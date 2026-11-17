@@ -326,7 +326,7 @@ export default function TambahKendaraan() {
 
             setTimeout(() => {
                 safeBack("/kendaraan");
-            }, 1000);
+            }, 1600);
         } catch (err) {
             console.error(
                 "Tambah kendaraan error:",
@@ -476,6 +476,19 @@ export default function TambahKendaraan() {
 
     return (
         <SafeAreaView style={styles.safeArea}>
+            {/* POPUP NOTIFIKASI POJOK KANAN ATAS */}
+            {success ? (
+                <View style={styles.topRightToast}>
+                    <View style={styles.toastIconBox}>
+                        <Ionicons name="checkmark-circle" size={24} color="#16A34A" />
+                    </View>
+                    <View style={styles.toastTextBox}>
+                        <Text style={styles.toastTitle}>Berhasil Disimpan!</Text>
+                        <Text style={styles.toastSubtitle}>{success}</Text>
+                    </View>
+                </View>
+            ) : null}
+
             <KeyboardAvoidingView
                 style={styles.keyboard}
                 behavior={
@@ -1150,6 +1163,42 @@ export default function TambahKendaraan() {
 }
 
 const styles = StyleSheet.create({
+    topRightToast: {
+        position: "absolute",
+        top: 24,
+        right: 24,
+        zIndex: 9999,
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#FFFFFF",
+        paddingVertical: 14,
+        paddingHorizontal: 18,
+        borderRadius: 14,
+        borderLeftWidth: 5,
+        borderLeftColor: "#16A34A",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.18,
+        shadowRadius: 12,
+        elevation: 8,
+        maxWidth: 380,
+    },
+    toastIconBox: {
+        marginRight: 12,
+    },
+    toastTextBox: {
+        flex: 1,
+    },
+    toastTitle: {
+        fontSize: 13.5,
+        fontWeight: "800",
+        color: "#181818",
+    },
+    toastSubtitle: {
+        fontSize: 11.5,
+        color: "#555555",
+        marginTop: 2,
+    },
     safeArea: {
         flex: 1,
         backgroundColor: COLORS.background,

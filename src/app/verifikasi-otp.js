@@ -28,12 +28,10 @@ export default function VerifikasiOTP() {
         : params.email;
 
     const [email, setEmail] = useState(emailParam || "");
-    const [otp, setOtp] = useState(params.initialOtp ? String(params.initialOtp) : "");
+    const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
     const [resendLoading, setResendLoading] = useState(false);
-    const [message, setMessage] = useState(
-        params.initialOtp ? `Kode OTP Anda adalah ${params.initialOtp}` : ""
-    );
+    const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
     const otpRef = useRef(null);

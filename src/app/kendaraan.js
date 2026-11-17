@@ -53,6 +53,9 @@ export default function Kendaraan() {
     const [selectedKendaraan, setSelectedKendaraan] =
         useState(null);
 
+    const [showToast, setShowToast] = useState(false);
+    const [toastMessage, setToastMessage] = useState('');
+
     const [deleteLoading, setDeleteLoading] =
         useState(false);
 
@@ -107,7 +110,7 @@ export default function Kendaraan() {
             if (savedPhoto) {
                 if (Platform.OS === "web" && savedPhoto.startsWith("blob:")) {
                     await AsyncStorage.removeItem("autocare_profile_photo");
-                    if (parsedUser.foto && (!Platform.OS === "web" || !parsedUser.foto.startsWith("blob:"))) {
+                    if (parsedUser.foto && (Platform.OS !== "web" || !parsedUser.foto.startsWith("blob:"))) {
                         setProfilePhoto(getPhotoUrl(parsedUser.foto));
                         setImageError(false);
                     } else {
@@ -117,7 +120,7 @@ export default function Kendaraan() {
                     setProfilePhoto(getPhotoUrl(savedPhoto));
                     setImageError(false);
                 }
-            } else if (parsedUser.foto && (!Platform.OS === "web" || !parsedUser.foto.startsWith("blob:"))) {
+            } else if (parsedUser.foto && (Platform.OS !== "web" || !parsedUser.foto.startsWith("blob:"))) {
                 setProfilePhoto(getPhotoUrl(parsedUser.foto));
                 setImageError(false);
             } else {
@@ -332,6 +335,9 @@ export default function Kendaraan() {
             }
 
             setShowEditModal(false);
+            setToastMessage('Perubahan data kendaraan berhasil disimpan.');
+            setShowToast(true);
+            setTimeout(() => setShowToast(false), 3000);
             await loadKendaraan();
         } catch (err) {
             console.error("Save Edit Kendaraan Error:", err);
@@ -714,28 +720,7 @@ export default function Kendaraan() {
                             </View>
 
 
-                            <View
-                                style={
-                                    styles.summaryInfo
-                                }
-                            >
 
-                                <Ionicons
-                                    name="shield-checkmark-outline"
-                                    size={19}
-                                    color="#18A558"
-                                />
-
-                                <Text
-                                    style={
-                                        styles.summaryInfoText
-                                    }
-                                >
-                                    Data kendaraan tersimpan
-                                    dengan aman
-                                </Text>
-
-                            </View>
 
                         </View>
 
@@ -2107,6 +2092,42 @@ const styles = StyleSheet.create({
     // DESKTOP
     // =========================================================
 
+    topRightToast: {
+        position: "absolute",
+        top: 24,
+        right: 24,
+        zIndex: 9999,
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "#FFFFFF",
+        paddingVertical: 14,
+        paddingHorizontal: 18,
+        borderRadius: 14,
+        borderLeftWidth: 5,
+        borderLeftColor: "#16A34A",
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 8,
+        maxWidth: 380,
+    },
+    toastIconBox: {
+        marginRight: 12,
+    },
+    toastTextBox: {
+        flex: 1,
+    },
+    toastTitle: {
+        fontSize: 13.5,
+        fontWeight: "800",
+        color: "#181818",
+    },
+    toastSubtitle: {
+        fontSize: 11.5,
+        color: "#555555",
+        marginTop: 2,
+    },
     desktopContainer: {
         flex: 1,
         flexDirection: "row",

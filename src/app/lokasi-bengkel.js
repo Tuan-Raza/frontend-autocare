@@ -134,7 +134,7 @@ export default function LokasiBengkel() {
                 if (savedPhoto) {
                     if (Platform.OS === "web" && savedPhoto.startsWith("blob:")) {
                         await AsyncStorage.removeItem("autocare_profile_photo");
-                        if (parsedUser.foto && (!Platform.OS === "web" || !parsedUser.foto.startsWith("blob:"))) {
+                        if (parsedUser.foto && (Platform.OS !== "web" || !parsedUser.foto.startsWith("blob:"))) {
                             setProfilePhoto(getPhotoUrl(parsedUser.foto));
                             setImageError(false);
                         } else {
@@ -144,7 +144,7 @@ export default function LokasiBengkel() {
                         setProfilePhoto(getPhotoUrl(savedPhoto));
                         setImageError(false);
                     }
-                } else if (parsedUser.foto && (!Platform.OS === "web" || !parsedUser.foto.startsWith("blob:"))) {
+                } else if (parsedUser.foto && (Platform.OS !== "web" || !parsedUser.foto.startsWith("blob:"))) {
                     setProfilePhoto(getPhotoUrl(parsedUser.foto));
                     setImageError(false);
                 }
@@ -268,7 +268,7 @@ export default function LokasiBengkel() {
             const { status } = await Location.requestForegroundPermissionsAsync();
 
             if (status !== "granted") {
-                setLocationError("Izin lokasi diperlukan untuk menghitung jarak ke cabang bengkel.");
+                setLocationError("Izin lokasi diperlukan untuk menghitung jarak ke lokasi bengkel.");
                 return;
             }
 
@@ -373,7 +373,7 @@ export default function LokasiBengkel() {
                         {locationLoading ? "Mencari koordinat lokasi..." : "Gunakan Lokasi Saya"}
                     </Text>
                     <Text style={styles.locationButtonSubtitle}>
-                        Hitung dan tampilkan jarak cabang AutoCare terdekat dari posisi Anda saat ini
+                        Hitung dan tampilkan jarak lokasi AutoCare terdekat dari posisi Anda saat ini
                     </Text>
                 </View>
 
@@ -391,16 +391,16 @@ export default function LokasiBengkel() {
             {/* SECTION HEADER */}
             <View style={styles.sectionHeader}>
                 <View>
-                    <Text style={styles.sectionTitle}>Daftar Cabang AutoCare</Text>
+                    <Text style={styles.sectionTitle}>Daftar Lokasi AutoCare</Text>
                     <Text style={styles.sectionSubtitle}>
                         {userLocation
-                            ? "Diurutkan otomatis dari cabang terdekat"
-                            : `${bengkelList.length} cabang resmi siap melayani Anda`}
+                            ? "Diurutkan otomatis dari lokasi terdekat"
+                            : `${bengkelList.length} lokasi resmi siap melayani Anda`}
                     </Text>
                 </View>
 
                 <View style={styles.countBadge}>
-                    <Text style={styles.countBadgeText}>{bengkelList.length} Cabang</Text>
+                    <Text style={styles.countBadgeText}>{bengkelList.length} Lokasi</Text>
                 </View>
             </View>
 
@@ -411,7 +411,7 @@ export default function LokasiBengkel() {
                         <Ionicons name="location-outline" size={38} color="#CCCCCC" />
                     </View>
                     <Text style={styles.emptyTitle}>Belum ada bengkel</Text>
-                    <Text style={styles.emptyText}>Data cabang bengkel saat ini belum tersedia.</Text>
+                    <Text style={styles.emptyText}>Data lokasi bengkel saat ini belum tersedia.</Text>
                 </View>
             ) : (
                 <View style={[styles.bengkelGrid, isDesktop && styles.bengkelGridDesktop]}>
@@ -458,7 +458,7 @@ export default function LokasiBengkel() {
                                 <View style={styles.infoRow}>
                                     <Ionicons name="location-outline" size={17} color="#777777" style={styles.infoIcon} />
                                     <Text style={styles.infoText}>
-                                        {bengkel.alamat || "Alamat cabang belum tersedia"}
+                                        {bengkel.alamat || "Alamat lokasi belum tersedia"}
                                     </Text>
                                 </View>
 
@@ -491,21 +491,12 @@ export default function LokasiBengkel() {
                                 {/* ACTION BUTTONS */}
                                 <View style={styles.actionRow}>
                                     <TouchableOpacity
-                                        style={styles.mapsButton}
+                                        style={styles.singleMapsButton}
                                         activeOpacity={0.85}
                                         onPress={() => openGoogleMapsDirections(bengkel)}
                                     >
-                                        <Ionicons name="navigate" size={16} color={COLORS.white} />
-                                        <Text style={styles.mapsButtonText}>Petunjuk Arah</Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity
-                                        style={styles.detailButton}
-                                        activeOpacity={0.85}
-                                        onPress={() => openLocationPin(bengkel)}
-                                    >
-                                        <Ionicons name="map-outline" size={16} color={COLORS.red} />
-                                        <Text style={styles.detailButtonText}>Lihat di Maps</Text>
+                                        <Ionicons name="navigate" size={17} color={COLORS.white} />
+                                        <Text style={styles.singleMapsButtonText}>Petunjuk Arah Google Maps</Text>
                                     </TouchableOpacity>
                                 </View>
 
@@ -516,7 +507,7 @@ export default function LokasiBengkel() {
                                     onPress={() => router.push("/booking")}
                                 >
                                     <Ionicons name="calendar-outline" size={15} color="#666666" />
-                                    <Text style={styles.bookingLinkText}>Booking Servis di Cabang Ini</Text>
+                                    <Text style={styles.bookingLinkText}>Booking Servis di Lokasi Ini</Text>
                                     <Ionicons name="chevron-forward" size={15} color="#999999" />
                                 </TouchableOpacity>
                             </View>
@@ -639,7 +630,7 @@ export default function LokasiBengkel() {
                             <View style={{ marginLeft: 14 }}>
                                 <Text style={styles.desktopHeaderTitle}>Lokasi Bengkel AutoCare</Text>
                                 <Text style={styles.desktopHeaderSubtitle}>
-                                    Temukan lokasi dan rute menuju 4 cabang bengkel resmi AutoCare Karawang
+                                    Temukan lokasi dan rute menuju lokasi bengkel resmi AutoCare Karawang
                                 </Text>
                             </View>
                         </View>
@@ -686,7 +677,7 @@ export default function LokasiBengkel() {
 
                     <View style={styles.headerTextContainer}>
                         <Text style={styles.headerTitle}>Lokasi Bengkel</Text>
-                        <Text style={styles.headerSubtitle}>Cabang bengkel AutoCare Karawang</Text>
+                        <Text style={styles.headerSubtitle}>Lokasi bengkel AutoCare Karawang</Text>
                     </View>
 
                     <RealtimeClock compact />
@@ -1089,6 +1080,26 @@ const styles = StyleSheet.create({
     },
 
     // ACTION BUTTONS
+    singleMapsButton: {
+        flex: 1,
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: COLORS.red,
+        height: 44,
+        borderRadius: 12,
+        gap: 8,
+        shadowColor: COLORS.red,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    singleMapsButtonText: {
+        color: COLORS.white,
+        fontSize: 13,
+        fontWeight: "700",
+    },
     actionRow: {
         flexDirection: "row",
         gap: 10,

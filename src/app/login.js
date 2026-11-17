@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Stack, router } from "expo-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BlurView } from "expo-blur";
 
 import {
@@ -36,6 +36,32 @@ export default function Login() {
 
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
+
+    useEffect(() => {
+        let isMounted = true;
+        AsyncStorage.getItem("autocare_user").then((userData) => {
+            if (!isMounted) return;
+            if (userData) {
+                try {
+                    const parsed = JSON.parse(userData);
+                    if (parsed && (parsed.id || parsed.email)) {
+                        if (parsed.role === "admin") {
+                            router.replace("/admin");
+                        } else {
+                            if (data.user.role === "admin") {
+                router.replace("/admin");
+            } else {
+                router.replace("/home");
+            }
+                        }
+                    }
+                } catch (_) {}
+            }
+        });
+        return () => {
+            isMounted = false;
+        };
+    }, []);
 
     const handleLogin = async () => {
         setErrorMessage("");
@@ -105,7 +131,11 @@ export default function Login() {
                 await AsyncStorage.removeItem("autocare_profile_photo");
             }
 
-            router.replace("/home");
+            if (data.user.role === "admin") {
+                router.replace("/admin");
+            } else {
+                router.replace("/home");
+            }
         } catch (error) {
             console.error("Login Error:", error);
 
@@ -274,6 +304,10 @@ export default function Login() {
                                         autoCapitalize="none"
                                         autoCorrect={false}
                                         keyboardType="email-address"
+                                        returnKeyType="next"
+                                        onSubmitEditing={() => {
+                                            if (password) handleLogin();
+                                        }}
                                     />
                                 </View>
 
@@ -313,6 +347,8 @@ export default function Login() {
                                         }
                                         autoCapitalize="none"
                                         autoCorrect={false}
+                                        returnKeyType="go"
+                                        onSubmitEditing={handleLogin}
                                     />
 
                                     <TouchableOpacity
@@ -712,6 +748,10 @@ export default function Login() {
                                     autoCapitalize="none"
                                     autoCorrect={false}
                                     keyboardType="email-address"
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => {
+                                        if (password) handleLogin();
+                                    }}
                                 />
                             </View>
 
@@ -738,6 +778,8 @@ export default function Login() {
                                     }
                                     autoCapitalize="none"
                                     autoCorrect={false}
+                                    returnKeyType="go"
+                                    onSubmitEditing={handleLogin}
                                 />
 
                                 <TouchableOpacity
@@ -1154,6 +1196,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
 
         outlineStyle: "none",
+        backgroundColor: "transparent",
     },
 
     passwordEye: {

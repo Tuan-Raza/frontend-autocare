@@ -24,14 +24,12 @@ import { API_URL } from "../config";
 export default function VerifikasiEmail() {
     const { email, mode, initialOtp } = useLocalSearchParams();
 
-    const [kode, setKode] = useState(initialOtp ? String(initialOtp) : "");
+    const [kode, setKode] = useState("");
     const [loading, setLoading] = useState(false);
     const [resending, setResending] = useState(false);
     const [countdown, setCountdown] = useState(0);
     const [errorMessage, setErrorMessage] = useState("");
-    const [successMessage, setSuccessMessage] = useState(
-        initialOtp ? `Kode verifikasi Anda adalah ${initialOtp}` : ""
-    );
+    const [successMessage, setSuccessMessage] = useState("");
 
     const inputRef = useRef(null);
 

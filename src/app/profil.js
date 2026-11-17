@@ -84,7 +84,7 @@ export default function Profil() {
                 const parsed = JSON.parse(savedUser);
                 setUser(parsed);
 
-                if (parsed.foto && (!Platform.OS === "web" || !parsed.foto.startsWith("blob:"))) {
+                if (parsed.foto && (Platform.OS !== "web" || !parsed.foto.startsWith("blob:"))) {
                     setProfilePhoto(getPhotoUrl(parsed.foto));
                     setImageError(false);
                 }

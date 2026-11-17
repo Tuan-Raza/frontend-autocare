@@ -108,7 +108,7 @@ export default function Daftar() {
 
             // OTP berhasil dibuat / dikirim
             setSuccessMessage(
-                data.message || "Pendaftaran berhasil! Mengalihkan ke verifikasi..."
+                "Pendaftaran berhasil! Kode OTP verifikasi telah dikirimkan ke email Anda. Silakan periksa inbox/spam email Anda."
             );
 
             // Pindah ke halaman verifikasi dengan email & initialOtp
@@ -117,7 +117,6 @@ export default function Daftar() {
                     pathname: "/verifikasi-email",
                     params: {
                         email: emailClean,
-                        initialOtp: data.otp || "",
                     },
                 });
             }, 700);
@@ -226,6 +225,7 @@ export default function Daftar() {
                             value={nama}
                             onChangeText={setNama}
                             autoCapitalize="words"
+                            autoComplete="off"
                         />
                     </View>
 
@@ -246,6 +246,7 @@ export default function Daftar() {
                             keyboardType="email-address"
                             autoCapitalize="none"
                             autoCorrect={false}
+                            autoComplete="off"
                         />
                     </View>
 
@@ -264,6 +265,7 @@ export default function Daftar() {
                             value={noHp}
                             onChangeText={setNoHp}
                             keyboardType="phone-pad"
+                            autoComplete="tel" textContentType="telephoneNumber"
                         />
                     </View>
 
@@ -283,6 +285,7 @@ export default function Daftar() {
                             onChangeText={setPassword}
                             secureTextEntry={!showPassword}
                             autoCapitalize="none"
+                            autoComplete="new-password" textContentType="newPassword"
                         />
 
                         <TouchableOpacity
@@ -314,6 +317,7 @@ export default function Daftar() {
                             onChangeText={setKonfirmasiPassword}
                             secureTextEntry={!showKonfirmasiPassword}
                             autoCapitalize="none"
+                            autoComplete="new-password" textContentType="newPassword"
                         />
 
                         <TouchableOpacity
@@ -535,6 +539,7 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         height: 48,
+        backgroundColor: "transparent",
 
         fontSize: 12,
 

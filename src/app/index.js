@@ -1,6 +1,8 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router } from "expo-router";
 import { useEffect } from "react";
 import {
+    ActivityIndicator,
     Image,
     StyleSheet,
     Text,
@@ -9,11 +11,38 @@ import {
 
 export default function Index() {
     useEffect(() => {
-        const timer = setTimeout(() => {
-            router.replace("/login");
-        }, 5000);
+        let isMounted = true;
 
-        return () => clearTimeout(timer);
+        const checkSession = async () => {
+            try {
+                const userData = await AsyncStorage.getItem("autocare_user");
+                if (!isMounted) return;
+
+                if (userData) {
+                    const parsed = JSON.parse(userData);
+                    if (parsed && (parsed.id || parsed.email)) {
+                        if (parsed.role === "admin") {
+                            router.replace("/admin");
+                        } else {
+                            router.replace("/home");
+                        }
+                        return;
+                    }
+                }
+                router.replace("/login");
+            } catch (err) {
+                if (isMounted) {
+                    router.replace("/login");
+                }
+            }
+        };
+
+        const timer = setTimeout(checkSession, 1200);
+
+        return () => {
+            isMounted = false;
+            clearTimeout(timer);
+        };
     }, []);
 
     return (
@@ -26,9 +55,12 @@ export default function Index() {
                 />
             </View>
 
-            <Text style={styles.loadingText}>
-                Memuat...
-            </Text>
+            <View style={styles.loadingWrapper}>
+                <ActivityIndicator size="small" color="#C8102E" />
+                <Text style={styles.loadingText}>
+                    Memuat AutoCare...
+                </Text>
+            </View>
         </View>
     );
 }
@@ -42,22 +74,29 @@ const styles = StyleSheet.create({
     },
 
     logoContainer: {
-    width: 190,
-    height: 190,
-    justifyContent: "center",
-    alignItems: "center",
+        width: 190,
+        height: 190,
+        justifyContent: "center",
+        alignItems: "center",
+        marginBottom: 20,
     },
 
     logo: {
-    width: 180,
-    height: 180,
-    marginBotom: 80,
+        width: 180,
+        height: 180,
+    },
+
+    loadingWrapper: {
+        position: "absolute",
+        bottom: 50,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
     },
 
     loadingText: {
-        position: "absolute",
-        bottom: 45,
-        fontSize: 7,
-        color: "#777777",
+        fontSize: 13,
+        fontWeight: "500",
+        color: "#666666",
     },
 });

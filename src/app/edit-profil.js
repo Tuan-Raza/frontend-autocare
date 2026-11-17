@@ -69,7 +69,7 @@ export default function EditProfil() {
             setNoHp(data.no_hp || data.noHp || "");
 
             // ── Load foto profil ──────────────────────────
-            if (data.foto && (!Platform.OS === "web" || !data.foto.startsWith("blob:"))) {
+            if (data.foto && (Platform.OS !== "web" || !data.foto.startsWith("blob:"))) {
                 setProfilePhoto(data.foto);
                 setImageError(false);
             } else {

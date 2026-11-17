@@ -35,3 +35,8 @@ export const getCarImage = (merek) => {
     // 3. Fallback default
     return require("../../assets/cars/default-car.png");
 };
+
+// Default export untuk rute Expo Router
+export default function CarImages() {
+    return null;
+}

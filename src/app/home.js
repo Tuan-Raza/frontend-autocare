@@ -86,7 +86,7 @@ export default function Home() {
             if (savedPhoto) {
                 if (Platform.OS === "web" && savedPhoto.startsWith("blob:")) {
                     await AsyncStorage.removeItem("autocare_profile_photo");
-                    if (parsedUser.foto && (!Platform.OS === "web" || !parsedUser.foto.startsWith("blob:"))) {
+                    if (parsedUser.foto && (Platform.OS !== "web" || !parsedUser.foto.startsWith("blob:"))) {
                         setProfilePhoto(getPhotoUrl(parsedUser.foto));
                         setImageError(false);
                     } else {
@@ -96,7 +96,7 @@ export default function Home() {
                     setProfilePhoto(getPhotoUrl(savedPhoto));
                     setImageError(false);
                 }
-            } else if (parsedUser.foto && (!Platform.OS === "web" || !parsedUser.foto.startsWith("blob:"))) {
+            } else if (parsedUser.foto && (Platform.OS !== "web" || !parsedUser.foto.startsWith("blob:"))) {
                 setProfilePhoto(getPhotoUrl(parsedUser.foto));
                 setImageError(false);
             } else {

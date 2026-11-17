@@ -59,7 +59,7 @@ export default function LupaPassword() {
             }
 
             setSuccessMessage(
-                data.message || "Kode reset password telah dikirim ke email."
+                "Kode reset password telah dikirim ke email Anda. Silakan periksa kotak masuk atau spam email Anda."
             );
 
             setTimeout(() => {
@@ -67,10 +67,9 @@ export default function LupaPassword() {
                     pathname: "/verifikasi-otp",
                     params: {
                         email: emailClean,
-                        initialOtp: data.otp || "",
                     },
                 });
-            }, 700);
+            }, 800);
         } catch (error) {
             console.error(
                 "Forgot Password Error:",

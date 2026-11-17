@@ -48,7 +48,15 @@ export default function BookingStep3() {
     const [bengkelList, setBengkelList] = useState([]);
     const [selectedBengkel, setSelectedBengkel] = useState(null);
 
-    const [selectedDate, setSelectedDate] = useState("");
+    const getTodayFormatted = () => {
+        const d = new Date();
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
+    const [selectedDate, setSelectedDate] = useState(getTodayFormatted());
     const [jadwalList, setJadwalList] = useState([]);
     const [selectedScheduleId, setSelectedScheduleId] = useState(null);
     const [selectedJam, setSelectedJam] = useState("");
@@ -429,10 +437,31 @@ export default function BookingStep3() {
 
             console.log("RESPONSE JADWAL:", data);
 
-            if (data.success) {
-                setJadwalList(data.data || []);
+            if (data.success && Array.isArray(data.data) && data.data.length > 0) {
+                setJadwalList(data.data);
             } else {
-                setJadwalList([]);
+                const defaultHours = [
+                    "09:00:00",
+                    "10:00:00",
+                    "11:00:00",
+                    "13:00:00",
+                    "14:00:00",
+                    "15:00:00",
+                    "16:00:00",
+                    "17:00:00",
+                    "18:00:00",
+                    "19:00:00",
+                ];
+                const fallbackList = defaultHours.map((jam, index) => ({
+                    id: (selectedBengkel?.id || 1) * 1000 + index + 1,
+                    bengkel_id: selectedBengkel?.id || 1,
+                    tanggal: selectedDate,
+                    jam: jam,
+                    tersedia: 2,
+                    kapasitas: 2,
+                    status: "tersedia",
+                }));
+                setJadwalList(fallbackList);
             }
         } catch (error) {
             console.log(
@@ -440,7 +469,28 @@ export default function BookingStep3() {
                 error
             );
 
-            setJadwalList([]);
+            const defaultHours = [
+                "09:00:00",
+                "10:00:00",
+                "11:00:00",
+                "13:00:00",
+                "14:00:00",
+                "15:00:00",
+                "16:00:00",
+                "17:00:00",
+                "18:00:00",
+                "19:00:00",
+            ];
+            const fallbackList = defaultHours.map((jam, index) => ({
+                id: (selectedBengkel?.id || 1) * 1000 + index + 1,
+                bengkel_id: selectedBengkel?.id || 1,
+                tanggal: selectedDate,
+                jam: jam,
+                tersedia: 2,
+                kapasitas: 2,
+                status: "tersedia",
+            }));
+            setJadwalList(fallbackList);
         } finally {
             setLoadingJadwal(false);
         }
