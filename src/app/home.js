@@ -1,7 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useFocusEffect } from "expo-router";
-import React, { useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 
 import {
     ActivityIndicator,
@@ -19,10 +19,12 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { API_URL } from "../config";
-import { getCarImage } from "./carImages";
-import { getPhotoUrl } from "../utils/photo";
 import RealtimeClock from "../components/RealtimeClock";
+import BottomNavBar from "../components/BottomNavBar";
+import DesktopSidebar from "../components/DesktopSidebar";
+import { API_URL } from "../config";
+import { getPhotoUrl } from "../utils/photo";
+import { getCarImage } from "./carImages";
 
 
 export default function Home() {
@@ -260,207 +262,14 @@ export default function Home() {
             >
 
                 {/* =================================================
-                    SIDEBAR
+                    SIDEBAR (STANDARDIZED)
                 ================================================= */}
-
-                <View
-                    style={styles.sidebar}
-                >
-
-                    {/* LOGO */}
-
-                    <View
-                        style={styles.sidebarBrand}
-                    >
-
-                        <View
-                            style={
-                                styles.sidebarLogoBox
-                            }
-                        >
-
-                            <Image
-                                source={require(
-                                    "../../assets/images/autocare-logo.png"
-                                )}
-                                style={
-                                    styles.sidebarLogo
-                                }
-                                resizeMode="contain"
-                            />
-
-                        </View>
-
-
-                        <Text
-                            style={
-                                styles.sidebarBrandTitle
-                            }
-                        >
-                            AutoCare
-                        </Text>
-
-
-                        <Text
-                            style={
-                                styles.sidebarBrandSubtitle
-                            }
-                        >
-                            Vehicle Service
-                        </Text>
-
-                    </View>
-
-
-                    {/* MENU */}
-
-                    <View
-                        style={styles.sidebarMenu}
-                    >
-
-                        <SidebarItem
-                            icon="home"
-                            title="Beranda"
-                            active
-                            onPress={() =>
-                                router.replace(
-                                    "/home"
-                                )
-                            }
-                        />
-
-
-                        <SidebarItem
-                            icon="car-outline"
-                            title="Kendaraan"
-                            onPress={() =>
-                                router.push(
-                                    "/kendaraan"
-                                )
-                            }
-                        />
-
-
-                        <SidebarItem
-                            icon="calendar-outline"
-                            title="Booking"
-                            onPress={() =>
-                                router.push(
-                                    "/booking"
-                                )
-                            }
-                        />
-
-
-                        <SidebarItem
-                            icon="receipt-outline"
-                            title="Riwayat Service"
-                            onPress={() =>
-                                router.push(
-                                    "/riwayat-servis"
-                                )
-                            }
-                        />
-
-
-                        <SidebarItem
-                            icon="location-outline"
-                            title="Lokasi Bengkel"
-                            onPress={() =>
-                                router.push(
-                                    "/lokasi-bengkel"
-                                )
-                            }
-                        />
-
-
-                        <SidebarItem
-                            icon="person-outline"
-                            title="Profil"
-                            onPress={() =>
-                                router.push(
-                                    "/profil"
-                                )
-                            }
-                        />
-
-                    </View>
-
-
-                    {/* SIDEBAR BOTTOM */}
-
-                    <View
-                        style={
-                            styles.sidebarBottom
-                        }
-                    >
-
-                        <View
-                            style={
-                                styles.sidebarUser
-                            }
-                        >
-
-                            <View
-                                style={
-                                    styles.sidebarAvatar
-                                }
-                            >
-
-                                {profilePhoto && !imageError ? (
-                                    <Image
-                                        source={{ uri: getPhotoUrl(profilePhoto) }}
-                                        style={styles.sidebarAvatarImage}
-                                        onError={() => setImageError(true)}
-                                    />
-                                ) : (
-                                    <Text style={styles.sidebarAvatarInitial}>
-                                        {namaUser.charAt(0).toUpperCase()}
-                                    </Text>
-                                )}
-
-                            </View>
-
-
-                            <View
-                                style={
-                                    styles.sidebarUserInfo
-                                }
-                            >
-
-                                <Text
-                                    style={
-                                        styles.sidebarUserName
-                                    }
-                                    numberOfLines={1}
-                                >
-                                    {namaUser}
-                                </Text>
-
-                                <Text
-                                    style={
-                                        styles.sidebarUserRole
-                                    }
-                                >
-                                    Pengguna
-                                </Text>
-
-                            </View>
-
-                        </View>
-
-
-                        <Text
-                            style={
-                                styles.sidebarCopyright
-                            }
-                        >
-                            © 2026 AutoCare
-                        </Text>
-
-                    </View>
-
-                </View>
+                <DesktopSidebar
+                    activeMenu="home"
+                    user={user}
+                    namaUser={namaUser}
+                    profilePhoto={profilePhoto}
+                />
 
 
                 {/* =================================================
@@ -2083,51 +1892,7 @@ export default function Home() {
 
 
             {/* MOBILE BOTTOM NAV */}
-
-            <View
-                style={styles.bottomNav}
-            >
-
-                <MobileNav
-                    icon="home"
-                    title="Home"
-                    active
-                />
-
-
-                <MobileNav
-                    icon="car-outline"
-                    title="Kendaraan"
-                    onPress={() =>
-                        router.push(
-                            "/kendaraan"
-                        )
-                    }
-                />
-
-
-                <MobileNav
-                    icon="calendar-outline"
-                    title="Booking"
-                    onPress={() =>
-                        router.push(
-                            "/booking"
-                        )
-                    }
-                />
-
-
-                <MobileNav
-                    icon="person-outline"
-                    title="Profil"
-                    onPress={() =>
-                        router.push(
-                            "/profil"
-                        )
-                    }
-                />
-
-            </View>
+            <BottomNavBar activeTab="home" />
 
         </SafeAreaView>
     );
@@ -2374,7 +2139,7 @@ const styles = StyleSheet.create({
     // SIDEBAR
     // =========================================================
 
-    sidebar: {
+     sidebar: {
         width: 245,
         backgroundColor: "#4A0404",
         paddingHorizontal: 18,
@@ -2430,7 +2195,7 @@ const styles = StyleSheet.create({
     },
 
     sidebarItemActive: {
-        backgroundColor: "#F20D18",
+        backgroundColor: "rgb(87, 10, 10)",
         shadowColor: "#000000",
         shadowOpacity: 0.18,
         shadowRadius: 8,
@@ -3447,7 +3212,7 @@ const styles = StyleSheet.create({
 
     reminderButton: {
         height: 27,
-        backgroundColor: "#C1010A",
+        backgroundColor: "rgb(85, 10, 10)",
         borderRadius: 5,
         alignSelf: "flex-start",
         paddingHorizontal: 10,

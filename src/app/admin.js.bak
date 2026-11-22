@@ -5,6 +5,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import {
     ActivityIndicator,
     Alert,
+    Animated,
     Dimensions,
     Image,
     ImageBackground,
@@ -20,8 +21,42 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_URL } from "../config";
+import AnimatedModalCard from "../components/AnimatedModalCard";
 
 const { width } = Dimensions.get("window");
+
+function AdminTabItem({ active, icon, outlineIcon, label, onPress }) {
+    const scaleAnim = React.useRef(new Animated.Value(active ? 1.12 : 1)).current;
+
+    React.useEffect(() => {
+        Animated.spring(scaleAnim, {
+            toValue: active ? 1.12 : 1,
+            friction: 6,
+            tension: 80,
+            useNativeDriver: Platform.OS !== "web",
+        }).start();
+    }, [active]);
+
+    return (
+        <TouchableOpacity style={styles.tabItem} onPress={onPress} activeOpacity={0.8}>
+            <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
+                <Ionicons
+                    name={active ? icon : outlineIcon}
+                    size={22}
+                    color={active ? "#C8102E" : "#888"}
+                />
+            </Animated.View>
+            <Text
+                style={[
+                    styles.tabItemText,
+                    active && styles.tabItemTextActive,
+                ]}
+            >
+                {label}
+            </Text>
+        </TouchableOpacity>
+    );
+}
 
 export default function AdminDashboard() {
     // Current Active Tab: 'dashboard' | 'booking' | 'pelanggan' | 'kendaraan' | 'layanan' | 'bengkel' | 'laporan' | 'pengaturan'
@@ -1357,7 +1392,7 @@ export default function AdminDashboard() {
             onRequestClose={() => setModalVisible(null)}
         >
             <View style={styles.modalOverlay}>
-                <View style={styles.modalCard}>
+                <AnimatedModalCard style={styles.modalCard} visible={modalVisible !== null}>
                     <Text style={styles.modalTitle}>
                         {modalVisible === "tambahPelanggan"
                             ? "Tambah Pelanggan Baru"
@@ -1421,7 +1456,7 @@ export default function AdminDashboard() {
                             <Text style={styles.modalSaveBtnText}>Simpan</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </AnimatedModalCard>
             </View>
         </Modal>
     );
@@ -1452,124 +1487,58 @@ export default function AdminDashboard() {
             {/* Bottom Tab Navigation Bar */}
             <View style={styles.bottomTabBar}>
                 {/* 1. Dashboard */}
-                <TouchableOpacity
-                    style={styles.tabItem}
+                <AdminTabItem
+                    active={activeTab === "dashboard"}
+                    icon="home"
+                    outlineIcon="home-outline"
+                    label="Dashboard"
                     onPress={() => setActiveTab("dashboard")}
-                >
-                    <Ionicons
-                        name={activeTab === "dashboard" ? "home" : "home-outline"}
-                        size={22}
-                        color={activeTab === "dashboard" ? "#C8102E" : "#888"}
-                    />
-                    <Text
-                        style={[
-                            styles.tabItemText,
-                            activeTab === "dashboard" && styles.tabItemTextActive,
-                        ]}
-                    >
-                        Dashboard
-                    </Text>
-                </TouchableOpacity>
+                />
 
                 {/* 2. Booking */}
-                <TouchableOpacity
-                    style={styles.tabItem}
+                <AdminTabItem
+                    active={activeTab === "booking"}
+                    icon="calendar"
+                    outlineIcon="calendar-outline"
+                    label="Booking"
                     onPress={() => setActiveTab("booking")}
-                >
-                    <Ionicons
-                        name={activeTab === "booking" ? "calendar" : "calendar-outline"}
-                        size={22}
-                        color={activeTab === "booking" ? "#C8102E" : "#888"}
-                    />
-                    <Text
-                        style={[
-                            styles.tabItemText,
-                            activeTab === "booking" && styles.tabItemTextActive,
-                        ]}
-                    >
-                        Booking
-                    </Text>
-                </TouchableOpacity>
+                />
 
                 {/* 3. Pelanggan */}
-                <TouchableOpacity
-                    style={styles.tabItem}
+                <AdminTabItem
+                    active={activeTab === "pelanggan"}
+                    icon="people"
+                    outlineIcon="people-outline"
+                    label="Pelanggan"
                     onPress={() => setActiveTab("pelanggan")}
-                >
-                    <Ionicons
-                        name={activeTab === "pelanggan" ? "people" : "people-outline"}
-                        size={22}
-                        color={activeTab === "pelanggan" ? "#C8102E" : "#888"}
-                    />
-                    <Text
-                        style={[
-                            styles.tabItemText,
-                            activeTab === "pelanggan" && styles.tabItemTextActive,
-                        ]}
-                    >
-                        Pelanggan
-                    </Text>
-                </TouchableOpacity>
+                />
 
                 {/* 4. Kelola (Kendaraan / Layanan / Bengkel) */}
-                <TouchableOpacity
-                    style={styles.tabItem}
+                <AdminTabItem
+                    active={activeTab === "kelola"}
+                    icon="car-sport"
+                    outlineIcon="car-sport-outline"
+                    label="Kendaraan"
                     onPress={() => setActiveTab("kelola")}
-                >
-                    <Ionicons
-                        name={activeTab === "kelola" ? "car-sport" : "car-sport-outline"}
-                        size={22}
-                        color={activeTab === "kelola" ? "#C8102E" : "#888"}
-                    />
-                    <Text
-                        style={[
-                            styles.tabItemText,
-                            activeTab === "kelola" && styles.tabItemTextActive,
-                        ]}
-                    >
-                        Kendaraan
-                    </Text>
-                </TouchableOpacity>
+                />
 
                 {/* 5. Laporan */}
-                <TouchableOpacity
-                    style={styles.tabItem}
+                <AdminTabItem
+                    active={activeTab === "laporan"}
+                    icon="bar-chart"
+                    outlineIcon="bar-chart-outline"
+                    label="Laporan"
                     onPress={() => setActiveTab("laporan")}
-                >
-                    <Ionicons
-                        name={activeTab === "laporan" ? "bar-chart" : "bar-chart-outline"}
-                        size={22}
-                        color={activeTab === "laporan" ? "#C8102E" : "#888"}
-                    />
-                    <Text
-                        style={[
-                            styles.tabItemText,
-                            activeTab === "laporan" && styles.tabItemTextActive,
-                        ]}
-                    >
-                        Laporan
-                    </Text>
-                </TouchableOpacity>
+                />
 
                 {/* 6. Lainnya / Pengaturan */}
-                <TouchableOpacity
-                    style={styles.tabItem}
+                <AdminTabItem
+                    active={activeTab === "pengaturan"}
+                    icon="settings"
+                    outlineIcon="settings-outline"
+                    label="Lainnya"
                     onPress={() => setActiveTab("pengaturan")}
-                >
-                    <Ionicons
-                        name={activeTab === "pengaturan" ? "settings" : "settings-outline"}
-                        size={22}
-                        color={activeTab === "pengaturan" ? "#C8102E" : "#888"}
-                    />
-                    <Text
-                        style={[
-                            styles.tabItemText,
-                            activeTab === "pengaturan" && styles.tabItemTextActive,
-                        ]}
-                    >
-                        Lainnya
-                    </Text>
-                </TouchableOpacity>
+                />
             </View>
         </SafeAreaView>
     );

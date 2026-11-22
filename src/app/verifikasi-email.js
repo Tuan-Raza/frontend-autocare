@@ -22,12 +22,12 @@ import {
 import { API_URL } from "../config";
 
 export default function VerifikasiEmail() {
-    const { email, mode, initialOtp } = useLocalSearchParams();
+    const { email, mode } = useLocalSearchParams();
 
     const [kode, setKode] = useState("");
     const [loading, setLoading] = useState(false);
     const [resending, setResending] = useState(false);
-    const [countdown, setCountdown] = useState(0);
+    const [countdown, setCountdown] = useState(60);
     const [errorMessage, setErrorMessage] = useState("");
     const [successMessage, setSuccessMessage] = useState("");
 
@@ -38,7 +38,7 @@ export default function VerifikasiEmail() {
     // =====================================================
     const isEmailChange = mode === "email-change";
 
-    // Timer countdown untuk kirim ulang kode
+    // Timer countdown untuk kirim ulang kode (cooldown 60 detik)
     useEffect(() => {
         let timer;
         if (countdown > 0) {
@@ -193,14 +193,13 @@ export default function VerifikasiEmail() {
                 setErrorMessage(
                     data.message || "Gagal mengirim ulang kode verifikasi."
                 );
+                if (data.retryAfter) {
+                    setCountdown(data.retryAfter);
+                }
                 return;
             }
 
-            if (data.otp) {
-                setKode(String(data.otp));
-            }
-
-            setSuccessMessage(data.message || "Kode verifikasi baru telah dikirim!");
+            setSuccessMessage("Kode verifikasi baru telah dikirim ke email Anda!");
             setCountdown(60);
         } catch (err) {
             console.error("Resend OTP Error:", err);
@@ -299,20 +298,6 @@ export default function VerifikasiEmail() {
                             {email || "-"}
                         </Text>
                     </View>
-
-                    {/* QUICK OTP NOTICE (IF PROVIDED) */}
-                    {initialOtp ? (
-                        <TouchableOpacity
-                            style={styles.otpNoticeBox}
-                            onPress={() => setKode(String(initialOtp))}
-                            activeOpacity={0.8}
-                        >
-                            <Ionicons name="key-outline" size={16} color="#FFD700" />
-                            <Text style={styles.otpNoticeText}>
-                                Kode OTP Anda: <Text style={styles.otpBold}>{initialOtp}</Text> (Ketuk untuk isi)
-                            </Text>
-                        </TouchableOpacity>
-                    ) : null}
 
                     {/* OTP LABEL */}
                     <Text style={styles.otpLabel}>
@@ -622,32 +607,6 @@ const styles = StyleSheet.create({
         fontSize: 12,
         fontWeight: "700",
         marginLeft: 7,
-    },
-
-    otpNoticeBox: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "rgba(255, 215, 0, 0.15)",
-        borderWidth: 1,
-        borderColor: "rgba(255, 215, 0, 0.45)",
-        borderRadius: 10,
-        paddingVertical: 7,
-        paddingHorizontal: 10,
-        marginBottom: 14,
-    },
-
-    otpNoticeText: {
-        color: "#FFEB3B",
-        fontSize: 11,
-        fontWeight: "600",
-        marginLeft: 6,
-    },
-
-    otpBold: {
-        fontWeight: "900",
-        letterSpacing: 2,
-        color: "#FFFFFF",
     },
 
     otpLabel: {

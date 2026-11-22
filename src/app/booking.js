@@ -22,6 +22,8 @@ import { API_URL } from "../config";
 import { getCarImage } from "./carImages";
 import { getPhotoUrl } from "../utils/photo";
 import RealtimeClock from "../components/RealtimeClock";
+import BottomNavBar from "../components/BottomNavBar";
+import DesktopSidebar from "../components/DesktopSidebar";
 
 export default function Booking() {
     const [user, setUser] = useState(null);
@@ -222,78 +224,13 @@ export default function Booking() {
     if (isDesktop) {
         return (
             <View style={styles.desktopContainer}>
-                {/* SIDEBAR */}
-                <View style={styles.sidebar}>
-                    <View style={styles.sidebarBrand}>
-                        <View style={styles.sidebarLogoBox}>
-                            <Image
-                                source={require("../../assets/images/autocare-logo.png")}
-                                style={styles.sidebarLogo}
-                                resizeMode="contain"
-                            />
-                        </View>
-                        <Text style={styles.sidebarBrandTitle}>AutoCare</Text>
-                        <Text style={styles.sidebarBrandSubtitle}>Vehicle Service</Text>
-                    </View>
-
-                    <View style={styles.sidebarMenu}>
-                        <SidebarItem
-                            icon="home-outline"
-                            title="Beranda"
-                            onPress={() => router.push("/home")}
-                        />
-                        <SidebarItem
-                            icon="car-outline"
-                            title="Kendaraan"
-                            onPress={() => router.push("/kendaraan")}
-                        />
-                        <SidebarItem
-                            icon="calendar"
-                            title="Booking"
-                            active
-                            onPress={() => router.replace("/booking")}
-                        />
-                        <SidebarItem
-                            icon="receipt-outline"
-                            title="Riwayat Service"
-                            onPress={() => router.push("/riwayat-servis")}
-                        />
-                        <SidebarItem
-                            icon="location-outline"
-                            title="Lokasi Bengkel"
-                            onPress={() => router.push("/lokasi-bengkel")}
-                        />
-                        <SidebarItem
-                            icon="person-outline"
-                            title="Profil"
-                            onPress={() => router.push("/profil")}
-                        />
-                    </View>
-
-                    <View style={styles.sidebarBottom}>
-                        <View style={styles.sidebarUser}>
-                            <View style={styles.sidebarAvatar}>
-                                {profilePhoto && !imageError ? (
-                                    <Image
-                                        source={{ uri: getPhotoUrl(profilePhoto) }}
-                                        style={styles.sidebarAvatarImage}
-                                        onError={() => setImageError(true)}
-                                    />
-                                ) : (
-                                    <Text style={styles.sidebarAvatarInitial}>
-                                        {namaUser.charAt(0).toUpperCase()}
-                                    </Text>
-                                )}
-                            </View>
-                            <View style={styles.sidebarUserInfo}>
-                                <Text style={styles.sidebarUserName} numberOfLines={1}>
-                                    {namaUser}
-                                </Text>
-                                <Text style={styles.sidebarUserRole}>Pengguna</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>
+                {/* SIDEBAR (STANDARDIZED) */}
+                <DesktopSidebar
+                    activeMenu="booking"
+                    user={user}
+                    namaUser={namaUser}
+                    profilePhoto={profilePhoto}
+                />
 
                 {/* DESKTOP MAIN */}
                 <View style={styles.desktopMain}>
@@ -598,7 +535,7 @@ export default function Booking() {
                                     isDesktop && styles.vehicleCardDesktop,
                                     isTablet && styles.vehicleCardTablet,
                                     isSelected &&
-                                        styles.vehicleCardSelected,
+                                    styles.vehicleCardSelected,
                                 ]}
                                 onPress={() =>
                                     handleSelectVehicle(item)
@@ -609,7 +546,7 @@ export default function Booking() {
                                     style={[
                                         styles.vehicleIcon,
                                         isSelected &&
-                                            styles.vehicleIconSelected,
+                                        styles.vehicleIconSelected,
                                     ]}
                                 >
                                     <Ionicons
@@ -684,7 +621,7 @@ export default function Booking() {
                                     style={[
                                         styles.radio,
                                         isSelected &&
-                                            styles.radioSelected,
+                                        styles.radioSelected,
                                     ]}
                                 >
                                     {isSelected && (
@@ -783,7 +720,7 @@ export default function Booking() {
                         style={[
                             styles.continueButton,
                             !selectedVehicle &&
-                                styles.continueButtonDisabled,
+                            styles.continueButtonDisabled,
                         ]}
                         onPress={handleContinue}
                         activeOpacity={0.85}
@@ -802,28 +739,7 @@ export default function Booking() {
             )}
 
             {/* MOBILE BOTTOM NAV */}
-            <View style={styles.bottomNav}>
-                <MobileNav
-                    icon="home-outline"
-                    title="Home"
-                    onPress={() => router.replace("/home")}
-                />
-                <MobileNav
-                    icon="car-outline"
-                    title="Kendaraan"
-                    onPress={() => router.replace("/kendaraan")}
-                />
-                <MobileNav
-                    icon="calendar"
-                    title="Booking"
-                    active
-                />
-                <MobileNav
-                    icon="person-outline"
-                    title="Profil"
-                    onPress={() => router.replace("/profil")}
-                />
-            </View>
+            <BottomNavBar activeTab="booking" />
         </SafeAreaView>
     );
 }
@@ -893,7 +809,7 @@ function MobileNav({
                 style={[
                     styles.navText,
                     active &&
-                        styles.navTextActive,
+                    styles.navTextActive,
                 ]}
             >
                 {title}
@@ -1246,36 +1162,36 @@ const styles = StyleSheet.create({
         fontWeight: "800",
     },
     scrollContentDesktop: {
-    width: "100%",
-    maxWidth: 1100,
-    alignSelf: "center",
-    paddingHorizontal: 30,
-    paddingTop: 25,
-},
+        width: "100%",
+        maxWidth: 1100,
+        alignSelf: "center",
+        paddingHorizontal: 30,
+        paddingTop: 25,
+    },
 
-scrollContentTablet: {
-    paddingHorizontal: 35,
-},
+    scrollContentTablet: {
+        paddingHorizontal: 35,
+    },
 
-vehicleCardDesktop: {
-    width: "48.5%",
-    minHeight: 115,
-},
+    vehicleCardDesktop: {
+        width: "48.5%",
+        minHeight: 115,
+    },
 
-vehicleCardTablet: {
-    width: "100%",
-},
-bookingCarImageWrap: {
-    width: 80,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    marginHorizontal: 8,
-},
-bookingCarImage: {
-    width: 80,
-    height: 50,
-},
+    vehicleCardTablet: {
+        width: "100%",
+    },
+    bookingCarImageWrap: {
+        width: 80,
+        height: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        marginHorizontal: 8,
+    },
+    bookingCarImage: {
+        width: 80,
+        height: 50,
+    },
 
     // =========================================================
     // DESKTOP STYLES
@@ -1334,7 +1250,7 @@ bookingCarImage: {
         marginBottom: 8,
     },
     sidebarItemActive: {
-        backgroundColor: "rgba(255, 255, 255, 0.14)",
+        backgroundColor: "rgb(87, 10, 10)",
     },
     sidebarItemText: {
         marginLeft: 12,

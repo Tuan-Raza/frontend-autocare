@@ -20,6 +20,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API_URL } from "../config";
 import { getPhotoUrl } from "../utils/photo";
 import RealtimeClock from "../components/RealtimeClock";
+import BottomNavBar from "../components/BottomNavBar";
+import DesktopSidebar from "../components/DesktopSidebar";
 
 const RED = "#C8102E";
 
@@ -370,87 +372,12 @@ export default function RiwayatServis() {
     if (isDesktop) {
         return (
             <View style={styles.desktopContainer}>
-                {/* SIDEBAR */}
-                <View style={styles.sidebar}>
-                    <View>
-                        {/* BRAND */}
-                        <View style={styles.sidebarBrand}>
-                            <View style={styles.sidebarLogoBox}>
-                                <Image
-                                    source={require("../../assets/images/autocare-logo.png")}
-                                    style={styles.sidebarLogo}
-                                    resizeMode="contain"
-                                />
-                            </View>
-                            <Text style={styles.sidebarBrandTitle}>AutoCare</Text>
-                            <Text style={styles.sidebarBrandSubtitle}>Vehicle Service System</Text>
-                        </View>
-
-                        {/* MENU */}
-                        <View style={styles.sidebarMenu}>
-                            <SidebarItem
-                                icon="home-outline"
-                                title="Beranda"
-                                onPress={() => router.push("/home")}
-                            />
-                            <SidebarItem
-                                icon="car-outline"
-                                title="Kendaraan"
-                                onPress={() => router.push("/kendaraan")}
-                            />
-                            <SidebarItem
-                                icon="calendar-outline"
-                                title="Booking"
-                                onPress={() => router.push("/booking")}
-                            />
-                            <SidebarItem
-                                icon="receipt"
-                                title="Riwayat Service"
-                                active
-                                onPress={() => {}}
-                            />
-                            <SidebarItem
-                                icon="location-outline"
-                                title="Lokasi Bengkel"
-                                onPress={() => router.push("/lokasi-bengkel")}
-                            />
-                            <SidebarItem
-                                icon="person-outline"
-                                title="Profil"
-                                onPress={() => router.push("/profil")}
-                            />
-                        </View>
-                    </View>
-
-                    {/* SIDEBAR USER BOTTOM */}
-                    <View style={styles.sidebarBottom}>
-                        <TouchableOpacity
-                            style={styles.sidebarUser}
-                            activeOpacity={0.85}
-                            onPress={() => router.push("/profil")}
-                        >
-                            <View style={styles.sidebarAvatar}>
-                                {profilePhoto && !imageError ? (
-                                    <Image
-                                        source={{ uri: getPhotoUrl(profilePhoto) }}
-                                        style={styles.sidebarAvatarImage}
-                                        onError={() => setImageError(true)}
-                                    />
-                                ) : (
-                                    <Text style={styles.sidebarAvatarInitial}>
-                                        {namaUser.charAt(0).toUpperCase()}
-                                    </Text>
-                                )}
-                            </View>
-                            <View style={styles.sidebarUserInfo}>
-                                <Text style={styles.sidebarUserName} numberOfLines={1}>
-                                    {namaUser}
-                                </Text>
-                                <Text style={styles.sidebarUserRole}>Pengguna</Text>
-                            </View>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+                {/* SIDEBAR (STANDARDIZED) */}
+                <DesktopSidebar
+                    activeMenu="riwayat-servis"
+                    namaUser={namaUser}
+                    profilePhoto={profilePhoto}
+                />
 
                 {/* DESKTOP MAIN */}
                 <View style={styles.desktopMain}>
@@ -540,28 +467,7 @@ export default function RiwayatServis() {
             </ScrollView>
 
             {/* MOBILE BOTTOM NAVIGATION */}
-            <View style={styles.bottomNav}>
-                <MobileNav
-                    icon="home-outline"
-                    title="Home"
-                    onPress={() => router.replace("/home")}
-                />
-                <MobileNav
-                    icon="car-outline"
-                    title="Kendaraan"
-                    onPress={() => router.replace("/kendaraan")}
-                />
-                <MobileNav
-                    icon="calendar-outline"
-                    title="Booking"
-                    onPress={() => router.replace("/booking")}
-                />
-                <MobileNav
-                    icon="person-outline"
-                    title="Profil"
-                    onPress={() => router.replace("/profil")}
-                />
-            </View>
+            <BottomNavBar activeTab={null} />
         </SafeAreaView>
     );
 }
@@ -1002,7 +908,15 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     sidebarItemActive: {
-        backgroundColor: "rgba(255, 255, 255, 0.14)",
+        backgroundColor: "rgb(87, 10, 10)",
+        shadowColor: "#000000",
+        shadowOpacity: 0.18,
+        shadowRadius: 8,
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        elevation: 4,
     },
     sidebarItemText: {
         marginLeft: 12,

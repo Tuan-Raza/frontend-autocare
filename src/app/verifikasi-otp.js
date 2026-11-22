@@ -31,6 +31,7 @@ export default function VerifikasiOTP() {
     const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
     const [resendLoading, setResendLoading] = useState(false);
+    const [countdown, setCountdown] = useState(60);
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
 
@@ -41,6 +42,15 @@ export default function VerifikasiOTP() {
             setEmail(emailParam);
         }
     }, [emailParam]);
+
+    // Timer countdown untuk kirim ulang OTP (cooldown 60 detik)
+    useEffect(() => {
+        let timer;
+        if (countdown > 0) {
+            timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+        }
+        return () => clearTimeout(timer);
+    }, [countdown]);
 
     const handleVerify = async () => {
         setMessage("");
@@ -115,7 +125,7 @@ export default function VerifikasiOTP() {
                 });
             }, 700);
         } catch (error) {
-            console.log("VERIFY OTP ERROR:", error);
+            console.error("VERIFY OTP ERROR:", error);
 
             setError(
                 error.message ||
@@ -127,6 +137,8 @@ export default function VerifikasiOTP() {
     };
 
     const handleResend = async () => {
+        if (countdown > 0 || resendLoading) return;
+
         setMessage("");
         setError("");
 
@@ -165,24 +177,24 @@ export default function VerifikasiOTP() {
             }
 
             if (!response.ok || !data.success) {
+                if (data.retryAfter) {
+                    setCountdown(data.retryAfter);
+                }
                 throw new Error(
                     data.message || "Gagal mengirim ulang OTP."
                 );
             }
 
-            if (data.otp) {
-                setOtp(String(data.otp));
-            }
-
             setMessage(
-                data.message || "OTP baru berhasil dikirim ke email."
+                data.message || "OTP baru berhasil dikirim ke email Anda."
             );
+            setCountdown(60);
 
             setTimeout(() => {
                 otpRef.current?.focus();
             }, 300);
         } catch (error) {
-            console.log("RESEND OTP ERROR:", error);
+            console.error("RESEND OTP ERROR:", error);
 
             setError(
                 error.message || "Gagal mengirim ulang OTP."
@@ -312,7 +324,7 @@ export default function VerifikasiOTP() {
                     />
 
                     <Text style={styles.helperText}>
-                        Kode OTP berlaku selama beberapa menit.
+                        Kode OTP berlaku selama 5 menit.
                     </Text>
 
                     {/* VERIFY */}
@@ -349,7 +361,7 @@ export default function VerifikasiOTP() {
                         </Text>
 
                         <TouchableOpacity
-                            disabled={resendLoading}
+                            disabled={resendLoading || countdown > 0}
                             activeOpacity={0.7}
                             onPress={handleResend}
                         >
@@ -359,8 +371,15 @@ export default function VerifikasiOTP() {
                                     color={RED}
                                 />
                             ) : (
-                                <Text style={styles.resendText}>
-                                    Kirim Ulang OTP
+                                <Text
+                                    style={[
+                                        styles.resendText,
+                                        countdown > 0 && styles.resendTextDisabled,
+                                    ]}
+                                >
+                                    {countdown > 0
+                                        ? `Kirim Ulang OTP (${countdown}s)`
+                                        : "Kirim Ulang OTP"}
                                 </Text>
                             )}
                         </TouchableOpacity>
@@ -569,6 +588,10 @@ const styles = StyleSheet.create({
         color: RED,
         fontSize: 13,
         fontWeight: "800",
+    },
+
+    resendTextDisabled: {
+        color: "rgba(178, 34, 34, 0.4)",
     },
 
     changeEmailButton: {

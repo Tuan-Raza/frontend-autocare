@@ -20,6 +20,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { API_URL } from "../config";
 import RealtimeClock from "../components/RealtimeClock";
+import AnimatedModalCard from "../components/AnimatedModalCard";
 
 const RED = "#B22222";
 
@@ -1803,12 +1804,13 @@ export default function BookingStep3() {
                 }
             >
                 <View style={styles.modalOverlay}>
-                    <View
+                    <AnimatedModalCard
                         style={[
                             styles.calendarModal,
                             isDesktop &&
                                 styles.calendarModalDesktop,
                         ]}
+                        visible={showCalendar}
                     >
                         {/* HEADER */}
 
@@ -2002,7 +2004,7 @@ export default function BookingStep3() {
                                 Gunakan Tanggal
                             </Text>
                         </TouchableOpacity>
-                    </View>
+                    </AnimatedModalCard>
                 </View>
             </Modal>
         </SafeAreaView>

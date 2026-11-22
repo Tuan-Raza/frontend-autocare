@@ -18,6 +18,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API_URL } from "../config";
 import { getPhotoUrl } from "../utils/photo";
 import RealtimeClock from "../components/RealtimeClock";
+import BottomNavBar from "../components/BottomNavBar";
+import DesktopSidebar from "../components/DesktopSidebar";
 
 // =====================================================
 // WARNA AUTOCARE
@@ -336,7 +338,7 @@ export default function Profil() {
                 style={[
                     styles.menuItem,
                     isDesktop &&
-                        styles.menuItemDesktop,
+                    styles.menuItemDesktop,
                 ]}
                 activeOpacity={0.8}
                 onPress={onPress}
@@ -390,7 +392,7 @@ export default function Profil() {
                 style={[
                     styles.menuItem,
                     isDesktop &&
-                        styles.menuItemDesktop,
+                    styles.menuItemDesktop,
                 ]}
                 activeOpacity={0.8}
                 onPress={onPress}
@@ -442,14 +444,14 @@ export default function Profil() {
             style={[
                 styles.profileCard,
                 isDesktop &&
-                    styles.profileCardDesktop,
+                styles.profileCardDesktop,
             ]}
         >
             <TouchableOpacity
                 style={[
                     styles.profilePhoto,
                     isDesktop &&
-                        styles.profilePhotoDesktop,
+                    styles.profilePhotoDesktop,
                 ]}
                 activeOpacity={0.8}
                 onPress={handleChoosePhoto}
@@ -478,7 +480,7 @@ export default function Profil() {
                     style={[
                         styles.cameraButton,
                         isDesktop &&
-                            styles.cameraButtonDesktop,
+                        styles.cameraButtonDesktop,
                     ]}
                 >
                     <Ionicons
@@ -493,7 +495,7 @@ export default function Profil() {
                 style={[
                     styles.profileName,
                     isDesktop &&
-                        styles.profileNameDesktop,
+                    styles.profileNameDesktop,
                 ]}
                 numberOfLines={2}
             >
@@ -505,7 +507,7 @@ export default function Profil() {
                 style={[
                     styles.profileEmail,
                     isDesktop &&
-                        styles.profileEmailDesktop,
+                    styles.profileEmailDesktop,
                 ]}
                 numberOfLines={2}
             >
@@ -535,7 +537,7 @@ export default function Profil() {
                 style={[
                     styles.editProfileButton,
                     isDesktop &&
-                        styles.editProfileButtonDesktop,
+                    styles.editProfileButtonDesktop,
                 ]}
                 activeOpacity={0.8}
                 onPress={() =>
@@ -578,7 +580,7 @@ export default function Profil() {
             style={[
                 styles.logoutButton,
                 isDesktop &&
-                    styles.logoutButtonDesktop,
+                styles.logoutButtonDesktop,
             ]}
             activeOpacity={0.8}
             onPress={() =>
@@ -606,78 +608,12 @@ export default function Profil() {
     if (isDesktop) {
         return (
             <View style={styles.desktopContainer}>
-                {/* SIDEBAR */}
-                <View style={styles.sidebar}>
-                    <View style={styles.sidebarBrand}>
-                        <View style={styles.sidebarLogoBox}>
-                            <Image
-                                source={require("../../assets/images/autocare-logo.png")}
-                                style={styles.sidebarLogo}
-                                resizeMode="contain"
-                            />
-                        </View>
-                        <Text style={styles.sidebarBrandTitle}>AutoCare</Text>
-                        <Text style={styles.sidebarBrandSubtitle}>Vehicle Service</Text>
-                    </View>
-
-                    <View style={styles.sidebarMenu}>
-                        <SidebarItem
-                            icon="home-outline"
-                            title="Beranda"
-                            onPress={() => router.push("/home")}
-                        />
-                        <SidebarItem
-                            icon="car-outline"
-                            title="Kendaraan"
-                            onPress={() => router.push("/kendaraan")}
-                        />
-                        <SidebarItem
-                            icon="calendar-outline"
-                            title="Booking"
-                            onPress={() => router.push("/booking")}
-                        />
-                        <SidebarItem
-                            icon="receipt-outline"
-                            title="Riwayat Service"
-                            onPress={() => router.push("/riwayat-servis")}
-                        />
-                        <SidebarItem
-                            icon="location-outline"
-                            title="Lokasi Bengkel"
-                            onPress={() => router.push("/lokasi-bengkel")}
-                        />
-                        <SidebarItem
-                            icon="person"
-                            title="Profil"
-                            active
-                            onPress={() => router.replace("/profil")}
-                        />
-                    </View>
-
-                    <View style={styles.sidebarBottom}>
-                        <View style={styles.sidebarUser}>
-                            <View style={styles.sidebarAvatar}>
-                                {profilePhoto && !imageError ? (
-                                    <Image
-                                        source={{ uri: getPhotoUrl(profilePhoto) }}
-                                        style={styles.sidebarAvatarImage}
-                                        onError={() => setImageError(true)}
-                                    />
-                                ) : (
-                                    <Text style={styles.sidebarAvatarInitial}>
-                                        {getInitial()}
-                                    </Text>
-                                )}
-                            </View>
-                            <View style={styles.sidebarUserInfo}>
-                                <Text style={styles.sidebarUserName} numberOfLines={1}>
-                                    {user?.nama || "Pengguna"}
-                                </Text>
-                                <Text style={styles.sidebarUserRole}>Pengguna</Text>
-                            </View>
-                        </View>
-                    </View>
-                </View>
+                {/* SIDEBAR (STANDARDIZED) */}
+                <DesktopSidebar
+                    activeMenu="profil"
+                    user={user}
+                    profilePhoto={profilePhoto}
+                />
 
                 {/* DESKTOP MAIN */}
                 <View style={styles.desktopMain}>
@@ -829,14 +765,14 @@ export default function Profil() {
                     style={[
                         styles.notificationContainer,
                         isDesktop &&
-                            styles.notificationContainerDesktop,
+                        styles.notificationContainerDesktop,
                     ]}
                 >
                     <View
                         style={[
                             styles.notification,
                             notification.type ===
-                            "success"
+                                "success"
                                 ? styles.notificationSuccess
                                 : styles.notificationError,
                         ]}
@@ -849,7 +785,7 @@ export default function Profil() {
                             <Ionicons
                                 name={
                                     notification.type ===
-                                    "success"
+                                        "success"
                                         ? "checkmark"
                                         : "close"
                                 }
@@ -901,7 +837,7 @@ export default function Profil() {
                         style={[
                             styles.logoutModal,
                             isDesktop &&
-                                styles.logoutModalDesktop,
+                            styles.logoutModalDesktop,
                         ]}
                     >
                         <View
@@ -986,7 +922,7 @@ export default function Profil() {
                 style={[
                     styles.header,
                     isDesktop &&
-                        styles.headerDesktop,
+                    styles.headerDesktop,
                 ]}
             >
                 <View
@@ -1050,14 +986,14 @@ export default function Profil() {
                 contentContainerStyle={[
                     styles.content,
                     isDesktop &&
-                        styles.contentDesktop,
+                    styles.contentDesktop,
                 ]}
             >
                 <View
                     style={[
                         styles.pageContainer,
                         isDesktop &&
-                            styles.pageContainerDesktop,
+                        styles.pageContainerDesktop,
                     ]}
                 >
                     {/* =================================================
@@ -1498,28 +1434,7 @@ export default function Profil() {
             </ScrollView>
 
             {/* MOBILE BOTTOM NAV */}
-            <View style={styles.bottomNav}>
-                <MobileNav
-                    icon="home-outline"
-                    title="Home"
-                    onPress={() => router.replace("/home")}
-                />
-                <MobileNav
-                    icon="car-outline"
-                    title="Kendaraan"
-                    onPress={() => router.replace("/kendaraan")}
-                />
-                <MobileNav
-                    icon="calendar-outline"
-                    title="Booking"
-                    onPress={() => router.replace("/booking")}
-                />
-                <MobileNav
-                    icon="person"
-                    title="Profil"
-                    active
-                />
-            </View>
+            <BottomNavBar activeTab="profil" />
         </SafeAreaView>
     );
 }
@@ -1589,7 +1504,7 @@ function MobileNav({
                 style={[
                     styles.navText,
                     active &&
-                        styles.navTextActive,
+                    styles.navTextActive,
                 ]}
             >
                 {title}
@@ -2306,7 +2221,15 @@ const styles = StyleSheet.create({
         marginBottom: 8,
     },
     sidebarItemActive: {
-        backgroundColor: "rgba(255, 255, 255, 0.14)",
+        backgroundColor: "rgb(87, 10, 10)",
+        shadowColor: "#000000",
+        shadowOpacity: 0.18,
+        shadowRadius: 8,
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        elevation: 4,
     },
     sidebarItemText: {
         marginLeft: 12,

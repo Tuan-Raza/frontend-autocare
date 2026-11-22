@@ -18,6 +18,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_URL } from "../config";
 import { getCarImage } from "./carImages";
+import AnimatedModalCard from "../components/AnimatedModalCard";
 
 const RED = "#B22222";
 const GREEN = "#2E9D59";
@@ -864,7 +865,7 @@ export default function BookingDetail() {
                     onRequestClose={() => setShowCancelModal(false)}
                 >
                     <View style={styles.modalOverlay}>
-                        <View style={styles.modalCard}>
+                        <AnimatedModalCard style={styles.modalCard} visible={showCancelModal}>
                             <View style={[styles.modalIconWrap, { backgroundColor: "#FFF1F2" }]}>
                                 <Ionicons name="alert-circle-outline" size={28} color="#C8102E" />
                             </View>
@@ -893,7 +894,7 @@ export default function BookingDetail() {
                                     )}
                                 </Pressable>
                             </View>
-                        </View>
+                        </AnimatedModalCard>
                     </View>
                 </Modal>
 
@@ -905,7 +906,7 @@ export default function BookingDetail() {
                     onRequestClose={() => setShowDeleteModal(false)}
                 >
                     <View style={styles.modalOverlay}>
-                        <View style={styles.modalCard}>
+                        <AnimatedModalCard style={styles.modalCard} visible={showDeleteModal}>
                             <View style={[styles.modalIconWrap, { backgroundColor: "#FFF1F2" }]}>
                                 <Ionicons name="trash-outline" size={28} color="#C8102E" />
                             </View>
@@ -934,7 +935,7 @@ export default function BookingDetail() {
                                     )}
                                 </Pressable>
                             </View>
-                        </View>
+                        </AnimatedModalCard>
                     </View>
                 </Modal>
 
@@ -946,7 +947,7 @@ export default function BookingDetail() {
                     onRequestClose={() => setShowEditKeluhanModal(false)}
                 >
                     <View style={styles.modalOverlay}>
-                        <View style={styles.modalCard}>
+                        <AnimatedModalCard style={styles.modalCard} visible={showEditKeluhanModal}>
                             <View style={[styles.modalIconWrap, { backgroundColor: "#E3F2FD" }]}>
                                 <Ionicons name="pencil-outline" size={26} color="#1E88E5" />
                             </View>
@@ -985,7 +986,7 @@ export default function BookingDetail() {
                                     )}
                                 </Pressable>
                             </View>
-                        </View>
+                        </AnimatedModalCard>
                     </View>
                 </Modal>
 

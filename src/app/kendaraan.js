@@ -23,6 +23,9 @@ import { API_URL } from "../config";
 import { getCarImage } from "./carImages";
 import { getPhotoUrl } from "../utils/photo";
 import RealtimeClock from "../components/RealtimeClock";
+import BottomNavBar from "../components/BottomNavBar";
+import AnimatedModalCard from "../components/AnimatedModalCard";
+import DesktopSidebar from "../components/DesktopSidebar";
 
 export default function Kendaraan() {
 
@@ -396,196 +399,14 @@ export default function Kendaraan() {
             >
 
                 {/* =================================================
-                    SIDEBAR
+                    SIDEBAR (STANDARDIZED)
                 ================================================= */}
-
-                <View
-                    style={
-                        styles.sidebar
-                    }
-                >
-
-                    {/* BRAND */}
-
-                    <View
-                        style={
-                            styles.sidebarBrand
-                        }
-                    >
-
-                        <View
-                            style={
-                                styles.sidebarLogoBox
-                            }
-                        >
-
-                            <Image
-                                source={require(
-                                    "../../assets/images/autocare-logo.png"
-                                )}
-                                style={
-                                    styles.sidebarLogo
-                                }
-                                resizeMode="contain"
-                            />
-
-                        </View>
-
-
-                        <Text
-                            style={
-                                styles.sidebarBrandTitle
-                            }
-                        >
-                            AutoCare
-                        </Text>
-
-
-                        <Text
-                            style={
-                                styles.sidebarBrandSubtitle
-                            }
-                        >
-                            Vehicle Service
-                        </Text>
-
-                    </View>
-
-
-                    {/* MENU */}
-
-                    <View
-                        style={
-                            styles.sidebarMenu
-                        }
-                    >
-
-                        <SidebarItem
-                            icon="home-outline"
-                            title="Beranda"
-                            onPress={() =>
-                                router.push(
-                                    "/home"
-                                )
-                            }
-                        />
-
-
-                        <SidebarItem
-                            icon="car"
-                            title="Kendaraan"
-                            active
-                            onPress={() =>
-                                router.replace(
-                                    "/kendaraan"
-                                )
-                            }
-                        />
-
-
-                        <SidebarItem
-                            icon="calendar-outline"
-                            title="Booking"
-                            onPress={() =>
-                                router.push(
-                                    "/booking"
-                                )
-                            }
-                        />
-
-
-                        <SidebarItem
-                            icon="receipt-outline"
-                            title="Riwayat Service"
-                            onPress={() =>
-                                router.push(
-                                    "/riwayat-servis"
-                                )
-                            }
-                        />
-
-
-                        <SidebarItem
-                            icon="location-outline"
-                            title="Lokasi Bengkel"
-                            onPress={() =>
-                                router.push(
-                                    "/lokasi-bengkel"
-                                )
-                            }
-                        />
-
-
-                        <SidebarItem
-                            icon="person-outline"
-                            title="Profil"
-                            onPress={() =>
-                                router.push(
-                                    "/profil"
-                                )
-                            }
-                        />
-
-                    </View>
-
-
-                    {/* SIDEBAR FOOTER */}
-
-                    <View
-                        style={
-                            styles.sidebarFooter
-                        }
-                    >
-
-                        <View
-                            style={
-                                styles.sidebarAvatar
-                            }
-                        >
-
-                            {profilePhoto && !imageError ? (
-                                <Image
-                                    source={{ uri: getPhotoUrl(profilePhoto) }}
-                                    style={styles.sidebarAvatarImage}
-                                    onError={() => setImageError(true)}
-                                />
-                            ) : (
-                                <Text style={styles.sidebarAvatarInitial}>
-                                    {namaUser.charAt(0).toUpperCase()}
-                                </Text>
-                            )}
-
-                        </View>
-
-
-                        <View
-                            style={
-                                styles.sidebarUserInfo
-                            }
-                        >
-
-                            <Text
-                                style={
-                                    styles.sidebarUserName
-                                }
-                                numberOfLines={1}
-                            >
-                                {namaUser}
-                            </Text>
-
-                            <Text
-                                style={
-                                    styles.sidebarUserRole
-                                }
-                            >
-                                Pengguna
-                            </Text>
-
-                        </View>
-
-                    </View>
-
-                </View>
+                <DesktopSidebar
+                    activeMenu="kendaraan"
+                    user={user}
+                    namaUser={namaUser}
+                    profilePhoto={profilePhoto}
+                />
 
 
                 {/* =================================================
@@ -1165,28 +986,7 @@ export default function Kendaraan() {
             />
 
             {/* MOBILE BOTTOM NAV */}
-            <View style={styles.bottomNav}>
-                <MobileNav
-                    icon="home-outline"
-                    title="Home"
-                    onPress={() => router.replace("/home")}
-                />
-                <MobileNav
-                    icon="car"
-                    title="Kendaraan"
-                    active
-                />
-                <MobileNav
-                    icon="calendar-outline"
-                    title="Booking"
-                    onPress={() => router.replace("/booking")}
-                />
-                <MobileNav
-                    icon="person-outline"
-                    title="Profil"
-                    onPress={() => router.replace("/profil")}
-                />
-            </View>
+            <BottomNavBar activeTab="kendaraan" />
 
         </View>
     );
@@ -1627,7 +1427,7 @@ function SidebarItem({
             style={[
                 styles.sidebarItem,
                 active &&
-                    styles.sidebarItemActive,
+                styles.sidebarItemActive,
             ]}
             activeOpacity={0.8}
             onPress={onPress}
@@ -1648,7 +1448,7 @@ function SidebarItem({
                 style={[
                     styles.sidebarItemText,
                     active &&
-                        styles.sidebarItemTextActive,
+                    styles.sidebarItemTextActive,
                 ]}
             >
                 {title}
@@ -1688,10 +1488,11 @@ function DeleteModal({
                 }
             >
 
-                <View
+                <AnimatedModalCard
                     style={
                         styles.modalCard
                     }
+                    visible={visible}
                 >
 
                     {/* ICON */}
@@ -1795,7 +1596,7 @@ function DeleteModal({
                             style={[
                                 styles.cancelButton,
                                 deleteLoading &&
-                                    styles.disabledButton,
+                                styles.disabledButton,
                             ]}
                             onPress={
                                 onCancel
@@ -1820,7 +1621,7 @@ function DeleteModal({
                             style={[
                                 styles.confirmDeleteButton,
                                 deleteLoading &&
-                                    styles.disabledButton,
+                                styles.disabledButton,
                             ]}
                             onPress={
                                 onDelete
@@ -1864,7 +1665,7 @@ function DeleteModal({
 
                     </View>
 
-                </View>
+                </AnimatedModalCard>
 
             </View>
 
@@ -1896,7 +1697,7 @@ function EditVehicleModal({
             onRequestClose={onCancel}
         >
             <View style={styles.modalOverlay}>
-                <View style={[styles.modalCard, { maxWidth: 440, padding: 22 }]}>
+                <AnimatedModalCard style={[styles.modalCard, { maxWidth: 440, padding: 22 }]} visible={visible}>
                     {/* ICON */}
                     <View style={[styles.modalIcon, { backgroundColor: "#E3F2FD" }]}>
                         <Ionicons
@@ -2014,7 +1815,7 @@ function EditVehicleModal({
                             )}
                         </Pressable>
                     </View>
-                </View>
+                </AnimatedModalCard>
             </View>
         </Modal>
     );
@@ -2050,7 +1851,7 @@ function MobileNav({
                 style={[
                     styles.navText,
                     active &&
-                        styles.navTextActive,
+                    styles.navTextActive,
                 ]}
             >
                 {title}
@@ -2189,7 +1990,15 @@ const styles = StyleSheet.create({
     },
 
     sidebarItemActive: {
-        backgroundColor: "#F20D18",
+        backgroundColor: "rgb(87, 10, 10)",
+        shadowColor: "#000000",
+        shadowOpacity: 0.18,
+        shadowRadius: 8,
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        elevation: 4,
     },
 
     sidebarItemText: {
@@ -2282,7 +2091,7 @@ const styles = StyleSheet.create({
         height: 44,
         paddingHorizontal: 17,
         borderRadius: 11,
-        backgroundColor: "#F20D18",
+        backgroundColor: "#860007ff",
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
