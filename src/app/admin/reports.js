@@ -231,6 +231,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     topBarTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 14,
         fontWeight: "700",
         color: "#374151",
@@ -252,11 +253,13 @@ const styles = StyleSheet.create({
         borderColor: "#C8102E",
     },
     yearChipText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#4B5563",
     },
     yearChipTextActive: {
+        fontFamily: "Poppins_400Regular",
         color: "#FFFFFF",
     },
     scrollArea: {
@@ -285,6 +288,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     cardTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 15,
         fontWeight: "700",
         color: "#111827",
@@ -302,6 +306,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "#E5E7EB",
     },
     th: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11,
         fontWeight: "700",
         color: "#6B7280",
@@ -316,15 +321,18 @@ const styles = StyleSheet.create({
         borderBottomColor: "#F3F4F6",
     },
     td: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: "#374151",
     },
     tdBold: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#111827",
     },
     emptyText: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
         padding: 30,
         color: "#9CA3AF",

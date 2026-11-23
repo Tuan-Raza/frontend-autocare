@@ -683,17 +683,15 @@ export default function Login() {
                         <View style={styles.mobileGlassInner}>
 
                             {/* LOGO */}
-                            <View
-                                style={
-                                    styles.logoContainer
-                                }
-                            >
+                        <View style={styles.logoRow}>
+                            <View style={styles.logoWrapper}>
                                 <Image
                                     source={require("../../assets/images/autocare-logo.png")}
                                     style={styles.logo}
                                     resizeMode="contain"
                                 />
                             </View>
+                        </View>
 
                             {/* TITLE */}
                             <Text style={styles.title}>
@@ -1149,6 +1147,7 @@ const styles = StyleSheet.create({
     },
 
     desktopTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 29,
         fontWeight: "900",
@@ -1156,6 +1155,7 @@ const styles = StyleSheet.create({
     },
 
     desktopSubtitle: {
+        fontFamily: "Poppins_400Regular",
         color: "rgba(255,255,255,0.72)",
         fontSize: 13,
         textAlign: "center",
@@ -1164,6 +1164,7 @@ const styles = StyleSheet.create({
     },
 
     desktopInputLabel: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 12,
         fontWeight: "800",
@@ -1171,6 +1172,7 @@ const styles = StyleSheet.create({
     },
 
     desktopInputContainer: {
+        fontFamily: "Poppins_400Regular",
         height: 53,
         borderRadius: 14,
 
@@ -1187,6 +1189,7 @@ const styles = StyleSheet.create({
     },
 
     desktopInput: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         height: "100%",
         marginLeft: 10,
@@ -1217,6 +1220,7 @@ const styles = StyleSheet.create({
     },
 
     desktopForgot: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 11,
         fontWeight: "800",
@@ -1245,6 +1249,7 @@ const styles = StyleSheet.create({
     },
 
     desktopLoginText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 14,
         fontWeight: "900",
@@ -1264,6 +1269,7 @@ const styles = StyleSheet.create({
     },
 
     desktopOrText: {
+        fontFamily: "Poppins_400Regular",
         color:
             "rgba(255,255,255,0.75)",
         fontSize: 11,
@@ -1292,12 +1298,14 @@ const styles = StyleSheet.create({
     },
 
     desktopRegisterText: {
+        fontFamily: "Poppins_400Regular",
         color:
             "rgba(255,255,255,0.70)",
         fontSize: 11,
     },
 
     desktopRegisterLink: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 11,
         fontWeight: "900",
@@ -1305,6 +1313,7 @@ const styles = StyleSheet.create({
     },
 
     desktopFooter: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
         color:
             "rgba(255,255,255,0.40)",
@@ -1404,6 +1413,7 @@ const styles = StyleSheet.create({
     },
 
     brandTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 42,
         fontWeight: "900",
@@ -1411,6 +1421,7 @@ const styles = StyleSheet.create({
     },
 
     brandSubtitle: {
+        fontFamily: "Poppins_600SemiBold",
         color:
             "rgba(255,255,255,0.84)",
         fontSize: 16,
@@ -1429,6 +1440,7 @@ const styles = StyleSheet.create({
     },
 
     brandDescription: {
+        fontFamily: "Poppins_400Regular",
         maxWidth: 430,
 
         textAlign: "center",
@@ -1470,6 +1482,7 @@ const styles = StyleSheet.create({
     },
 
     brandFeatureText: {
+        fontFamily: "Poppins_800ExtraBold",
         color:
             "rgba(255,255,255,0.86)",
 
@@ -1480,6 +1493,7 @@ const styles = StyleSheet.create({
     },
 
     brandCopyright: {
+        fontFamily: "Poppins_400Regular",
         position: "absolute",
         bottom: 20,
 
@@ -1563,14 +1577,34 @@ const styles = StyleSheet.create({
         alignItems: "center",
 
         marginBottom: 8,
+        borderRadius: 20,
+    },
+    logoRow: {
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+    },
+
+    logoWrapper: {
+        width: 80,
+        height: 80,
+        borderRadius: 12,
+        overflow: 'hidden',
+        backgroundColor: '#FFFFFF',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
 
     logo: {
-        width: 150,
-        height: 85,
+        width: '100%',
+        height: '100%',
+        borderRadius: 12,
+        resizeMode: 'contain',
     },
 
     title: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 22,
         fontWeight: "800",
 
@@ -1582,6 +1616,7 @@ const styles = StyleSheet.create({
     },
 
     subtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
 
         color:
@@ -1610,6 +1645,7 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
+        fontFamily: "Poppins_400Regular",
         color: "#E00000",
         fontSize: 11,
 
@@ -1619,6 +1655,7 @@ const styles = StyleSheet.create({
     },
 
     inputContainer: {
+        fontFamily: "Poppins_400Regular",
         height: 50,
 
         borderWidth: 1,
@@ -1639,6 +1676,7 @@ const styles = StyleSheet.create({
     },
 
     input: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
 
         marginLeft: 10,
@@ -1690,6 +1728,7 @@ const styles = StyleSheet.create({
     },
 
     checkmark: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
 
         fontSize: 9,
@@ -1700,11 +1739,13 @@ const styles = StyleSheet.create({
     },
 
     rememberText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#FFFFFF",
     },
 
     forgotText: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11,
 
         color: "#FFFFFF",
@@ -1744,6 +1785,7 @@ const styles = StyleSheet.create({
     },
 
     loginText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
 
         fontSize: 13,
@@ -1769,6 +1811,7 @@ const styles = StyleSheet.create({
     },
 
     orText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
 
         color: "#FFFFFF",
@@ -1793,6 +1836,7 @@ const styles = StyleSheet.create({
     },
 
     googleG: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 20,
 
         fontWeight: "800",
@@ -1803,6 +1847,7 @@ const styles = StyleSheet.create({
     },
 
     googleText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 12,
 
         color: "#555555",
@@ -1820,6 +1865,7 @@ const styles = StyleSheet.create({
     },
 
     registerText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
 
         color:
@@ -1827,6 +1873,7 @@ const styles = StyleSheet.create({
     },
 
     registerLink: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 12,
 
         color: "#FFFFFF",
@@ -1837,6 +1884,7 @@ const styles = StyleSheet.create({
     },
 
     footer: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
 
         fontSize: 9,

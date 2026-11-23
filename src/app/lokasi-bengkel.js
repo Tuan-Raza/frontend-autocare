@@ -694,6 +694,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     loadingText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 10,
         fontSize: 13,
         color: COLORS.grayText,
@@ -726,11 +727,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     headerTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         fontWeight: "800",
         color: COLORS.black,
     },
     headerSubtitle: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 3,
         fontSize: 11,
         color: "#888888",
@@ -798,11 +801,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     locationButtonTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 14,
         fontWeight: "800",
         color: COLORS.red,
     },
     locationButtonSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#777777",
         marginTop: 3,
@@ -821,6 +826,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     errorText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         marginLeft: 8,
         fontSize: 11.5,
@@ -836,11 +842,13 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     sectionTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 17,
         fontWeight: "800",
         color: COLORS.black,
     },
     sectionSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#888888",
         marginTop: 3,
@@ -854,6 +862,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     countBadgeText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: COLORS.red,
         fontSize: 11,
         fontWeight: "800",
@@ -912,6 +921,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     bengkelName: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 15,
         lineHeight: 20,
         fontWeight: "800",
@@ -930,6 +940,7 @@ const styles = StyleSheet.create({
         marginRight: 6,
     },
     statusText: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11,
         color: COLORS.green,
         fontWeight: "700",
@@ -945,6 +956,7 @@ const styles = StyleSheet.create({
         marginLeft: 8,
     },
     distanceBadgeText: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 11,
         color: COLORS.red,
         fontWeight: "800",
@@ -962,6 +974,7 @@ const styles = StyleSheet.create({
         marginRight: 8,
     },
     infoText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         fontSize: 12,
         lineHeight: 18,
@@ -980,6 +993,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     distanceInfoText: {
+        fontFamily: "Poppins_400Regular",
         marginLeft: 6,
         fontSize: 11,
         color: COLORS.lightText,
@@ -1002,6 +1016,7 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     singleMapsButtonText: {
+        fontFamily: "Poppins_700Bold",
         color: COLORS.white,
         fontSize: 13,
         fontWeight: "700",
@@ -1022,6 +1037,7 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     mapsButtonText: {
+        fontFamily: "Poppins_700Bold",
         color: COLORS.white,
         fontSize: 12,
         fontWeight: "700",
@@ -1039,6 +1055,7 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     detailButtonText: {
+        fontFamily: "Poppins_700Bold",
         color: COLORS.red,
         fontSize: 12,
         fontWeight: "700",
@@ -1056,6 +1073,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     bookingLinkText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 11.5,
         fontWeight: "600",
         color: "#444444",
@@ -1082,11 +1100,13 @@ const styles = StyleSheet.create({
         marginBottom: 14,
     },
     emptyTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 15,
         fontWeight: "800",
         color: COLORS.darkText,
     },
     emptyText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 5,
         fontSize: 12,
         color: COLORS.lightText,
@@ -1101,6 +1121,7 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     bottomInfoText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: COLORS.lightText,
     },
@@ -1126,12 +1147,14 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     navText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 9,
         color: "#999999",
         marginTop: 3,
         fontWeight: "600",
     },
     navTextActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: COLORS.red,
         fontWeight: "800",
     },
@@ -1171,12 +1194,14 @@ const styles = StyleSheet.create({
         height: 44,
     },
     sidebarBrandTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 18,
         fontWeight: "900",
         letterSpacing: 0.3,
     },
     sidebarBrandSubtitle: {
+        fontFamily: "Poppins_400Regular",
         color: "#E5B4B4",
         fontSize: 11,
         marginTop: 3,
@@ -1204,12 +1229,14 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     sidebarItemText: {
+        fontFamily: "Poppins_600SemiBold",
         marginLeft: 12,
         color: COLORS.sidebarText,
         fontSize: 13,
         fontWeight: "600",
     },
     sidebarItemTextActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontWeight: "800",
     },
@@ -1236,6 +1263,7 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     sidebarAvatarInitial: {
+        fontFamily: "Poppins_800ExtraBold",
         color: COLORS.sidebarBg,
         fontWeight: "900",
         fontSize: 15,
@@ -1245,11 +1273,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     sidebarUserName: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 13,
         fontWeight: "800",
     },
     sidebarUserRole: {
+        fontFamily: "Poppins_400Regular",
         color: COLORS.sidebarText,
         fontSize: 11,
         marginTop: 2,
@@ -1273,11 +1303,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     desktopHeaderTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 20,
         fontWeight: "800",
         color: "#222222",
     },
     desktopHeaderSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#888888",
         marginTop: 3,

@@ -49,17 +49,20 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     title: {
+        fontFamily: "Poppins_500Medium",
         fontSize: 13,
         fontWeight: "500",
         color: "#6B7280",
         marginBottom: 4,
     },
     value: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 22,
         fontWeight: "700",
         color: "#111827",
     },
     subtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#9CA3AF",
         marginTop: 4,

@@ -409,6 +409,7 @@ const styles = StyleSheet.create({
     },
 
     headerTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 16,
         fontWeight: "800",
         color: "#1A1A1A",
@@ -464,6 +465,7 @@ const styles = StyleSheet.create({
     },
 
     heroTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 20,
         fontWeight: "900",
         color: "#1A1A1A",
@@ -472,6 +474,7 @@ const styles = StyleSheet.create({
     },
 
     heroSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12.5,
         color: "#666666",
         textAlign: "center",
@@ -505,6 +508,7 @@ const styles = StyleSheet.create({
     },
 
     statusBadgeText: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 11,
         fontWeight: "800",
         letterSpacing: 0.3,
@@ -527,12 +531,14 @@ const styles = StyleSheet.create({
     },
 
     qaTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 12,
         fontWeight: "800",
         color: "#333333",
     },
 
     qaDesc: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#666666",
         lineHeight: 16,
@@ -563,6 +569,7 @@ const styles = StyleSheet.create({
     },
 
     qaBtnText: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontSize: 11.5,
         fontWeight: "700",
@@ -599,6 +606,7 @@ const styles = StyleSheet.create({
     },
 
     receiptType: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 9.5,
         fontWeight: "800",
         color: "#F20D18",
@@ -606,6 +614,7 @@ const styles = StyleSheet.create({
     },
 
     receiptId: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 10,
         color: "#888888",
         fontWeight: "600",
@@ -628,12 +637,14 @@ const styles = StyleSheet.create({
     },
 
     totalLabel: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         color: "#666666",
         fontWeight: "600",
     },
 
     totalValue: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 22,
         fontWeight: "900",
         color: "#F20D18",
@@ -652,12 +663,14 @@ const styles = StyleSheet.create({
     },
 
     detailLabel: {
+        fontFamily: "Poppins_500Medium",
         fontSize: 12,
         color: "#777777",
         fontWeight: "500",
     },
 
     detailValue: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 12,
         color: "#222222",
         fontWeight: "600",
@@ -667,6 +680,7 @@ const styles = StyleSheet.create({
     },
 
     detailValueBold: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 12.5,
         color: "#111111",
         fontWeight: "800",
@@ -680,6 +694,7 @@ const styles = StyleSheet.create({
     },
 
     proofTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11.5,
         fontWeight: "700",
         color: "#444444",
@@ -722,6 +737,7 @@ const styles = StyleSheet.create({
     },
 
     primaryButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 13.5,
         fontWeight: "800",
@@ -740,6 +756,7 @@ const styles = StyleSheet.create({
     },
 
     secondaryButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#F20D18",
         fontSize: 13.5,
         fontWeight: "800",

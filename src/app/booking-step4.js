@@ -1557,6 +1557,7 @@ const styles = StyleSheet.create({
     },
 
     loadingScreenText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 10,
         fontSize: 13,
         color: "#888",
@@ -1597,12 +1598,14 @@ const styles = StyleSheet.create({
     },
 
     headerTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         fontWeight: "900",
         color: "#1C1C1C",
     },
 
     headerSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#888",
         marginTop: 2,
@@ -1659,6 +1662,7 @@ const styles = StyleSheet.create({
     },
 
     stepNumberActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 14,
         fontWeight: "900",
@@ -1678,6 +1682,7 @@ const styles = StyleSheet.create({
     },
 
     stepLabel: {
+        fontFamily: "Poppins_600SemiBold",
         marginTop: 6,
         fontSize: 10,
         color: "#888",
@@ -1686,6 +1691,7 @@ const styles = StyleSheet.create({
     },
 
     stepLabelActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: RED,
         fontWeight: "900",
     },
@@ -1723,12 +1729,14 @@ const styles = StyleSheet.create({
     },
 
     pageTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         fontWeight: "900",
         color: "#202020",
     },
 
     pageDescription: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 3,
         fontSize: 12,
         color: "#888",
@@ -1766,6 +1774,7 @@ const styles = StyleSheet.create({
     },
 
     cardTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 15,
         fontWeight: "900",
         color: "#222",
@@ -1796,12 +1805,14 @@ const styles = StyleSheet.create({
     },
 
     vehicleName: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 16,
         fontWeight: "900",
         color: "#222",
     },
 
     vehiclePlate: {
+        fontFamily: "Poppins_800ExtraBold",
         marginTop: 3,
         fontSize: 14,
         fontWeight: "800",
@@ -1815,6 +1826,7 @@ const styles = StyleSheet.create({
     },
 
     vehicleInfo: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#888",
     },
@@ -1851,12 +1863,14 @@ const styles = StyleSheet.create({
     },
 
     serviceNumberText: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 12,
         fontWeight: "900",
         color: RED,
     },
 
     serviceName: {
+        fontFamily: "Poppins_700Bold",
         flex: 1,
         fontSize: 13,
         color: "#444",
@@ -1864,6 +1878,7 @@ const styles = StyleSheet.create({
     },
 
     servicePrice: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 13,
         color: "#222",
         fontWeight: "900",
@@ -1871,6 +1886,7 @@ const styles = StyleSheet.create({
     },
 
     emptyService: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: "#999",
         textAlign: "center",
@@ -1888,12 +1904,14 @@ const styles = StyleSheet.create({
     },
 
     totalLabel: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 13,
         color: "#777",
         fontWeight: "700",
     },
 
     totalValue: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         color: RED,
         fontWeight: "900",
@@ -1915,12 +1933,14 @@ const styles = StyleSheet.create({
     },
 
     detailLabel: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#999",
         marginBottom: 2,
     },
 
     detailValue: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 14,
         color: "#333",
         fontWeight: "700",
@@ -1946,12 +1966,14 @@ const styles = StyleSheet.create({
     },
 
     scheduleLabel: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 8,
         fontSize: 11,
         color: "#999",
     },
 
     scheduleValue: {
+        fontFamily: "Poppins_800ExtraBold",
         marginTop: 3,
         fontSize: 14,
         color: "#222",
@@ -1985,12 +2007,14 @@ const styles = StyleSheet.create({
     },
 
     paymentTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 13,
         fontWeight: "900",
         color: "#333",
     },
 
     paymentText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 3,
         fontSize: 11,
         color: "#888",
@@ -2012,6 +2036,7 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
+        fontFamily: "Poppins_700Bold",
         flex: 1,
         marginLeft: 8,
         fontSize: 12,
@@ -2045,11 +2070,13 @@ const styles = StyleSheet.create({
     },
 
     bottomLabel: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#999",
     },
 
     bottomValue: {
+        fontFamily: "Poppins_800ExtraBold",
         marginTop: 2,
         fontSize: 17,
         color: RED,
@@ -2069,6 +2096,7 @@ const styles = StyleSheet.create({
     },
 
     confirmButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 14,
         fontWeight: "900",
@@ -2097,11 +2125,13 @@ const styles = StyleSheet.create({
     },
 
     desktopTotalLabel: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#888",
     },
 
     desktopTotalValue: {
+        fontFamily: "Poppins_800ExtraBold",
         marginTop: 3,
         fontSize: 24,
         color: RED,
@@ -2154,12 +2184,14 @@ const styles = StyleSheet.create({
     },
 
     paymentHeaderTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         fontWeight: "900",
         color: "#222",
     },
 
     paymentHeaderSubtitle: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 2,
         fontSize: 11,
         color: "#888",
@@ -2181,6 +2213,7 @@ const styles = StyleSheet.create({
     },
 
     webViewLoadingText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 12,
         fontSize: 13,
         color: "#888",

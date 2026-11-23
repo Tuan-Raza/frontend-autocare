@@ -409,6 +409,7 @@ const styles = StyleSheet.create({
         height: 42,
     },
     searchInput: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         marginLeft: 8,
         fontSize: 13,
@@ -423,6 +424,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     addBtnText: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontSize: 13,
         fontWeight: "700",
@@ -458,6 +460,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "#E5E7EB",
     },
     th: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11,
         fontWeight: "700",
         color: "#6B7280",
@@ -472,25 +475,30 @@ const styles = StyleSheet.create({
         borderBottomColor: "#F3F4F6",
     },
     serviceTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 13,
         fontWeight: "700",
         color: "#111827",
     },
     serviceDesc: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#6B7280",
         marginTop: 2,
     },
     priceText: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 13,
         fontWeight: "700",
         color: "#C8102E",
     },
     td: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: "#374151",
     },
     tdBold: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#111827",
@@ -507,6 +515,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#F3F4F6",
     },
     emptyText: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
         padding: 30,
         color: "#9CA3AF",
@@ -535,6 +544,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "#E5E7EB",
     },
     modalTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 16,
         fontWeight: "700",
         color: "#111827",
@@ -550,12 +560,14 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     formLabel: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#374151",
         marginBottom: 6,
     },
     formInput: {
+        fontFamily: "Poppins_400Regular",
         borderWidth: 1,
         borderColor: "#D1D5DB",
         borderRadius: 8,
@@ -582,11 +594,13 @@ const styles = StyleSheet.create({
         backgroundColor: "#FEF2F2",
     },
     statusOptionText: {
+        fontFamily: "Poppins_500Medium",
         fontSize: 13,
         fontWeight: "500",
         color: "#4B5563",
     },
     statusOptionTextActive: {
+        fontFamily: "Poppins_700Bold",
         color: "#C8102E",
         fontWeight: "700",
     },
@@ -606,6 +620,7 @@ const styles = StyleSheet.create({
         borderColor: "#D1D5DB",
     },
     cancelBtnText: {
+        fontFamily: "Poppins_600SemiBold",
         color: "#4B5563",
         fontSize: 13,
         fontWeight: "600",
@@ -617,6 +632,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     saveBtnText: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontSize: 13,
         fontWeight: "700",

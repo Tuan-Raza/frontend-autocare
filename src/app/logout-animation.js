@@ -495,6 +495,7 @@ const styles = StyleSheet.create({
     /* ── TEKS ── */
 
     title: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize:      30,
         fontWeight:    "800",
         color:         WHITE,
@@ -513,6 +514,7 @@ const styles = StyleSheet.create({
     },
 
     subtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize:      15,
         fontWeight:    "400",
         color:         "rgba(255,255,255,0.80)",
@@ -541,6 +543,7 @@ const styles = StyleSheet.create({
     /* ── REDIRECT LABEL ── */
 
     redirectLabel: {
+        fontFamily: "Poppins_400Regular",
         fontSize:   13,
         color:      "rgba(255,255,255,0.55)",
         textAlign:  "center",
@@ -558,6 +561,7 @@ const styles = StyleSheet.create({
     },
 
     footerText: {
+        fontFamily: "Poppins_400Regular",
         fontSize:  13,
         color:     "rgba(255,255,255,0.45)",
         textAlign: "center",

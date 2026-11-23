@@ -278,6 +278,7 @@ const styles = StyleSheet.create({
     },
 
     headerTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         fontWeight: "800",
         color: "#222",
@@ -303,6 +304,7 @@ const styles = StyleSheet.create({
     },
 
     title: {
+        fontFamily: "Poppins_800ExtraBold",
         textAlign: "center",
         fontSize: 21,
         fontWeight: "800",
@@ -311,6 +313,7 @@ const styles = StyleSheet.create({
     },
 
     subtitle: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
         color: "#777",
         fontSize: 12,
@@ -324,6 +327,7 @@ const styles = StyleSheet.create({
     },
 
     label: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 13,
         fontWeight: "700",
         color: "#333",
@@ -331,6 +335,7 @@ const styles = StyleSheet.create({
     },
 
     inputContainer: {
+        fontFamily: "Poppins_400Regular",
         height: 52,
         backgroundColor: "#fff",
         borderRadius: 14,
@@ -342,6 +347,7 @@ const styles = StyleSheet.create({
     },
 
     input: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         marginHorizontal: 10,
         fontSize: 14,
@@ -360,6 +366,7 @@ const styles = StyleSheet.create({
     },
 
     buttonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#fff",
         fontSize: 14,
         fontWeight: "800",

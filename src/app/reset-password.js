@@ -461,6 +461,7 @@ const styles = StyleSheet.create({
     },
 
     title: {
+        fontFamily: "Poppins_800ExtraBold",
         textAlign: "center",
         fontSize: 24,
         fontWeight: "800",
@@ -469,6 +470,7 @@ const styles = StyleSheet.create({
     },
 
     subtitle: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
         fontSize: 13,
         color: "#777777",
@@ -477,6 +479,7 @@ const styles = StyleSheet.create({
     },
 
     label: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 12,
         fontWeight: "700",
         color: "#333333",
@@ -484,6 +487,7 @@ const styles = StyleSheet.create({
     },
 
     inputContainer: {
+        fontFamily: "Poppins_400Regular",
         minHeight: 52,
         borderWidth: 1,
         borderColor: "#999999",
@@ -496,6 +500,7 @@ const styles = StyleSheet.create({
     },
 
     emailText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         marginLeft: 10,
         fontSize: 12,
@@ -503,6 +508,7 @@ const styles = StyleSheet.create({
     },
 
     input: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         height: 52,
         marginLeft: 10,
@@ -521,6 +527,7 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         color: "#DC2626",
         fontSize: 12,
@@ -533,6 +540,7 @@ const styles = StyleSheet.create({
     },
 
     successText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         color: "#16A34A",
         fontSize: 12,
@@ -549,6 +557,7 @@ const styles = StyleSheet.create({
     },
 
     ruleTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 12,
         fontWeight: "700",
         color: "#444444",
@@ -562,6 +571,7 @@ const styles = StyleSheet.create({
     },
 
     ruleText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#777777",
         marginLeft: 7,
@@ -583,6 +593,7 @@ const styles = StyleSheet.create({
     },
 
     buttonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 12,
         fontWeight: "800",
@@ -596,6 +607,7 @@ const styles = StyleSheet.create({
     },
 
     backText: {
+        fontFamily: "Poppins_700Bold",
         color: RED,
         fontSize: 12,
         fontWeight: "700",

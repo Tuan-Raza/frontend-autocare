@@ -1,7 +1,15 @@
 import "../global.css";
 import { Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { useFonts } from "expo-font";
 
+import {
+    Poppins_400Regular,
+    Poppins_500Medium,
+    Poppins_600SemiBold,
+    Poppins_700Bold,
+    Poppins_800ExtraBold,
+} from "@expo-google-fonts/poppins";
 /**
  * RootLayout AutoCare
  * Mengatur animasi transisi navigasi terpusat untuk seluruh screen.
@@ -14,6 +22,18 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
  * 4. Success / Feedback: Fade (280ms).
  */
 export default function RootLayout() {
+    const [fontsLoaded] = useFonts({
+        Poppins_400Regular,
+        Poppins_500Medium,
+        Poppins_600SemiBold,
+        Poppins_700Bold,
+        Poppins_800ExtraBold,
+    });
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
     return (
         <SafeAreaProvider>
             <Stack

@@ -217,6 +217,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     brandTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 17,
         fontWeight: "800",
         color: "#4A0404",
@@ -231,6 +232,7 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     adminBadgeText: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 9,
         fontWeight: "800",
         color: "#C8102E",
@@ -247,6 +249,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 12,
     },
     sectionHeader: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11,
         fontWeight: "700",
         color: "#9CA3AF",
@@ -270,12 +273,14 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     menuLabel: {
+        fontFamily: "Poppins_500Medium",
         fontSize: 14,
         fontWeight: "500",
         color: "#4B5563",
         flex: 1,
     },
     menuLabelActive: {
+        fontFamily: "Poppins_700Bold",
         color: "#C8102E",
         fontWeight: "700",
     },
@@ -309,6 +314,7 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     avatarText: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontWeight: "700",
         fontSize: 15,
@@ -317,11 +323,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     userName: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 13,
         fontWeight: "700",
         color: "#1F2937",
     },
     userRole: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#6B7280",
     },
@@ -336,6 +344,7 @@ const styles = StyleSheet.create({
         borderRadius: 6,
     },
     logoutText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#EF4444",

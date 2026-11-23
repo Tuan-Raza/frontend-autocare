@@ -122,12 +122,14 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     desktopTimeText: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 13,
         fontWeight: "800",
         color: "#181818",
         letterSpacing: 0.3,
     },
     desktopDateText: {
+        fontFamily: "Poppins_500Medium",
         fontSize: 10.5,
         color: "#777777",
         marginTop: 1,
@@ -152,6 +154,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#16A34A",
     },
     mobileText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 10.5,
         color: "#4A0404",
         fontWeight: "600",
@@ -166,6 +169,7 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     compactTime: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11,
         fontWeight: "700",
         color: "#C8102E",

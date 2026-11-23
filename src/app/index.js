@@ -95,6 +95,7 @@ const styles = StyleSheet.create({
     },
 
     loadingText: {
+        fontFamily: "Poppins_500Medium",
         fontSize: 13,
         fontWeight: "500",
         color: "#666666",

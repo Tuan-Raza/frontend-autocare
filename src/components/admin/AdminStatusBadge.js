@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
         alignSelf: "flex-start",
     },
     badgeText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 12,
         fontWeight: "600",
         textTransform: "capitalize",

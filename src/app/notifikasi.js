@@ -392,6 +392,7 @@ const styles = StyleSheet.create({
     },
 
     headerTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         fontWeight: "800",
         color: "#222222",
@@ -440,6 +441,7 @@ const styles = StyleSheet.create({
     },
 
     introTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 15,
         fontWeight: "800",
         color: "#222222",
@@ -447,12 +449,14 @@ const styles = StyleSheet.create({
     },
 
     introText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         lineHeight: 18,
         color: "#777777",
     },
 
     sectionTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 14,
         fontWeight: "800",
         color: "#333333",
@@ -500,6 +504,7 @@ const styles = StyleSheet.create({
     },
 
     menuTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 14,
         fontWeight: "700",
         color: "#222222",
@@ -507,6 +512,7 @@ const styles = StyleSheet.create({
     },
 
     menuDescription: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11.5,
         color: "#888888",
         lineHeight: 17,
@@ -528,6 +534,7 @@ const styles = StyleSheet.create({
     },
 
     infoText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         fontSize: 11.5,
         color: "#777777",
@@ -542,6 +549,7 @@ const styles = StyleSheet.create({
     },
 
     loadingText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 10,
         color: "#777777",
         fontSize: 13,

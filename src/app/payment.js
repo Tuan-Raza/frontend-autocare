@@ -416,7 +416,7 @@ export default function Payment() {
                                     />
                                 </View>
                                 <Text style={styles.qrisNmidText}>
-                                    <Text style={{ fontWeight: "700" }}>Azaadesigns ID</Text> • NMID: ID1026511776878 (A01)
+                                    <Text style={{ fontFamily: "Poppins_700Bold", fontWeight: "700" }}>Azaadesigns ID</Text> • NMID: ID1026511776878 (A01)
                                 </Text>
                                 <Text style={styles.qrisInstructions}>
                                     Buka aplikasi M-Banking atau E-Wallet pilihan Anda, pilih menu Scan QRIS, lalu arahkan ke kode di atas.
@@ -654,6 +654,7 @@ const styles = StyleSheet.create({
     },
 
     loadingText: {
+        fontFamily: "Poppins_600SemiBold",
         marginTop: 12,
         color: "#666666",
         fontSize: 13,
@@ -681,6 +682,7 @@ const styles = StyleSheet.create({
     },
 
     headerTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 16,
         fontWeight: "800",
         color: "#1A1A1A",
@@ -729,12 +731,14 @@ const styles = StyleSheet.create({
     },
 
     billLabel: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 12,
         color: "#777777",
         fontWeight: "600",
     },
 
     billAmount: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 22,
         fontWeight: "900",
         color: "#F20D18",
@@ -751,6 +755,7 @@ const styles = StyleSheet.create({
     },
 
     bookingBadgeText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#F20D18",
         fontWeight: "800",
         fontSize: 11,
@@ -769,6 +774,7 @@ const styles = StyleSheet.create({
     },
 
     infoText: {
+        fontFamily: "Poppins_500Medium",
         fontSize: 12,
         color: "#444444",
         marginLeft: 8,
@@ -804,12 +810,14 @@ const styles = StyleSheet.create({
     },
 
     statusTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 14.5,
         fontWeight: "800",
         marginLeft: 8,
     },
 
     statusDescription: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#444444",
         lineHeight: 18,
@@ -823,6 +831,7 @@ const styles = StyleSheet.create({
     },
 
     qaAccLabel: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11,
         fontWeight: "700",
         color: "#555",
@@ -853,12 +862,14 @@ const styles = StyleSheet.create({
     },
 
     qaBtnText: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontSize: 11,
         fontWeight: "700",
     },
 
     sectionTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 14.5,
         fontWeight: "800",
         color: "#222222",
@@ -894,12 +905,14 @@ const styles = StyleSheet.create({
     },
 
     methodName: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 13,
         fontWeight: "800",
         color: "#222222",
     },
 
     methodDesc: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 10.5,
         color: "#777777",
         marginTop: 2,
@@ -934,6 +947,7 @@ const styles = StyleSheet.create({
     },
 
     detailTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 12.5,
         fontWeight: "700",
         color: "#333333",
@@ -959,6 +973,7 @@ const styles = StyleSheet.create({
     },
 
     qrisNmidText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#555555",
         textAlign: "center",
@@ -966,6 +981,7 @@ const styles = StyleSheet.create({
     },
 
     qrisInstructions: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#777777",
         textAlign: "center",
@@ -985,12 +1001,14 @@ const styles = StyleSheet.create({
     },
 
     accountLabel: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 11,
         color: "#666666",
         fontWeight: "600",
     },
 
     accountNumber: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 17,
         fontWeight: "900",
         color: "#222222",
@@ -999,6 +1017,7 @@ const styles = StyleSheet.create({
     },
 
     accountName: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 11,
         color: "#444444",
         fontWeight: "600",
@@ -1018,6 +1037,7 @@ const styles = StyleSheet.create({
     },
 
     copyBtnText: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11,
         fontWeight: "700",
         color: "#118EEA",
@@ -1033,6 +1053,7 @@ const styles = StyleSheet.create({
     },
 
     codAlertText: {
+        fontFamily: "Poppins_500Medium",
         flex: 1,
         fontSize: 11.5,
         color: "#2E7D32",
@@ -1051,12 +1072,14 @@ const styles = StyleSheet.create({
     },
 
     uploadSectionTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 13.5,
         fontWeight: "800",
         color: "#222222",
     },
 
     uploadSectionSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#777777",
         marginTop: 2,
@@ -1076,6 +1099,7 @@ const styles = StyleSheet.create({
     },
 
     uploadDropzoneText: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 12,
         fontWeight: "700",
         color: "#F20D18",
@@ -1083,6 +1107,7 @@ const styles = StyleSheet.create({
     },
 
     uploadDropzoneHint: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 10,
         color: "#999999",
         marginTop: 2,
@@ -1113,12 +1138,14 @@ const styles = StyleSheet.create({
     },
 
     changeImageBtnText: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontSize: 11,
         fontWeight: "700",
     },
 
     inputLabel: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11.5,
         fontWeight: "700",
         color: "#444444",
@@ -1127,6 +1154,7 @@ const styles = StyleSheet.create({
     },
 
     textInput: {
+        fontFamily: "Poppins_400Regular",
         height: 44,
         borderRadius: 10,
         borderWidth: 1,
@@ -1150,6 +1178,7 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
+        fontFamily: "Poppins_600SemiBold",
         flex: 1,
         color: "#D32F2F",
         fontSize: 11.5,
@@ -1169,6 +1198,7 @@ const styles = StyleSheet.create({
     },
 
     successText: {
+        fontFamily: "Poppins_600SemiBold",
         flex: 1,
         color: "#2E7D32",
         fontSize: 11.5,
@@ -1195,6 +1225,7 @@ const styles = StyleSheet.create({
     },
 
     submitButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 13.5,
         fontWeight: "800",
@@ -1207,6 +1238,7 @@ const styles = StyleSheet.create({
     },
 
     historyBtnText: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 12,
         fontWeight: "700",
         color: "#666666",

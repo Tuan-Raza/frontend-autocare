@@ -508,6 +508,7 @@ const styles = StyleSheet.create({
     },
 
     headerTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         fontWeight: "800",
         color: "#222",
@@ -550,6 +551,7 @@ const styles = StyleSheet.create({
     },
 
     avatarText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#fff",
         fontSize: 34,
         fontWeight: "800",
@@ -570,6 +572,7 @@ const styles = StyleSheet.create({
     },
 
     avatarHint: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
         fontSize: 12,
         color: "#888",
@@ -580,6 +583,7 @@ const styles = StyleSheet.create({
     // ── FORM ────────────────────────────────────────
 
     label: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 13,
         fontWeight: "700",
         color: "#333",
@@ -588,6 +592,7 @@ const styles = StyleSheet.create({
     },
 
     inputContainer: {
+        fontFamily: "Poppins_400Regular",
         height: 52,
         backgroundColor: "#fff",
         borderRadius: 14,
@@ -599,6 +604,7 @@ const styles = StyleSheet.create({
     },
 
     input: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         marginLeft: 10,
         fontSize: 14,
@@ -619,6 +625,7 @@ const styles = StyleSheet.create({
     },
 
     saveButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#fff",
         fontSize: 14,
         fontWeight: "800",
@@ -633,6 +640,7 @@ const styles = StyleSheet.create({
     },
 
     loadingText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 10,
         color: "#777",
         fontSize: 13,

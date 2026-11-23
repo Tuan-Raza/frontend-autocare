@@ -443,6 +443,7 @@ const styles = StyleSheet.create({
     },
 
     topBackText: {
+        fontFamily: "Poppins_600SemiBold",
         color: "#FFFFFF",
         fontSize: 11,
         fontWeight: "600",
@@ -460,6 +461,7 @@ const styles = StyleSheet.create({
     },
 
     title: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 22,
         fontWeight: "800",
         color: "#FFFFFF",
@@ -468,6 +470,7 @@ const styles = StyleSheet.create({
     },
 
     subtitle: {
+        fontFamily: "Poppins_500Medium",
         fontSize: 11.5,
         color: "rgba(235, 235, 235, 0.85)",
         lineHeight: 16,
@@ -490,6 +493,7 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
+        fontFamily: "Poppins_600SemiBold",
         flex: 1,
         color: "#FFFFFF",
         fontSize: 11,
@@ -511,6 +515,7 @@ const styles = StyleSheet.create({
     },
 
     successText: {
+        fontFamily: "Poppins_600SemiBold",
         flex: 1,
         color: "#FFFFFF",
         fontSize: 11,
@@ -519,6 +524,7 @@ const styles = StyleSheet.create({
     },
 
     inputContainer: {
+        fontFamily: "Poppins_400Regular",
         height: 48,
 
         borderWidth: 1,
@@ -537,6 +543,7 @@ const styles = StyleSheet.create({
     },
 
     input: {
+        fontFamily: "Poppins_600SemiBold",
         flex: 1,
         height: 48,
         backgroundColor: "transparent",
@@ -587,6 +594,7 @@ const styles = StyleSheet.create({
     },
 
     registerButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 13.5,
         fontWeight: "800",
@@ -601,12 +609,14 @@ const styles = StyleSheet.create({
     },
 
     loginText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 11.5,
         color: "rgba(255,255,255,0.85)",
         fontWeight: "600",
     },
 
     loginLink: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 12.5,
         color: "#FF4D4D",
         fontWeight: "800",

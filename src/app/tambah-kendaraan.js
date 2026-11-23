@@ -1190,11 +1190,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     toastTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 13.5,
         fontWeight: "800",
         color: "#181818",
     },
     toastSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11.5,
         color: "#555555",
         marginTop: 2,
@@ -1257,16 +1259,19 @@ const styles = StyleSheet.create({
     },
 
     title: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 20,
         fontWeight: "800",
         color: COLORS.text,
     },
 
     titleDesktop: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 25,
     },
 
     subtitle: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 3,
         fontSize: 11.5,
         color: COLORS.gray,
@@ -1285,6 +1290,7 @@ const styles = StyleSheet.create({
     },
 
     headerBadgeText: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 12,
         fontWeight: "700",
         color: COLORS.red,
@@ -1339,12 +1345,14 @@ const styles = StyleSheet.create({
     },
 
     introTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 15,
         fontWeight: "800",
         color: COLORS.text,
     },
 
     introDescription: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11.5,
         color: COLORS.gray,
         lineHeight: 17,
@@ -1369,6 +1377,7 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         color: "#B71C1C",
         fontSize: 12,
@@ -1389,6 +1398,7 @@ const styles = StyleSheet.create({
     },
 
     successText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         color: "#237A4C",
         fontSize: 12,
@@ -1426,12 +1436,14 @@ const styles = StyleSheet.create({
     },
 
     formTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 17,
         fontWeight: "800",
         color: COLORS.text,
     },
 
     formSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11.5,
         color: COLORS.gray,
         marginTop: 3,
@@ -1446,6 +1458,7 @@ const styles = StyleSheet.create({
     },
 
     requiredText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 10,
         color: COLORS.gray,
         fontWeight: "600",
@@ -1477,6 +1490,7 @@ const styles = StyleSheet.create({
     },
 
     label: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 13,
         fontWeight: "700",
         color: COLORS.darkText,
@@ -1501,12 +1515,14 @@ const styles = StyleSheet.create({
     },
 
     inputLeft: {
+        fontFamily: "Poppins_400Regular",
         flexDirection: "row",
         alignItems: "center",
         flex: 1,
     },
 
     inputIcon: {
+        fontFamily: "Poppins_400Regular",
         width: 32,
         height: 32,
         borderRadius: 9,
@@ -1516,6 +1532,7 @@ const styles = StyleSheet.create({
     },
 
     inputIconDisabled: {
+        fontFamily: "Poppins_400Regular",
         backgroundColor: "#EEEEEE",
     },
 
@@ -1532,6 +1549,7 @@ const styles = StyleSheet.create({
     },
 
     dropdownText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: COLORS.darkText,
         marginLeft: 9,
@@ -1539,10 +1557,12 @@ const styles = StyleSheet.create({
     },
 
     placeholder: {
+        fontFamily: "Poppins_400Regular",
         color: "#999999",
     },
 
     textInputBox: {
+        fontFamily: "Poppins_400Regular",
         height: 50,
         borderRadius: 14,
         borderWidth: 1,
@@ -1554,6 +1574,7 @@ const styles = StyleSheet.create({
     },
 
     textInput: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         height: 48,
         fontSize: 13,
@@ -1562,6 +1583,7 @@ const styles = StyleSheet.create({
     },
 
     rightText: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 12,
         fontWeight: "800",
         color: COLORS.gray,
@@ -1598,6 +1620,7 @@ const styles = StyleSheet.create({
     },
 
     infoTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 12,
         fontWeight: "800",
         color: COLORS.red,
@@ -1605,6 +1628,7 @@ const styles = StyleSheet.create({
     },
 
     infoText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 10.5,
         color: "#777777",
         lineHeight: 16,
@@ -1635,6 +1659,7 @@ const styles = StyleSheet.create({
     },
 
     saveText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: COLORS.white,
         fontSize: 14,
         fontWeight: "800",
@@ -1642,6 +1667,7 @@ const styles = StyleSheet.create({
     },
 
     bottomInfo: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
         color: "#8A8A8A",
         fontSize: 10.5,
@@ -1709,12 +1735,14 @@ const styles = StyleSheet.create({
     },
 
     modalTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 19,
         fontWeight: "800",
         color: COLORS.text,
     },
 
     modalSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11.5,
         color: "#888888",
         marginTop: 3,
@@ -1783,6 +1811,7 @@ const styles = StyleSheet.create({
     },
 
     optionText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: COLORS.darkText,
@@ -1790,6 +1819,7 @@ const styles = StyleSheet.create({
     },
 
     selectedOptionText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: COLORS.red,
         fontWeight: "800",
     },

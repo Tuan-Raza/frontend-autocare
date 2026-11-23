@@ -322,12 +322,14 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     navText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 8,
         color: "#999999",
         marginTop: 3,
         fontWeight: "600",
     },
     navTextActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#F20D18",
         fontWeight: "800",
     },

@@ -2059,12 +2059,14 @@ const styles = StyleSheet.create({
     },
 
     headerTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         fontWeight: "900",
         color: "#1C1C1C",
     },
 
     headerSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#888888",
         marginTop: 2,
@@ -2134,6 +2136,7 @@ const styles = StyleSheet.create({
     },
 
     stepNumber: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#888888",
         fontSize: 14,
         fontWeight: "800",
@@ -2158,6 +2161,7 @@ const styles = StyleSheet.create({
     },
 
     stepLabel: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 10,
         color: "#888888",
         marginTop: 6,
@@ -2166,6 +2170,7 @@ const styles = StyleSheet.create({
     },
 
     stepLabelActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: RED,
         fontWeight: "900",
     },
@@ -2211,18 +2216,21 @@ const styles = StyleSheet.create({
     },
 
     labelSmall: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#999999",
         marginBottom: 2,
     },
 
     vehicleName: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 16,
         fontWeight: "900",
         color: "#222222",
     },
 
     vehicleMeta: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: "#888888",
         marginTop: 2,
@@ -2242,6 +2250,7 @@ const styles = StyleSheet.create({
     // =========================================================
 
     sectionTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 15,
         fontWeight: "900",
         color: "#202020",
@@ -2282,12 +2291,14 @@ const styles = StyleSheet.create({
     },
 
     locationTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 14,
         fontWeight: "900",
         color: "#222222",
     },
 
     locationText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#888888",
         marginTop: 3,
@@ -2306,6 +2317,7 @@ const styles = StyleSheet.create({
     },
 
     locationButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 12,
         fontWeight: "900",
@@ -2322,6 +2334,7 @@ const styles = StyleSheet.create({
     },
 
     locationErrorText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         marginLeft: 7,
         fontSize: 11,
@@ -2337,6 +2350,7 @@ const styles = StyleSheet.create({
     },
 
     nearestLabelText: {
+        fontFamily: "Poppins_800ExtraBold",
         marginLeft: 6,
         fontSize: 12,
         color: RED,
@@ -2398,6 +2412,7 @@ const styles = StyleSheet.create({
     },
 
     bengkelName: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 15,
         fontWeight: "800",
         color: "#181818",
@@ -2412,6 +2427,7 @@ const styles = StyleSheet.create({
     },
 
     bengkelAddress: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         marginLeft: 6,
         fontSize: 12,
@@ -2420,6 +2436,7 @@ const styles = StyleSheet.create({
     },
 
     bengkelExtra: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         marginLeft: 6,
         fontSize: 12,
@@ -2434,6 +2451,7 @@ const styles = StyleSheet.create({
     },
 
     distanceText: {
+        fontFamily: "Poppins_800ExtraBold",
         marginLeft: 5,
         fontSize: 13,
         fontWeight: "800",
@@ -2450,6 +2468,7 @@ const styles = StyleSheet.create({
     },
 
     nearestBadgeText: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 9,
         fontWeight: "900",
         color: "#FFFFFF",
@@ -2479,6 +2498,7 @@ const styles = StyleSheet.create({
     },
 
     mapsButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         marginLeft: 7,
         fontSize: 13,
         fontWeight: "900",
@@ -2505,12 +2525,14 @@ const styles = StyleSheet.create({
     },
 
     selectBengkelText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: RED,
         fontSize: 13,
         fontWeight: "900",
     },
 
     selectBengkelTextActive: {
+        fontFamily: "Poppins_400Regular",
         color: "#FFFFFF",
     },
 
@@ -2551,12 +2573,14 @@ const styles = StyleSheet.create({
     },
 
     dateValue: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 16,
         color: "#222222",
         fontWeight: "800",
     },
 
     notSelected: {
+        fontFamily: "Poppins_500Medium",
         color: "#999999",
         fontWeight: "500",
     },
@@ -2601,12 +2625,14 @@ const styles = StyleSheet.create({
     },
 
     timeText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: RED,
         fontSize: 15,
         fontWeight: "900",
     },
 
     timeTextSelected: {
+        fontFamily: "Poppins_400Regular",
         color: "#FFFFFF",
     },
 
@@ -2627,6 +2653,7 @@ const styles = StyleSheet.create({
     },
 
     loadingText: {
+        fontFamily: "Poppins_400Regular",
         color: "#888888",
         marginTop: 7,
         fontSize: 13,
@@ -2641,6 +2668,7 @@ const styles = StyleSheet.create({
     },
 
     emptyTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         marginTop: 7,
         fontSize: 15,
         fontWeight: "800",
@@ -2648,6 +2676,7 @@ const styles = StyleSheet.create({
     },
 
     emptyText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 4,
         fontSize: 12,
         color: "#999999",
@@ -2669,6 +2698,7 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
+        fontFamily: "Poppins_700Bold",
         flex: 1,
         color: RED,
         fontSize: 13,
@@ -2691,6 +2721,7 @@ const styles = StyleSheet.create({
     },
 
     summaryTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 16,
         fontWeight: "900",
         color: "#222222",
@@ -2704,6 +2735,7 @@ const styles = StyleSheet.create({
     },
 
     summaryText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         marginLeft: 10,
         fontSize: 14,
@@ -2741,11 +2773,13 @@ const styles = StyleSheet.create({
     },
 
     bottomLabel: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#999999",
     },
 
     bottomValue: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 12,
         color: RED,
         fontWeight: "800",
@@ -2773,6 +2807,7 @@ const styles = StyleSheet.create({
     },
 
     continueText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "900",
@@ -2809,12 +2844,14 @@ const styles = StyleSheet.create({
     },
 
     calendarTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 20,
         fontWeight: "900",
         color: "#222222",
     },
 
     calendarSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#999999",
         marginTop: 2,
@@ -2847,6 +2884,7 @@ const styles = StyleSheet.create({
     },
 
     monthTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 16,
         fontWeight: "900",
         color: "#222222",
@@ -2858,6 +2896,7 @@ const styles = StyleSheet.create({
     },
 
     weekText: {
+        fontFamily: "Poppins_800ExtraBold",
         width: "14.285%",
         textAlign: "center",
         fontSize: 11,
@@ -2891,16 +2930,19 @@ const styles = StyleSheet.create({
     },
 
     dayText: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 13,
         color: "#333333",
         fontWeight: "700",
     },
 
     pastDayText: {
+        fontFamily: "Poppins_400Regular",
         color: "#AAAAAA",
     },
 
     selectedDayText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontWeight: "900",
     },
@@ -2915,6 +2957,7 @@ const styles = StyleSheet.create({
     },
 
     selectedDateInfoText: {
+        fontFamily: "Poppins_800ExtraBold",
         flex: 1,
         marginLeft: 8,
         color: RED,
@@ -2932,6 +2975,7 @@ const styles = StyleSheet.create({
     },
 
     useDateText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 14,
         fontWeight: "900",

@@ -333,6 +333,7 @@ const styles = StyleSheet.create({
         padding: 30,
     },
     loadingText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 12,
         color: "#6B7280",
         fontSize: 14,
@@ -363,12 +364,14 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     cardTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 16,
         fontWeight: "700",
         color: "#111827",
         marginBottom: 14,
     },
     viewAllText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         color: "#C8102E",
         fontWeight: "600",
@@ -389,11 +392,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     statusCount: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 22,
         fontWeight: "800",
         marginBottom: 4,
     },
     statusLabel: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 12,
         color: "#4B5563",
         fontWeight: "600",
@@ -422,6 +427,7 @@ const styles = StyleSheet.create({
         borderColor: "#FECACA",
     },
     actionBtnText: {
+        fontFamily: "Poppins_600SemiBold",
         marginLeft: 8,
         fontSize: 13,
         fontWeight: "600",
@@ -439,6 +445,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 8,
     },
     th: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11,
         fontWeight: "700",
         color: "#6B7280",
@@ -453,24 +460,29 @@ const styles = StyleSheet.create({
         borderBottomColor: "#F3F4F6",
     },
     td: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: "#374151",
     },
     tdBold: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#111827",
     },
     tdSub: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#6B7280",
         marginTop: 2,
     },
     codeText: {
+        fontFamily: "Poppins_700Bold",
         fontWeight: "700",
         color: "#C8102E",
     },
     emptyText: {
+        fontFamily: "Poppins_400Regular",
         color: "#9CA3AF",
         fontSize: 13,
         textAlign: "center",
@@ -498,6 +510,7 @@ const styles = StyleSheet.create({
         marginRight: 12,
     },
     rankText: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 12,
         fontWeight: "800",
         color: "#C8102E",
@@ -506,11 +519,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     popularName: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 14,
         fontWeight: "600",
         color: "#111827",
     },
     popularPrice: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#6B7280",
         marginTop: 2,
@@ -519,11 +534,13 @@ const styles = StyleSheet.create({
         alignItems: "flex-end",
     },
     popularCount: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 14,
         fontWeight: "700",
         color: "#C8102E",
     },
     popularSub: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 10,
         color: "#9CA3AF",
     },

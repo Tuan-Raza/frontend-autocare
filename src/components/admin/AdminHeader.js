@@ -93,11 +93,13 @@ const styles = StyleSheet.create({
         padding: 4,
     },
     title: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 18,
         fontWeight: "700",
         color: "#111827",
     },
     subtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#6B7280",
         marginTop: 2,
@@ -131,6 +133,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     headerAvatarText: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontWeight: "700",
         fontSize: 13,
@@ -139,12 +142,14 @@ const styles = StyleSheet.create({
         marginLeft: 8,
     },
     adminName: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#1F2937",
         maxWidth: 140,
     },
     adminRole: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 10,
         color: "#C8102E",
         fontWeight: "600",

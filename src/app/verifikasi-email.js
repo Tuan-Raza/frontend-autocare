@@ -544,6 +544,7 @@ const styles = StyleSheet.create({
     },
 
     topBackText: {
+        fontFamily: "Poppins_600SemiBold",
         color: "#FFFFFF",
         fontSize: 11,
         fontWeight: "600",
@@ -574,6 +575,7 @@ const styles = StyleSheet.create({
     },
 
     title: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 20,
         fontWeight: "800",
         color: "#FFFFFF",
@@ -582,6 +584,7 @@ const styles = StyleSheet.create({
     },
 
     subtitle: {
+        fontFamily: "Poppins_500Medium",
         fontSize: 11.5,
         color: "rgba(235, 235, 235, 0.85)",
         textAlign: "center",
@@ -603,6 +606,7 @@ const styles = StyleSheet.create({
     },
 
     email: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontSize: 12,
         fontWeight: "700",
@@ -610,6 +614,7 @@ const styles = StyleSheet.create({
     },
 
     otpLabel: {
+        fontFamily: "Poppins_600SemiBold",
         color: "rgba(255, 255, 255, 0.85)",
         fontSize: 11.5,
         fontWeight: "600",
@@ -641,12 +646,14 @@ const styles = StyleSheet.create({
     },
 
     otpText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 22,
         fontWeight: "800",
     },
 
     hiddenInput: {
+        fontFamily: "Poppins_400Regular",
         position: "absolute",
         width: 1,
         height: 1,
@@ -666,6 +673,7 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
+        fontFamily: "Poppins_600SemiBold",
         flex: 1,
         color: "#FFFFFF",
         fontSize: 11,
@@ -679,6 +687,7 @@ const styles = StyleSheet.create({
     },
 
     successText: {
+        fontFamily: "Poppins_600SemiBold",
         flex: 1,
         color: "#FFFFFF",
         fontSize: 11,
@@ -709,6 +718,7 @@ const styles = StyleSheet.create({
     },
 
     buttonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 13.5,
         fontWeight: "800",
@@ -723,12 +733,14 @@ const styles = StyleSheet.create({
     },
 
     resendLabel: {
+        fontFamily: "Poppins_500Medium",
         color: "rgba(255, 255, 255, 0.8)",
         fontSize: 11.5,
         fontWeight: "500",
     },
 
     resendLink: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FF4D4D",
         fontSize: 12,
         fontWeight: "800",
@@ -736,6 +748,7 @@ const styles = StyleSheet.create({
     },
 
     resendLinkDisabled: {
+        fontFamily: "Poppins_400Regular",
         color: "rgba(255, 255, 255, 0.4)",
     },
 
@@ -748,6 +761,7 @@ const styles = StyleSheet.create({
     },
 
     infoText: {
+        fontFamily: "Poppins_500Medium",
         color: "rgba(255, 255, 255, 0.65)",
         fontSize: 10,
         fontWeight: "500",

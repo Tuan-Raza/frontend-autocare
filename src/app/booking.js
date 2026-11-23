@@ -831,6 +831,7 @@ const styles = StyleSheet.create({
     },
 
     loadingText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 12,
         color: "#777",
         fontSize: 14,
@@ -861,12 +862,14 @@ const styles = StyleSheet.create({
     },
 
     headerTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 17,
         fontWeight: "800",
         color: "#222",
     },
 
     headerSubtitle: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 2,
         fontSize: 12,
         color: "#888",
@@ -906,12 +909,14 @@ const styles = StyleSheet.create({
     },
 
     activeStepText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#fff",
         fontSize: 13,
         fontWeight: "900",
     },
 
     stepText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#999",
         fontSize: 13,
         fontWeight: "900",
@@ -926,6 +931,7 @@ const styles = StyleSheet.create({
     },
 
     stepActiveText: {
+        fontFamily: "Poppins_700Bold",
         color: "#B22222",
         fontSize: 10,
         fontWeight: "700",
@@ -933,6 +939,7 @@ const styles = StyleSheet.create({
     },
 
     stepTextLabel: {
+        fontFamily: "Poppins_400Regular",
         color: "#999",
         fontSize: 10,
         marginTop: 5,
@@ -943,12 +950,14 @@ const styles = StyleSheet.create({
     },
 
     pageTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 17,
         fontWeight: "800",
         color: "#222",
     },
 
     pageDescription: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 5,
         fontSize: 13,
         color: "#888",
@@ -989,6 +998,7 @@ const styles = StyleSheet.create({
     },
 
     vehicleName: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 16,
         fontWeight: "800",
         color: "#222",
@@ -1002,6 +1012,7 @@ const styles = StyleSheet.create({
     },
 
     vehicleDetail: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: "#666",
     },
@@ -1020,6 +1031,7 @@ const styles = StyleSheet.create({
     },
 
     smallText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#777",
     },
@@ -1060,12 +1072,14 @@ const styles = StyleSheet.create({
     },
 
     emptyTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         fontWeight: "800",
         color: "#222",
     },
 
     emptyDescription: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
         color: "#888",
         fontSize: 13,
@@ -1085,6 +1099,7 @@ const styles = StyleSheet.create({
     },
 
     addButtonText: {
+        fontFamily: "Poppins_700Bold",
         color: "#fff",
         fontSize: 14,
         fontWeight: "700",
@@ -1104,6 +1119,7 @@ const styles = StyleSheet.create({
     },
 
     outlineAddText: {
+        fontFamily: "Poppins_700Bold",
         color: "#B22222",
         fontSize: 14,
         fontWeight: "700",
@@ -1130,12 +1146,14 @@ const styles = StyleSheet.create({
     },
 
     selectedLabel: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 10,
         color: "#999",
         marginBottom: 3,
     },
 
     selectedVehicleName: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 13,
         fontWeight: "800",
         color: "#222",
@@ -1157,6 +1175,7 @@ const styles = StyleSheet.create({
     },
 
     continueText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#fff",
         fontSize: 14,
         fontWeight: "800",
@@ -1228,12 +1247,14 @@ const styles = StyleSheet.create({
         height: 44,
     },
     sidebarBrandTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 18,
         fontWeight: "900",
         letterSpacing: 0.3,
     },
     sidebarBrandSubtitle: {
+        fontFamily: "Poppins_400Regular",
         color: "#E5B4B4",
         fontSize: 11,
         marginTop: 3,
@@ -1253,12 +1274,14 @@ const styles = StyleSheet.create({
         backgroundColor: "rgb(87, 10, 10)",
     },
     sidebarItemText: {
+        fontFamily: "Poppins_600SemiBold",
         marginLeft: 12,
         color: "#D7B4B4",
         fontSize: 13,
         fontWeight: "600",
     },
     sidebarItemTextActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontWeight: "800",
     },
@@ -1285,6 +1308,7 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     sidebarAvatarInitial: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#4A0404",
         fontWeight: "900",
         fontSize: 15,
@@ -1294,11 +1318,13 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     sidebarUserName: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 13,
         fontWeight: "800",
     },
     sidebarUserRole: {
+        fontFamily: "Poppins_400Regular",
         color: "#D7B4B4",
         fontSize: 11,
         marginTop: 2,
@@ -1318,11 +1344,13 @@ const styles = StyleSheet.create({
         justifyContent: "space-between",
     },
     desktopHeaderTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 20,
         fontWeight: "800",
         color: "#222222",
     },
     desktopHeaderSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#888888",
         marginTop: 3,
@@ -1347,11 +1375,13 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     desktopSectionTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 20,
         fontWeight: "800",
         color: "#222222",
     },
     desktopSectionSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: "#777777",
         marginTop: 4,
@@ -1366,6 +1396,7 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     desktopAddButtonText: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontSize: 13,
         fontWeight: "700",
@@ -1412,6 +1443,7 @@ const styles = StyleSheet.create({
     },
 
     navText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 8,
         color: "#999999",
         marginTop: 3,
@@ -1419,6 +1451,7 @@ const styles = StyleSheet.create({
     },
 
     navTextActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#F20D18",
         fontWeight: "800",
     },

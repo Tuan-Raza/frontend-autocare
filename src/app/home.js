@@ -2118,6 +2118,7 @@ const styles = StyleSheet.create({
     },
 
     loadingText: {
+        fontFamily: "Poppins_400Regular",
         marginTop: 10,
         color: "#777777",
         fontSize: 13,
@@ -2169,6 +2170,7 @@ const styles = StyleSheet.create({
     },
 
     sidebarBrandTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 22,
         fontWeight: "900",
@@ -2176,6 +2178,7 @@ const styles = StyleSheet.create({
     },
 
     sidebarBrandSubtitle: {
+        fontFamily: "Poppins_400Regular",
         color: "#D9B7B7",
         fontSize: 11,
         marginTop: 3,
@@ -2207,6 +2210,7 @@ const styles = StyleSheet.create({
     },
 
     sidebarItemText: {
+        fontFamily: "Poppins_600SemiBold",
         color: "#D7B4B4",
         fontSize: 13,
         fontWeight: "600",
@@ -2214,6 +2218,7 @@ const styles = StyleSheet.create({
     },
 
     sidebarItemTextActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontWeight: "800",
     },
@@ -2246,6 +2251,7 @@ const styles = StyleSheet.create({
     },
 
     sidebarAvatarInitial: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "800",
@@ -2257,18 +2263,21 @@ const styles = StyleSheet.create({
     },
 
     sidebarUserName: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 12,
         fontWeight: "800",
     },
 
     sidebarUserRole: {
+        fontFamily: "Poppins_400Regular",
         color: "#CDAAAA",
         fontSize: 10,
         marginTop: 2,
     },
 
     sidebarCopyright: {
+        fontFamily: "Poppins_400Regular",
         color: "#9F7373",
         fontSize: 9,
         textAlign: "center",
@@ -2297,12 +2306,14 @@ const styles = StyleSheet.create({
     },
 
     desktopTopTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 20,
         fontWeight: "900",
         color: "#222222",
     },
 
     desktopTopSubtitle: {
+        fontFamily: "Poppins_400Regular",
         color: "#888888",
         fontSize: 11,
         marginTop: 4,
@@ -2361,12 +2372,14 @@ const styles = StyleSheet.create({
     },
 
     desktopAvatarInitial: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "800",
     },
 
     desktopProfileName: {
+        fontFamily: "Poppins_800ExtraBold",
         maxWidth: 100,
         fontSize: 11,
         fontWeight: "800",
@@ -2374,6 +2387,7 @@ const styles = StyleSheet.create({
     },
 
     desktopProfileRole: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 9,
         color: "#999999",
         marginTop: 2,
@@ -2393,12 +2407,14 @@ const styles = StyleSheet.create({
     },
 
     desktopWelcomeTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 25,
         fontWeight: "900",
         color: "#1C1C1C",
     },
 
     desktopWelcomeText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#888888",
         marginTop: 5,
@@ -2444,6 +2460,7 @@ const styles = StyleSheet.create({
     },
 
     heroBadgeText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 9,
         fontWeight: "800",
@@ -2452,6 +2469,7 @@ const styles = StyleSheet.create({
     },
 
     desktopHeroTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 27,
         fontWeight: "900",
@@ -2459,6 +2477,7 @@ const styles = StyleSheet.create({
     },
 
     desktopHeroSubtitle: {
+        fontFamily: "Poppins_400Regular",
         color: "#FFFFFF",
         fontSize: 12,
         lineHeight: 18,
@@ -2479,6 +2498,7 @@ const styles = StyleSheet.create({
     },
 
     desktopHeroButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#B22222",
         fontSize: 11,
         fontWeight: "900",
@@ -2512,18 +2532,21 @@ const styles = StyleSheet.create({
     },
 
     desktopSectionTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 15,
         fontWeight: "900",
         color: "#222222",
     },
 
     desktopSectionSubtitle: {
+        fontFamily: "Poppins_400Regular",
         color: "#999999",
         fontSize: 10,
         marginTop: 3,
     },
 
     seeAllText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#F20D18",
         fontSize: 10,
         fontWeight: "800",
@@ -2561,12 +2584,14 @@ const styles = StyleSheet.create({
     },
 
     desktopVehicleName: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 16,
         fontWeight: "900",
         color: "#222222",
     },
 
     desktopVehiclePlate: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 11,
         color: "#777777",
         marginTop: 3,
@@ -2586,6 +2611,7 @@ const styles = StyleSheet.create({
     },
 
     metaText: {
+        fontFamily: "Poppins_400Regular",
         color: "#777777",
         fontSize: 10,
     },
@@ -2634,12 +2660,14 @@ const styles = StyleSheet.create({
     },
 
     emptyVehicleTitleDesktop: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 15,
         fontWeight: "900",
         color: "#222222",
     },
 
     emptyVehicleTextDesktop: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 10,
         color: "#888888",
         lineHeight: 15,
@@ -2687,12 +2715,14 @@ const styles = StyleSheet.create({
     },
 
     desktopQuickTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 11,
         color: "#222222",
         fontWeight: "900",
     },
 
     desktopQuickSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 9,
         color: "#999999",
         marginTop: 2,
@@ -2738,12 +2768,14 @@ const styles = StyleSheet.create({
     },
 
     desktopBookingTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 22,
         fontWeight: "900",
     },
 
     desktopBookingText: {
+        fontFamily: "Poppins_400Regular",
         color: "#FFFFFF",
         fontSize: 11,
         opacity: 0.9,
@@ -2762,6 +2794,7 @@ const styles = StyleSheet.create({
     },
 
     desktopBookingButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#B22222",
         fontSize: 10,
         fontWeight: "900",
@@ -2798,12 +2831,14 @@ const styles = StyleSheet.create({
     },
 
     desktopReminderTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#C4141D",
         fontSize: 12,
         fontWeight: "900",
     },
 
     desktopReminderText: {
+        fontFamily: "Poppins_400Regular",
         color: "#777777",
         fontSize: 10,
         marginTop: 4,
@@ -2819,6 +2854,7 @@ const styles = StyleSheet.create({
     },
 
     desktopReminderButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 9,
         fontWeight: "800",
@@ -2849,12 +2885,14 @@ const styles = StyleSheet.create({
     },
 
     greeting: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         color: "#222222",
         fontWeight: "800",
     },
 
     headerSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 10.5,
         color: "#777777",
         marginTop: 3,
@@ -2894,6 +2932,7 @@ const styles = StyleSheet.create({
     },
 
     mobileAvatarInitial: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "800",
@@ -2928,6 +2967,7 @@ const styles = StyleSheet.create({
     },
 
     heroTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "800",
@@ -2935,6 +2975,7 @@ const styles = StyleSheet.create({
     },
 
     heroSubtitle: {
+        fontFamily: "Poppins_400Regular",
         color: "#FFFFFF",
         fontSize: 9,
         lineHeight: 14,
@@ -2954,6 +2995,7 @@ const styles = StyleSheet.create({
     },
 
     heroButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#B22222",
         fontSize: 9,
         fontWeight: "800",
@@ -2984,6 +3026,7 @@ const styles = StyleSheet.create({
     },
 
     vehicleTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 13,
         fontWeight: "800",
         color: "#151515",
@@ -2997,6 +3040,7 @@ const styles = StyleSheet.create({
     },
 
     vehicleText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 9.5,
         color: "#777777",
         marginLeft: 6,
@@ -3024,6 +3068,7 @@ const styles = StyleSheet.create({
     },
 
     emptyVehicleTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 15,
         fontWeight: "800",
         color: "#222222",
@@ -3031,6 +3076,7 @@ const styles = StyleSheet.create({
     },
 
     emptyVehicleSubtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 10,
         color: "#888888",
         lineHeight: 15,
@@ -3055,6 +3101,7 @@ const styles = StyleSheet.create({
     },
 
     addVehicleText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 8,
         fontWeight: "800",
@@ -3067,6 +3114,7 @@ const styles = StyleSheet.create({
     // =========================================================
 
     sectionTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 13,
         fontWeight: "800",
         color: "#161616",
@@ -3117,6 +3165,7 @@ const styles = StyleSheet.create({
     },
 
     bookingText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 20,
         fontWeight: "800",
@@ -3150,6 +3199,7 @@ const styles = StyleSheet.create({
     },
 
     featureTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 8.5,
         color: "#222222",
         fontWeight: "700",
@@ -3157,6 +3207,7 @@ const styles = StyleSheet.create({
     },
 
     featureSubtitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 8.5,
         color: "#222222",
         fontWeight: "700",
@@ -3197,6 +3248,7 @@ const styles = StyleSheet.create({
     },
 
     reminderTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 10,
         fontWeight: "800",
         color: "#C4141D",
@@ -3204,6 +3256,7 @@ const styles = StyleSheet.create({
     },
 
     reminderText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 8.5,
         color: "#777777",
         lineHeight: 13,
@@ -3212,7 +3265,7 @@ const styles = StyleSheet.create({
 
     reminderButton: {
         height: 27,
-        backgroundColor: "rgb(85, 10, 10)",
+        backgroundColor: "rgb(193, 1, 1)",
         borderRadius: 5,
         alignSelf: "flex-start",
         paddingHorizontal: 10,
@@ -3221,6 +3274,7 @@ const styles = StyleSheet.create({
     },
 
     reminderButtonText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 8,
         fontWeight: "800",
@@ -3249,6 +3303,7 @@ const styles = StyleSheet.create({
     },
 
     navText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 8,
         color: "#999999",
         marginTop: 3,
@@ -3256,6 +3311,7 @@ const styles = StyleSheet.create({
     },
 
     navTextActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#F20D18",
         fontWeight: "800",
     },

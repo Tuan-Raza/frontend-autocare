@@ -207,6 +207,7 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     successText: {
+        fontFamily: "Poppins_600SemiBold",
         color: "#065F46",
         fontSize: 13,
         fontWeight: "600",
@@ -221,6 +222,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     sectionTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 15,
         fontWeight: "700",
         color: "#111827",
@@ -230,12 +232,14 @@ const styles = StyleSheet.create({
         marginBottom: 16,
     },
     label: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#374151",
         marginBottom: 6,
     },
     input: {
+        fontFamily: "Poppins_400Regular",
         borderWidth: 1,
         borderColor: "#D1D5DB",
         borderRadius: 8,
@@ -256,6 +260,7 @@ const styles = StyleSheet.create({
         gap: 6,
     },
     saveBtnText: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontSize: 14,
         fontWeight: "700",

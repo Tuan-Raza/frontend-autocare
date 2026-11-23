@@ -448,6 +448,7 @@ const styles = StyleSheet.create({
     },
 
     title: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 20,
         fontWeight: "800",
         color: "#1C1C1C",
@@ -456,6 +457,7 @@ const styles = StyleSheet.create({
     },
 
     subtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 14,
         lineHeight: 21,
         color: "#777",
@@ -477,6 +479,7 @@ const styles = StyleSheet.create({
     },
 
     emailText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         fontSize: 14,
         color: "#555",
@@ -496,6 +499,7 @@ const styles = StyleSheet.create({
     },
 
     errorText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         color: "#C62828",
         fontSize: 13,
@@ -516,6 +520,7 @@ const styles = StyleSheet.create({
     },
 
     successText: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         color: "#2E7D32",
         fontSize: 13,
@@ -524,6 +529,7 @@ const styles = StyleSheet.create({
     },
 
     label: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 14,
         fontWeight: "700",
         color: "#333",
@@ -531,6 +537,7 @@ const styles = StyleSheet.create({
     },
 
     otpInput: {
+        fontFamily: "Poppins_800ExtraBold",
         height: 62,
         borderWidth: 1.5,
         borderColor: "#D9D9D9",
@@ -544,6 +551,7 @@ const styles = StyleSheet.create({
     },
 
     helperText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#999",
         textAlign: "center",
@@ -566,6 +574,7 @@ const styles = StyleSheet.create({
     },
 
     verifyText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 13,
         fontWeight: "800",
@@ -580,17 +589,20 @@ const styles = StyleSheet.create({
     },
 
     resendLabel: {
+        fontFamily: "Poppins_400Regular",
         color: "#777",
         fontSize: 13,
     },
 
     resendText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: RED,
         fontSize: 13,
         fontWeight: "800",
     },
 
     resendTextDisabled: {
+        fontFamily: "Poppins_400Regular",
         color: "rgba(178, 34, 34, 0.4)",
     },
 
@@ -602,6 +614,7 @@ const styles = StyleSheet.create({
     },
 
     changeEmailText: {
+        fontFamily: "Poppins_400Regular",
         color: "#777",
         fontSize: 13,
         marginLeft: 6,

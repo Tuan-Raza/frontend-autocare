@@ -284,12 +284,14 @@ const styles = StyleSheet.create({
         height: 46,
     },
     sidebarBrandTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 20,
         fontWeight: "900",
         letterSpacing: 0.4,
     },
     sidebarBrandSubtitle: {
+        fontFamily: "Poppins_500Medium",
         color: "#E5B4B4",
         fontSize: 11,
         marginTop: 3,
@@ -324,15 +326,18 @@ const styles = StyleSheet.create({
         elevation: 4,
     },
     sidebarItemText: {
+        fontFamily: "Poppins_600SemiBold",
         color: "#D7B4B4",
         fontSize: 13,
         fontWeight: "600",
         marginLeft: 13,
     },
     sidebarItemTextHover: {
+        fontFamily: "Poppins_400Regular",
         color: "#FFFFFF",
     },
     sidebarItemTextActive: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontWeight: "800",
     },
@@ -361,6 +366,7 @@ const styles = StyleSheet.create({
         height: "100%",
     },
     sidebarAvatarInitial: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 16,
         fontWeight: "800",
@@ -370,16 +376,19 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     sidebarUserName: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
         fontSize: 12.5,
         fontWeight: "800",
     },
     sidebarUserRole: {
+        fontFamily: "Poppins_400Regular",
         color: "#CDAAAA",
         fontSize: 10,
         marginTop: 2,
     },
     sidebarCopyright: {
+        fontFamily: "Poppins_400Regular",
         color: "#9F7373",
         fontSize: 9,
         textAlign: "center",

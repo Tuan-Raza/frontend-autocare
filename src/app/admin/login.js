@@ -209,6 +209,7 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     brandTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 22,
         fontWeight: "800",
         color: "#4A0404",
@@ -222,12 +223,14 @@ const styles = StyleSheet.create({
         marginTop: 6,
     },
     badgeText: {
+        fontFamily: "Poppins_800ExtraBold",
         color: "#C8102E",
         fontSize: 10,
         fontWeight: "800",
         letterSpacing: 0.8,
     },
     subtitle: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: "#6B7280",
         textAlign: "center",
@@ -245,6 +248,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     errorText: {
+        fontFamily: "Poppins_500Medium",
         color: "#991B1B",
         fontSize: 13,
         marginLeft: 8,
@@ -255,12 +259,14 @@ const styles = StyleSheet.create({
         marginBottom: 18,
     },
     label: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#374151",
         marginBottom: 6,
     },
     inputWrapper: {
+        fontFamily: "Poppins_400Regular",
         flexDirection: "row",
         alignItems: "center",
         borderWidth: 1,
@@ -271,9 +277,11 @@ const styles = StyleSheet.create({
         height: 46,
     },
     inputIcon: {
+        fontFamily: "Poppins_400Regular",
         marginRight: 10,
     },
     input: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         height: "100%",
         fontSize: 14,
@@ -295,6 +303,7 @@ const styles = StyleSheet.create({
         opacity: 0.7,
     },
     submitButtonText: {
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
         fontSize: 14,
         fontWeight: "700",
@@ -307,6 +316,7 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
     },
     backLinkText: {
+        fontFamily: "Poppins_500Medium",
         fontSize: 13,
         color: "#4B5563",
         fontWeight: "500",

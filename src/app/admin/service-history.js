@@ -276,6 +276,7 @@ const styles = StyleSheet.create({
         height: 42,
     },
     searchInput: {
+        fontFamily: "Poppins_400Regular",
         flex: 1,
         marginLeft: 8,
         fontSize: 13,
@@ -288,6 +289,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     countBadgeText: {
+        fontFamily: "Poppins_700Bold",
         color: "#065F46",
         fontWeight: "700",
         fontSize: 13,
@@ -322,6 +324,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "#E5E7EB",
     },
     th: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 11,
         fontWeight: "700",
         color: "#6B7280",
@@ -336,6 +339,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "#F3F4F6",
     },
     codeText: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 13,
         fontWeight: "700",
         color: "#111827",
@@ -349,20 +353,24 @@ const styles = StyleSheet.create({
         marginTop: 4,
     },
     doneBadgeText: {
+        fontFamily: "Poppins_700Bold",
         color: "#065F46",
         fontSize: 10,
         fontWeight: "700",
     },
     td: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: "#374151",
     },
     tdBold: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#111827",
     },
     tdSub: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#6B7280",
         marginTop: 2,
@@ -378,6 +386,7 @@ const styles = StyleSheet.create({
         backgroundColor: "#EFF6FF",
     },
     emptyText: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
         padding: 30,
         color: "#9CA3AF",
@@ -406,6 +415,7 @@ const styles = StyleSheet.create({
         borderBottomColor: "#E5E7EB",
     },
     modalTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 16,
         fontWeight: "700",
         color: "#111827",
@@ -422,10 +432,12 @@ const styles = StyleSheet.create({
         borderBottomColor: "#F3F4F6",
     },
     detailLabel: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 13,
         color: "#6B7280",
     },
     detailVal: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 13,
         fontWeight: "600",
         color: "#111827",
@@ -439,12 +451,14 @@ const styles = StyleSheet.create({
         borderColor: "#E5E7EB",
     },
     noteLabel: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 12,
         fontWeight: "700",
         color: "#374151",
         marginBottom: 2,
     },
     noteText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#6B7280",
     },

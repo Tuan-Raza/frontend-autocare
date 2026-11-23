@@ -314,6 +314,7 @@ const styles = StyleSheet.create({
     },
 
     headerTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 18,
         fontWeight: "800",
         color: "#222",
@@ -347,6 +348,7 @@ const styles = StyleSheet.create({
     },
 
     helpTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 19,
         fontWeight: "800",
         color: "#222",
@@ -354,6 +356,7 @@ const styles = StyleSheet.create({
     },
 
     helpText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#777",
         lineHeight: 18,
@@ -362,6 +365,7 @@ const styles = StyleSheet.create({
     },
 
     sectionTitle: {
+        fontFamily: "Poppins_800ExtraBold",
         fontSize: 17,
         fontWeight: "800",
         color: "#222",
@@ -396,6 +400,7 @@ const styles = StyleSheet.create({
     },
 
     question: {
+        fontFamily: "Poppins_700Bold",
         flex: 1,
         fontSize: 12.5,
         fontWeight: "700",
@@ -411,6 +416,7 @@ const styles = StyleSheet.create({
     },
 
     answer: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 12,
         color: "#777",
         lineHeight: 19,
@@ -452,6 +458,7 @@ const styles = StyleSheet.create({
     },
 
     contactTitle: {
+        fontFamily: "Poppins_700Bold",
         fontSize: 13,
         fontWeight: "700",
         color: "#333",
@@ -459,11 +466,13 @@ const styles = StyleSheet.create({
     },
 
     contactText: {
+        fontFamily: "Poppins_400Regular",
         fontSize: 11,
         color: "#888",
     },
 
     version: {
+        fontFamily: "Poppins_400Regular",
         textAlign: "center",
         fontSize: 11,
         color: "#AAA",
