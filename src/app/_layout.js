@@ -2,6 +2,7 @@ import "../global.css";
 import { Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useFonts } from "expo-font";
+import Ionicons from "@expo/vector-icons/Ionicons";
 
 import {
     Poppins_400Regular,
@@ -23,6 +24,7 @@ import {
  */
 export default function RootLayout() {
     const [fontsLoaded] = useFonts({
+        ...Ionicons.font,
         Poppins_400Regular,
         Poppins_500Medium,
         Poppins_600SemiBold,

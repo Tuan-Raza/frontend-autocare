@@ -277,7 +277,6 @@ const styles = StyleSheet.create({
         height: 46,
     },
     inputIcon: {
-        fontFamily: "Poppins_400Regular",
         marginRight: 10,
     },
     input: {

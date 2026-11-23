@@ -1522,7 +1522,6 @@ const styles = StyleSheet.create({
     },
 
     inputIcon: {
-        fontFamily: "Poppins_400Regular",
         width: 32,
         height: 32,
         borderRadius: 9,
@@ -1532,7 +1531,6 @@ const styles = StyleSheet.create({
     },
 
     inputIconDisabled: {
-        fontFamily: "Poppins_400Regular",
         backgroundColor: "#EEEEEE",
     },
 
