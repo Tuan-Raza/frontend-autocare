@@ -18,6 +18,7 @@ import {
     useWindowDimensions,
     View,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { API_URL } from "../config";
 import { getCarImage } from "./carImages";
@@ -34,9 +35,11 @@ export default function Kendaraan() {
     // =========================================================
 
     const { width } = useWindowDimensions();
+    const insets = useSafeAreaInsets();
 
     const isDesktop =
         Platform.OS === "web" && width >= 900;
+    const bottomNavTotalHeight = 64 + insets.bottom;
 
 
     // =========================================================
@@ -782,24 +785,6 @@ export default function Kendaraan() {
                 }
             >
 
-                <TouchableOpacity
-                    onPress={() =>
-                        safeBack("/home")
-                    }
-                    style={
-                        styles.backButton
-                    }
-                >
-
-                    <Text
-                        style={
-                            styles.backText
-                        }
-                    >
-                        ‹
-                    </Text>
-
-                </TouchableOpacity>
 
 
                 <View style={{ flex: 1, marginLeft: 10 }}>
@@ -833,9 +818,10 @@ export default function Kendaraan() {
             {kendaraan.length === 0 ? (
 
                 <View
-                    style={
-                        styles.empty
-                    }
+                    style={[
+                        styles.empty,
+                        { paddingBottom: bottomNavTotalHeight + 76 },
+                    ]}
                 >
 
                     <View
@@ -893,9 +879,10 @@ export default function Kendaraan() {
                                 handleDeletePress,
                         })
                     }
-                    contentContainerStyle={
-                        styles.list
-                    }
+                    contentContainerStyle={[
+                        styles.list,
+                        { paddingBottom: bottomNavTotalHeight + 86 },
+                    ]}
                     showsVerticalScrollIndicator={
                         false
                     }
@@ -907,9 +894,10 @@ export default function Kendaraan() {
             {/* MOBILE ADD BUTTON */}
 
             <TouchableOpacity
-                style={
-                    styles.addButton
-                }
+                style={[
+                    styles.addButton,
+                    { bottom: bottomNavTotalHeight + 12 },
+                ]}
                 onPress={() =>
                     router.push(
                         "/tambah-kendaraan"

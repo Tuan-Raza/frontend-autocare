@@ -1,6 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { BlurView } from "expo-blur";
 import { router, useLocalSearchParams } from "expo-router";
 import { safeBack } from "../utils/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -8,8 +7,9 @@ import { useEffect, useRef, useState } from "react";
 import {
     ActivityIndicator,
     Image,
-    ImageBackground,
     Keyboard,
+    KeyboardAvoidingView,
+    Platform,
     Pressable,
     ScrollView,
     StyleSheet,
@@ -218,59 +218,69 @@ export default function VerifikasiEmail() {
         setErrorMessage("");
     };
 
-    return (
-        <ImageBackground
-            source={require("../../assets/autocare-login-bg.jpg")}
-            style={styles.background}
-            resizeMode="cover"
-        >
-            {/* DARK OVERLAY */}
-            <View style={styles.overlay} />
+    const isOtpComplete = kode.length === 6;
 
+    return (
+        <KeyboardAvoidingView
+            style={styles.container}
+            behavior={Platform.OS === "ios" ? "padding" : undefined}
+        >
             <ScrollView
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >
-                {/* GLASS CARD */}
-                <BlurView
-                    intensity={35}
-                    tint="dark"
-                    style={styles.card}
-                >
-                    {/* BACK BUTTON */}
-                    <TouchableOpacity
-                        style={styles.topBackBtn}
-                        onPress={() =>
-                            isEmailChange
-                                ? safeBack("/ubah-email")
-                                : router.replace("/daftar")
-                        }
-                        activeOpacity={0.7}
-                    >
-                        <Ionicons name="arrow-back" size={18} color="#FFFFFF" />
-                        <Text style={styles.topBackText}>
-                            {isEmailChange ? "Kembali" : "Kembali ke Daftar"}
+                {/* HEADER MERAH DENGAN AKSEN LINGKARAN (PEMBEDA DARI DAFTAR) */}
+                <View style={styles.heroHeader}>
+                    <View style={styles.headerDecorCircle} />
+
+                    <View style={styles.topBar}>
+                        <TouchableOpacity
+                            style={styles.backBtn}
+                            onPress={() =>
+                                isEmailChange
+                                    ? safeBack("/ubah-email")
+                                    : router.replace("/daftar")
+                            }
+                            activeOpacity={0.75}
+                            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                        >
+                            <Ionicons name="arrow-back" size={22} color="#FFFFFF" />
+                        </TouchableOpacity>
+
+                        <Text style={styles.headerTitle}>
+                            {isEmailChange
+                                ? "Verifikasi Email Baru"
+                                : "Verifikasi Email"}
                         </Text>
-                    </TouchableOpacity>
 
-                    {/* LOGO */}
-                    <Image
-                        source={require("../../assets/images/autocare-logo.png")}
-                        style={styles.logo}
-                        resizeMode="contain"
-                    />
+                        <View style={styles.topBarSpacer} />
+                    </View>
 
-                    {/* EMAIL ICON */}
-                    <View style={styles.iconContainer}>
-                        <Ionicons
-                            name="mail-open-outline"
-                            size={38}
-                            color="#FFFFFF"
+                    <Text style={styles.heroSubtitle}>
+                        {isEmailChange
+                            ? "Konfirmasi perubahan alamat email akun AutoCare Anda"
+                            : "Satu langkah lagi untuk mengaktifkan akun AutoCare Anda"}
+                    </Text>
+                </View>
+
+                {/* BADGE AMPLOP & LOGO DI PERBATASAN HEADER DAN KONTEN */}
+                <View style={styles.badgeRow}>
+                    <View style={styles.logoCircle}>
+                        <Image
+                            source={require("../../assets/images/autocare-logo.png")}
+                            style={styles.logo}
+                            resizeMode="contain"
                         />
                     </View>
 
-                    {/* TITLE */}
+                    <View style={styles.mailBadge}>
+                        <Ionicons name="mail-open-outline" size={24} color="#A80000" />
+                    </View>
+                </View>
+
+                {/* KONTEN UTAMA */}
+                <View style={styles.contentContainer}>
                     <Text style={styles.title}>
                         {isEmailChange
                             ? "Verifikasi Email Baru"
@@ -283,12 +293,12 @@ export default function VerifikasiEmail() {
                             : "Masukkan kode verifikasi 6 digit yang dikirimkan ke:"}
                     </Text>
 
-                    {/* EMAIL */}
+                    {/* PILL ALAMAT EMAIL */}
                     <View style={styles.emailContainer}>
                         <Ionicons
                             name="mail-outline"
                             size={16}
-                            color="#FFFFFF"
+                            color="#A80000"
                         />
 
                         <Text
@@ -306,28 +316,18 @@ export default function VerifikasiEmail() {
 
                     {/* OTP BOXES */}
                     <Pressable
-                        onPress={() =>
-                            inputRef.current?.focus()
-                        }
+                        onPress={() => inputRef.current?.focus()}
                         style={styles.otpWrapper}
                     >
-                        {Array.from({
-                            length: 6,
-                        }).map((_, index) => (
+                        {Array.from({ length: 6 }).map((_, index) => (
                             <View
                                 key={index}
                                 style={[
                                     styles.otpBox,
-                                    kode[index]
-                                        ? styles.otpBoxActive
-                                        : null,
+                                    kode[index] ? styles.otpBoxActive : null,
                                 ]}
                             >
-                                <Text
-                                    style={
-                                        styles.otpText
-                                    }
-                                >
+                                <Text style={styles.otpText}>
                                     {kode[index] || ""}
                                 </Text>
                             </View>
@@ -337,15 +337,11 @@ export default function VerifikasiEmail() {
                         <TextInput
                             ref={inputRef}
                             value={kode}
-                            onChangeText={
-                                handleOtpChange
-                            }
+                            onChangeText={handleOtpChange}
                             keyboardType="number-pad"
                             maxLength={6}
                             autoFocus={false}
-                            style={
-                                styles.hiddenInput
-                            }
+                            style={styles.hiddenInput}
                         />
                     </Pressable>
 
@@ -354,15 +350,10 @@ export default function VerifikasiEmail() {
                         <View style={styles.messageBox}>
                             <Ionicons
                                 name="alert-circle-outline"
-                                size={17}
-                                color="#FF6B6B"
+                                size={18}
+                                color="#B30000"
                             />
-
-                            <Text
-                                style={
-                                    styles.errorText
-                                }
-                            >
+                            <Text style={styles.errorText}>
                                 {errorMessage}
                             </Text>
                         </View>
@@ -370,23 +361,13 @@ export default function VerifikasiEmail() {
 
                     {/* SUCCESS */}
                     {successMessage ? (
-                        <View
-                            style={[
-                                styles.messageBox,
-                                styles.successBox,
-                            ]}
-                        >
+                        <View style={[styles.messageBox, styles.successBox]}>
                             <Ionicons
                                 name="checkmark-circle-outline"
-                                size={17}
-                                color="#5BE37B"
+                                size={18}
+                                color="#15803D"
                             />
-
-                            <Text
-                                style={
-                                    styles.successText
-                                }
-                            >
+                            <Text style={styles.successText}>
                                 {successMessage}
                             </Text>
                         </View>
@@ -396,35 +377,19 @@ export default function VerifikasiEmail() {
                     <TouchableOpacity
                         style={[
                             styles.button,
-                            loading &&
-                                styles.buttonDisabled,
+                            isOtpComplete && styles.buttonActive,
+                            loading && styles.buttonDisabled,
                         ]}
-                        onPress={
-                            handleVerifikasi
-                        }
+                        onPress={handleVerifikasi}
                         disabled={loading}
-                        activeOpacity={0.8}
+                        activeOpacity={0.85}
                     >
                         {loading ? (
-                            <ActivityIndicator
-                                color="#FFFFFF"
-                            />
+                            <ActivityIndicator color="#FFFFFF" />
                         ) : (
-                            <>
-                                <Text
-                                    style={
-                                        styles.buttonText
-                                    }
-                                >
-                                    Verifikasi Sekarang
-                                </Text>
-
-                                <Ionicons
-                                    name="arrow-forward"
-                                    size={18}
-                                    color="#FFFFFF"
-                                />
-                            </>
+                            <Text style={styles.buttonText}>
+                                Verifikasi Sekarang
+                            </Text>
                         )}
                     </TouchableOpacity>
 
@@ -457,166 +422,179 @@ export default function VerifikasiEmail() {
                     )}
 
                     {/* INFO */}
-                    <View
-                        style={
-                            styles.infoContainer
-                        }
-                    >
+                    <View style={styles.infoContainer}>
                         <Ionicons
                             name="information-circle-outline"
-                            size={15}
-                            color="rgba(255,255,255,0.65)"
+                            size={16}
+                            color="#636B78"
                         />
-
-                        <Text
-                            style={
-                                styles.infoText
-                            }
-                        >
+                        <Text style={styles.infoText}>
                             Periksa folder Inbox atau Spam email Anda.
                         </Text>
                     </View>
-                </BlurView>
+                </View>
             </ScrollView>
-        </ImageBackground>
+        </KeyboardAvoidingView>
     );
 }
 
 const styles = StyleSheet.create({
-    background: {
+    container: {
         flex: 1,
-        width: "100%",
-        height: "100%",
-    },
-
-    overlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(0, 0, 0, 0.45)",
+        backgroundColor: "#FFFFFF",
     },
 
     scrollContent: {
         flexGrow: 1,
-        justifyContent: "center",
-        alignItems: "center",
+        backgroundColor: "#FFFFFF",
+        paddingBottom: 36,
+    },
+
+    heroHeader: {
+        backgroundColor: "#A80000",
+        paddingTop: Platform.OS === "ios" ? 54 : 36,
+        paddingBottom: 42,
         paddingHorizontal: 20,
-        paddingVertical: 35,
-    },
-
-    card: {
-        width: "100%",
-        maxWidth: 440,
-
-        backgroundColor:
-            "rgba(255, 255, 255, 0.14)",
-
-        borderRadius: 24,
-
-        borderWidth: 1.2,
-        borderColor:
-            "rgba(255, 255, 255, 0.45)",
-
-        paddingHorizontal: 26,
-        paddingTop: 20,
-        paddingBottom: 24,
-
+        borderBottomLeftRadius: 28,
+        borderBottomRightRadius: 28,
         overflow: "hidden",
-
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 12,
-        },
-        shadowOpacity: 0.35,
-        shadowRadius: 20,
-
-        elevation: 12,
     },
 
-    topBackBtn: {
+    headerDecorCircle: {
+        position: "absolute",
+        width: 190,
+        height: 190,
+        borderRadius: 95,
+        backgroundColor: "rgba(255, 255, 255, 0.08)",
+        top: -55,
+        right: -45,
+    },
+
+    topBar: {
         flexDirection: "row",
         alignItems: "center",
-        alignSelf: "flex-start",
-        marginBottom: 8,
-        paddingVertical: 4,
-        paddingHorizontal: 6,
-        borderRadius: 8,
-        backgroundColor: "rgba(255, 255, 255, 0.12)",
+        justifyContent: "space-between",
     },
 
-    topBackText: {
-        fontFamily: "Poppins_600SemiBold",
+    backBtn: {
+        width: 32,
+        height: 32,
+        justifyContent: "center",
+        alignItems: "flex-start",
+    },
+
+    headerTitle: {
         color: "#FFFFFF",
-        fontSize: 11,
-        fontWeight: "600",
-        marginLeft: 5,
+        fontSize: 16,
+        fontWeight: "700",
+        textAlign: "center",
+    },
+
+    topBarSpacer: {
+        width: 32,
+    },
+
+    heroSubtitle: {
+        color: "rgba(255, 255, 255, 0.88)",
+        fontSize: 12.5,
+        textAlign: "center",
+        marginTop: 10,
+        paddingHorizontal: 14,
+    },
+
+    badgeRow: {
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: -28,
+        marginBottom: 8,
+        gap: 12,
+    },
+
+    logoCircle: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: "#FFFFFF",
+        borderWidth: 1.5,
+        borderColor: "#E5E7EB",
+        justifyContent: "center",
+        alignItems: "center",
+        elevation: 5,
+        shadowColor: "#000000",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.14,
+        shadowRadius: 5,
     },
 
     logo: {
-        width: 140,
-        height: 75,
-        alignSelf: "center",
-        marginBottom: 2,
+        width: 40,
+        height: 40,
     },
 
-    iconContainer: {
-        width: 70,
-        height: 70,
-        borderRadius: 35,
-        alignSelf: "center",
-        backgroundColor: "rgba(242, 13, 24, 0.8)",
+    mailBadge: {
+        width: 56,
+        height: 56,
+        borderRadius: 28,
+        backgroundColor: "#FFF5F5",
+        borderWidth: 1.8,
+        borderColor: "#A80000",
         justifyContent: "center",
         alignItems: "center",
-        marginBottom: 12,
-        shadowColor: "#F20D18",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.4,
-        shadowRadius: 8,
-        elevation: 6,
+        elevation: 5,
+        shadowColor: "#000000",
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.14,
+        shadowRadius: 5,
+    },
+
+    contentContainer: {
+        paddingHorizontal: 26,
+        paddingTop: 6,
     },
 
     title: {
-        fontFamily: "Poppins_800ExtraBold",
-        fontSize: 20,
-        fontWeight: "800",
-        color: "#FFFFFF",
+        fontSize: 21,
+        fontWeight: "700",
+        color: "#111827",
         textAlign: "center",
         marginBottom: 4,
     },
 
     subtitle: {
-        fontFamily: "Poppins_500Medium",
-        fontSize: 11.5,
-        color: "rgba(235, 235, 235, 0.85)",
+        fontSize: 13,
+        color: "#5C6370",
         textAlign: "center",
-        marginBottom: 12,
-        fontWeight: "500",
+        marginBottom: 14,
+        lineHeight: 19,
     },
 
     emailContainer: {
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "rgba(255, 255, 255, 0.12)",
-        borderRadius: 12,
+        backgroundColor: "#FFF5F5",
+        borderRadius: 999,
         paddingVertical: 8,
-        paddingHorizontal: 14,
-        marginBottom: 14,
+        paddingHorizontal: 16,
+        marginBottom: 20,
         borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 0.25)",
+        borderColor: "#F3C6C6",
+        alignSelf: "center",
+        maxWidth: "100%",
     },
 
     email: {
-        fontFamily: "Poppins_700Bold",
-        color: "#FFFFFF",
-        fontSize: 12,
+        color: "#A80000",
+        fontSize: 12.5,
         fontWeight: "700",
-        marginLeft: 7,
+        marginLeft: 6,
+        flexShrink: 1,
     },
 
     otpLabel: {
-        fontFamily: "Poppins_600SemiBold",
-        color: "rgba(255, 255, 255, 0.85)",
-        fontSize: 11.5,
+        color: "#4B5563",
+        fontSize: 12.5,
         fontWeight: "600",
         marginBottom: 10,
         textAlign: "center",
@@ -625,35 +603,33 @@ const styles = StyleSheet.create({
     otpWrapper: {
         flexDirection: "row",
         justifyContent: "space-between",
-        marginBottom: 16,
-        paddingHorizontal: 4,
+        gap: 6,
+        marginBottom: 22,
     },
 
     otpBox: {
-        width: 44,
-        height: 52,
-        borderRadius: 12,
-        backgroundColor: "rgba(255, 255, 255, 0.15)",
-        borderWidth: 1.5,
-        borderColor: "rgba(255, 255, 255, 0.3)",
+        flex: 1,
+        height: 50,
+        borderRadius: 14,
+        backgroundColor: "#FFFFFF",
+        borderWidth: 1.2,
+        borderColor: "#636B78",
         justifyContent: "center",
         alignItems: "center",
     },
 
     otpBoxActive: {
-        borderColor: "#F20D18",
-        backgroundColor: "rgba(242, 13, 24, 0.18)",
+        borderColor: "#A80000",
+        backgroundColor: "#FFFDFD",
     },
 
     otpText: {
-        fontFamily: "Poppins_800ExtraBold",
-        color: "#FFFFFF",
-        fontSize: 22,
-        fontWeight: "800",
+        color: "#111827",
+        fontSize: 20,
+        fontWeight: "700",
     },
 
     hiddenInput: {
-        fontFamily: "Poppins_400Regular",
         position: "absolute",
         width: 1,
         height: 1,
@@ -661,56 +637,57 @@ const styles = StyleSheet.create({
     },
 
     messageBox: {
-        minHeight: 38,
-        backgroundColor: "rgba(255, 70, 70, 0.22)",
+        minHeight: 40,
+        backgroundColor: "#FFF0F0",
         borderWidth: 1,
-        borderColor: "rgba(255, 100, 100, 0.5)",
-        borderRadius: 11,
-        paddingHorizontal: 12,
-        marginBottom: 12,
+        borderColor: "#FFCCCC",
+        borderRadius: 12,
+        paddingHorizontal: 14,
+        paddingVertical: 10,
+        marginBottom: 14,
         flexDirection: "row",
         alignItems: "center",
+        gap: 8,
     },
 
     errorText: {
-        fontFamily: "Poppins_600SemiBold",
         flex: 1,
-        color: "#FFFFFF",
-        fontSize: 11,
+        color: "#B30000",
+        fontSize: 12.5,
         fontWeight: "600",
-        marginLeft: 8,
     },
 
     successBox: {
-        backgroundColor: "rgba(60, 220, 110, 0.22)",
-        borderColor: "rgba(90, 240, 130, 0.5)",
+        backgroundColor: "#F0FDF4",
+        borderColor: "#BBF7D0",
     },
 
     successText: {
-        fontFamily: "Poppins_600SemiBold",
         flex: 1,
-        color: "#FFFFFF",
-        fontSize: 11,
+        color: "#15803D",
+        fontSize: 12.5,
         fontWeight: "600",
-        marginLeft: 8,
     },
 
     button: {
-        height: 48,
-        borderRadius: 13,
-        backgroundColor: "#F20D18",
+        height: 46,
+        borderRadius: 8,
+        backgroundColor: "#A9A9A9",
         justifyContent: "center",
         alignItems: "center",
-        flexDirection: "row",
         marginTop: 4,
-        shadowColor: "#F20D18",
+        elevation: 3,
+        shadowColor: "#000000",
         shadowOffset: {
             width: 0,
-            height: 5,
+            height: 2,
         },
-        shadowOpacity: 0.35,
-        shadowRadius: 8,
-        elevation: 6,
+        shadowOpacity: 0.16,
+        shadowRadius: 3,
+    },
+
+    buttonActive: {
+        backgroundColor: "#A80000",
     },
 
     buttonDisabled: {
@@ -718,38 +695,35 @@ const styles = StyleSheet.create({
     },
 
     buttonText: {
-        fontFamily: "Poppins_800ExtraBold",
         color: "#FFFFFF",
-        fontSize: 13.5,
-        fontWeight: "800",
-        marginRight: 8,
+        fontSize: 14.5,
+        fontWeight: "700",
     },
 
     resendContainer: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        marginTop: 16,
+        marginTop: 20,
+        flexWrap: "wrap",
     },
 
     resendLabel: {
-        fontFamily: "Poppins_500Medium",
-        color: "rgba(255, 255, 255, 0.8)",
-        fontSize: 11.5,
+        color: "#5C6370",
+        fontSize: 12.5,
         fontWeight: "500",
     },
 
     resendLink: {
-        fontFamily: "Poppins_800ExtraBold",
-        color: "#FF4D4D",
-        fontSize: 12,
-        fontWeight: "800",
+        color: "#A80000",
+        fontSize: 12.5,
+        fontWeight: "700",
         marginLeft: 6,
     },
 
     resendLinkDisabled: {
-        fontFamily: "Poppins_400Regular",
-        color: "rgba(255, 255, 255, 0.4)",
+        color: "#8E96A4",
+        fontWeight: "600",
     },
 
     infoContainer: {
@@ -757,15 +731,13 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         marginTop: 14,
-        paddingHorizontal: 5,
+        paddingHorizontal: 6,
+        gap: 6,
     },
 
     infoText: {
-        fontFamily: "Poppins_500Medium",
-        color: "rgba(255, 255, 255, 0.65)",
-        fontSize: 10,
-        fontWeight: "500",
-        marginLeft: 5,
+        color: "#636B78",
+        fontSize: 12,
         textAlign: "center",
     },
 });

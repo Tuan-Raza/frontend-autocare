@@ -16,6 +16,7 @@ import {
     View,
     useWindowDimensions,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { API_URL } from "../config";
@@ -36,9 +37,11 @@ export default function Booking() {
     const [refreshing, setRefreshing] = useState(false);
 
     const { width } = useWindowDimensions();
+    const insets = useSafeAreaInsets();
 
     const isDesktop = width >= 900;
     const isTablet = width >= 600 && width < 900;
+    const bottomNavTotalHeight = 64 + insets.bottom;
 
     // ==========================================
     // LOAD USER
@@ -443,10 +446,10 @@ export default function Booking() {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={[
                     styles.scrollContent,
+                    { paddingBottom: 175 + insets.bottom },
                     isDesktop && styles.scrollContentDesktop,
                     isTablet && styles.scrollContentTablet,
                 ]}
-
                 refreshControl={
                     <RefreshControl
                         refreshing={refreshing}
@@ -692,15 +695,13 @@ export default function Booking() {
                         </Text>
                     </TouchableOpacity>
                 )}
-
-                <View style={{ height: 160 }} />
             </ScrollView>
 
             {/* =====================================
                 BOTTOM ACTION
             ====================================== */}
             {kendaraan.length > 0 && (
-                <View style={[styles.bottomContainer, { bottom: 64 }]}>
+                <View style={[styles.bottomContainer, { bottom: bottomNavTotalHeight }]}>
                     <View style={styles.selectedInfo}>
                         <Text style={styles.selectedLabel}>
                             Kendaraan dipilih
@@ -1127,7 +1128,7 @@ const styles = StyleSheet.create({
 
     bottomContainer: {
         position: "absolute",
-        bottom: 0,
+        bottom: 64,
         left: 0,
         right: 0,
         backgroundColor: "#fff",
@@ -1139,6 +1140,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 12,
+        zIndex: 10,
+        elevation: 6,
     },
 
     selectedInfo: {
@@ -1163,11 +1166,12 @@ const styles = StyleSheet.create({
         height: 48,
         backgroundColor: "#B22222",
         borderRadius: 13,
-        paddingHorizontal: 17,
+        paddingHorizontal: 18,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
         gap: 8,
+        flexShrink: 0,
     },
 
     continueButtonDisabled: {

@@ -17,6 +17,7 @@ import {
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as WebBrowser from "expo-web-browser";
 import { WebView } from "react-native-webview";
 
 import { API_URL } from "../config";
@@ -54,6 +55,8 @@ export default function BookingStep4() {
 
     const [submitting, setSubmitting] = useState(false);
     const [paymentUrl, setPaymentUrl] = useState("");
+    const [activeBookingId, setActiveBookingId] = useState(null);
+    const [activeOrderId, setActiveOrderId] = useState(null);
 
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -185,6 +188,16 @@ export default function BookingStep4() {
     const handleBack = () => {
         if (paymentUrl) {
             setPaymentUrl("");
+            if (activeBookingId) {
+                router.replace({
+                    pathname: "/booking-berhasil",
+                    params: {
+                        bookingId: String(activeBookingId),
+                        orderId: String(activeOrderId || ""),
+                        metode: "midtrans",
+                    },
+                });
+            }
             return;
         }
 
@@ -225,80 +238,42 @@ export default function BookingStep4() {
     const handleConfirmBooking = async () => {
         setErrorMessage("");
 
-        // -----------------------------------------------------
-        // VALIDASI USER
-        // -----------------------------------------------------
+        const resolvedKendaraanId = kendaraanId || params.kendaraan_id;
+        const resolvedBengkelId = bengkelId || params.bengkel_id;
+        const rawJadwalId = jadwalId || params.jadwal_id;
+        const resolvedJadwalId = rawJadwalId && !isNaN(Number(rawJadwalId)) ? Number(rawJadwalId) : null;
+        const resolvedTanggal = String(tanggal || params.tanggal_booking || "").trim();
+        const resolvedJam = String(jam || params.jam_booking || "").trim();
 
-        if (!user?.id) {
-            setErrorMessage(
-                "Data pengguna tidak ditemukan. Silakan login kembali."
-            );
+        const isValidVal = (v) => v !== undefined && v !== null && String(v).trim() !== "" && String(v) !== "undefined" && String(v) !== "null";
+
+        if (!isValidVal(user?.id)) {
+            setErrorMessage("Data pengguna tidak ditemukan. Silakan login kembali.");
             return;
         }
 
-        // -----------------------------------------------------
-        // VALIDASI KENDARAAN
-        // -----------------------------------------------------
-
-        if (!kendaraanId) {
-            setErrorMessage(
-                "Kendaraan belum dipilih."
-            );
+        if (!isValidVal(resolvedKendaraanId)) {
+            setErrorMessage("Kendaraan belum dipilih.");
             return;
         }
 
-        // -----------------------------------------------------
-        // VALIDASI BENGKEL
-        // -----------------------------------------------------
-
-        if (!bengkelId) {
-            setErrorMessage(
-                "Bengkel belum dipilih."
-            );
+        if (!isValidVal(resolvedBengkelId)) {
+            setErrorMessage("Bengkel belum dipilih.");
             return;
         }
 
-        // -----------------------------------------------------
-        // VALIDASI JADWAL
-        // -----------------------------------------------------
-
-        if (!jadwalId) {
-            setErrorMessage(
-                "Jadwal service belum dipilih."
-            );
+        if (!isValidVal(resolvedTanggal)) {
+            setErrorMessage("Tanggal service belum dipilih.");
             return;
         }
 
-        // -----------------------------------------------------
-        // VALIDASI TANGGAL
-        // -----------------------------------------------------
-
-        if (!tanggal) {
-            setErrorMessage(
-                "Tanggal service belum dipilih."
-            );
+        if (!isValidVal(resolvedJam)) {
+            setErrorMessage("Jam service belum dipilih.");
             return;
         }
-
-        // -----------------------------------------------------
-        // VALIDASI JAM
-        // -----------------------------------------------------
-
-        if (!jam) {
-            setErrorMessage(
-                "Jam service belum dipilih."
-            );
-            return;
-        }
-
-        // -----------------------------------------------------
-        // VALIDASI LAYANAN
-        // -----------------------------------------------------
 
         if (!layananList.length) {
-            setErrorMessage(
-                "Layanan service belum dipilih."
-            );
+            setErrorMessage("Layanan service belum dipilih.");
             return;
         }
 
@@ -306,134 +281,80 @@ export default function BookingStep4() {
             setSubmitting(true);
 
             // =================================================
-            // STEP 1
-            // BUAT BOOKING
+            // STEP 1: BUAT BOOKING DI DATABASE MYSQL
             // =================================================
-
             const bookingData = {
                 userId: Number(user.id),
-
-                kendaraanId:
-                    Number(kendaraanId),
-
-                bengkelId:
-                    Number(bengkelId),
-
-                jadwalId:
-                    Number(jadwalId),
-
-                tanggalBooking:
-                    String(tanggal),
-
-                jamBooking:
-                    String(jam),
-
-                layanan:
-                    layananList.map(
-                        (item) => ({
-                            id: Number(
-                                item.id
-                            ),
-
-                            qty: Number(
-                                item.qty || 1
-                            ),
-                        })
-                    ),
-
+                kendaraanId: Number(resolvedKendaraanId),
+                bengkelId: Number(resolvedBengkelId),
+                jadwalId: resolvedJadwalId,
+                tanggalBooking: resolvedTanggal,
+                jamBooking: resolvedJam,
+                layanan: layananList.map((item) => ({
+                    id: Number(item.id || item.layanan_id),
+                    qty: Number(item.qty || 1),
+                })),
                 keluhan: "",
             };
 
-            console.log(
-                "===================================="
-            );
+            console.log("STEP 1 - CREATE BOOKING:", JSON.stringify(bookingData, null, 2));
 
-            console.log(
-                "STEP 1 - CREATE BOOKING"
-            );
+            const bookingResponse = await fetch(`${API_URL}/api/booking`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(bookingData),
+            });
 
-            console.log(
-                "===================================="
-            );
+            const bookingResult = await bookingResponse.json();
 
-            console.log(
-                JSON.stringify(
-                    bookingData,
-                    null,
-                    2
-                )
-            );
-
-            const bookingResponse =
-                await fetch(
-                    `${API_URL}/api/booking`,
-                    {
-                        method: "POST",
-
-                        headers: {
-                            "Content-Type":
-                                "application/json",
-                        },
-
-                        body: JSON.stringify(
-                            bookingData
-                        ),
-                    }
-                );
-
-            const bookingResult =
-                await bookingResponse.json();
-
-            console.log(
-                "BOOKING RESPONSE:",
-                bookingResult
-            );
-
-            if (
-                !bookingResponse.ok ||
-                !bookingResult.success
-            ) {
+            if (!bookingResponse.ok || !bookingResult.success) {
                 throw new Error(
-                    bookingResult.message ||
-                        "Booking gagal dibuat."
+                    bookingResult.message || "Booking gagal dibuat."
                 );
             }
 
-            const booking =
-                bookingResult.data || {};
-
-            const bookingId =
-                booking.bookingId;
-
-            const kodeBooking =
-                booking.kodeBooking;
-
-            // -------------------------------------------------
-            // PASTIKAN BOOKING ID ADA
-            // -------------------------------------------------
+            const booking = bookingResult.data || {};
+            const bookingId = booking.bookingId;
+            const kodeBooking = booking.kodeBooking;
 
             if (!bookingId) {
+                throw new Error("Booking berhasil dibuat tetapi ID tidak ditemukan.");
+            }
+
+            setActiveBookingId(bookingId);
+
+            // =================================================
+            // STEP 2: BUAT TRANSAKSI MIDTRANS SNAP
+            // =================================================
+            console.log("STEP 2 - CREATE MIDTRANS SNAP TRANSACTION FOR BOOKING:", bookingId);
+            const paymentResponse = await fetch(`${API_URL}/api/payment/create`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    bookingId: Number(bookingId),
+                    userId: Number(user.id),
+                }),
+            });
+
+            const paymentResult = await paymentResponse.json();
+
+            if (!paymentResponse.ok || !paymentResult.success) {
                 throw new Error(
-                    "Booking berhasil dibuat tetapi Booking ID tidak ditemukan."
+                    paymentResult.message || "Gagal membuat transaksi pembayaran Midtrans."
                 );
             }
 
-            console.log(
-                "BOOKING ID:",
-                bookingId
-            );
+            const payment = paymentResult.data || {};
+            const redirectUrl = payment.redirectUrl;
+            const orderId = payment.orderId;
 
-            console.log(
-                "KODE BOOKING:",
-                kodeBooking
-            );
+            setActiveOrderId(orderId);
 
-            // =================================================
-            // LANGKAH 2: ARAHKAN LANGSUNG KE HALAMAN PEMBAYARAN
-            // =================================================
-            console.log("Navigasi ke halaman pembayaran dengan bookingId:", bookingId);
-            
-            // Hapus cache form booking lokal agar bersih untuk booking berikutnya
+            // Bersihkan form cache lokal
             try {
                 await AsyncStorage.multiRemove([
                     "booking_kendaraan",
@@ -444,31 +365,53 @@ export default function BookingStep4() {
                 ]);
             } catch (_) {}
 
-            router.replace({
-                pathname: "/payment",
-                params: {
-                    bookingId: String(bookingId),
-                },
-            });
+            // =================================================
+            // STEP 3: BUKA HALAMAN MIDTRANS SNAP
+            // =================================================
+            if (Platform.OS === "web") {
+                if (redirectUrl && typeof window !== "undefined") {
+                    window.location.href = redirectUrl;
+                    return;
+                }
+            }
 
+            if (redirectUrl) {
+                try {
+                    await WebBrowser.openBrowserAsync(redirectUrl, {
+                        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
+                        toolbarColor: RED,
+                    });
+                } catch (browserErr) {
+                    console.log("WebBrowser fallback:", browserErr);
+                    if (await Linking.canOpenURL(redirectUrl)) {
+                        await Linking.openURL(redirectUrl);
+                    } else {
+                        setPaymentUrl(redirectUrl);
+                        return;
+                    }
+                }
+
+                // Setelah browser Midtrans ditutup / selesai, alihkan ke status struk
+                router.replace({
+                    pathname: "/booking-berhasil",
+                    params: {
+                        bookingId: String(bookingId),
+                        orderId: String(orderId || ""),
+                        metode: "midtrans",
+                    },
+                });
+            } else {
+                router.replace({
+                    pathname: "/payment",
+                    params: {
+                        bookingId: String(bookingId),
+                    },
+                });
+            }
         } catch (error) {
-            console.log(
-                "===================================="
-            );
-
-            console.log(
-                "CREATE BOOKING/PAYMENT ERROR:"
-            );
-
-            console.log(error);
-
-            console.log(
-                "===================================="
-            );
-
+            console.log("CREATE BOOKING/PAYMENT ERROR:", error);
             setErrorMessage(
-                error?.message ||
-                    "Terjadi kesalahan saat membuat booking."
+                error?.message || "Terjadi kesalahan saat memproses booking."
             );
         } finally {
             setSubmitting(false);
@@ -574,9 +517,27 @@ export default function BookingStep4() {
                         startInLoadingState
                         javaScriptEnabled
                         domStorageEnabled
-                        setSupportMultipleWindows={
-                            false
-                        }
+                        setSupportMultipleWindows={false}
+                        onNavigationStateChange={(navState) => {
+                            const url = navState.url || "";
+                            if (
+                                url.includes("status_code=200") ||
+                                url.includes("status_code=201") ||
+                                url.includes("transaction_status=settlement") ||
+                                url.includes("/finish") ||
+                                url.includes("booking-berhasil")
+                            ) {
+                                setPaymentUrl("");
+                                router.replace({
+                                    pathname: "/booking-berhasil",
+                                    params: {
+                                        bookingId: String(activeBookingId || ""),
+                                        orderId: String(activeOrderId || ""),
+                                        metode: "midtrans",
+                                    },
+                                });
+                            }
+                        }}
                         renderLoading={() => (
                             <View
                                 style={

@@ -3,11 +3,13 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
 import { safeBack } from "../utils/navigation";
+import * as WebBrowser from "expo-web-browser";
 import { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
     Dimensions,
+    Linking,
     Image,
     Platform,
     SafeAreaView,
@@ -248,10 +250,50 @@ export default function Payment() {
 
     const totalHarga = bookingData?.total_harga || 0;
     const kodeBooking = bookingData?.kode_booking || "-";
+    const txStatus = paymentData?.transaction_status || "";
+    const isMidtrans = paymentData?.metode_pembayaran === "midtrans" || paymentData?.payment_type === "midtrans";
     const statusVerifikasi = paymentData?.status_verifikasi; // 'menunggu_verifikasi' | 'diterima' | 'ditolak'
-    const isApproved = statusVerifikasi === "diterima";
-    const isRejected = statusVerifikasi === "ditolak";
-    const isPendingVerif = statusVerifikasi === "menunggu_verifikasi";
+    const isApproved = statusVerifikasi === "diterima" || txStatus === "settlement" || txStatus === "capture";
+    const isRejected = statusVerifikasi === "ditolak" || txStatus === "deny" || txStatus === "cancel" || txStatus === "expire";
+    const isPendingVerif = !isApproved && !isRejected && (Boolean(statusVerifikasi) || Boolean(txStatus));
+
+    const handlePayMidtrans = async () => {
+        try {
+            const snapToken = paymentData?.snap_token;
+            const redirectUrl = snapToken 
+                ? `https://app.sandbox.midtrans.com/snap/v2/vtweb/${snapToken}` 
+                : null;
+
+            if (!redirectUrl) {
+                Alert.alert("Perhatian", "Data Snap Midtrans belum tersedia. Silakan muat ulang.");
+                return;
+            }
+
+            if (Platform.OS === "web") {
+                if (typeof window !== "undefined") {
+                    window.location.href = redirectUrl;
+                    return;
+                }
+            }
+
+            try {
+                await WebBrowser.openBrowserAsync(redirectUrl, {
+                    presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
+                    toolbarColor: "#B22222",
+                });
+            } catch (err) {
+                if (await Linking.canOpenURL(redirectUrl)) {
+                    await Linking.openURL(redirectUrl);
+                }
+            }
+
+            // Setelah browser ditutup, refresh data langsung dari backend & Midtrans
+            await loadData(true);
+        } catch (err) {
+            console.error("Open Midtrans Error:", err);
+            Alert.alert("Error", "Gagal membuka halaman pembayaran Midtrans.");
+        }
+    };
 
     return (
         <SafeAreaView style={styles.container}>
@@ -349,10 +391,10 @@ export default function Payment() {
 
                             <Text style={styles.statusDescription}>
                                 {isApproved
-                                    ? "Bukti pembayaran Anda telah diverifikasi dan disetujui (ACC). Booking servis Anda telah DIKONFIRMASI!"
+                                    ? (isMidtrans ? "Pembayaran online Midtrans Anda telah berhasil dikonfirmasi. Booking servis Anda sudah aktif!" : "Bukti pembayaran Anda telah diverifikasi dan disetujui (ACC). Booking servis Anda telah DIKONFIRMASI!")
                                     : isRejected
-                                    ? `Bukti transfer tidak sesuai atau belum masuk. ${paymentData?.catatan || "Silakan lakukan transfer ulang dan unggah bukti baru."}`
-                                    : "Bukti transfer Anda telah tersimpan dan sedang dalam antrean verifikasi oleh admin AutoCare. Status akan otomatis berubah saat di-ACC."}
+                                    ? (isMidtrans ? "Pembayaran Midtrans dibatalkan atau kedaluwarsa. Silakan lakukan pembayaran baru." : `Bukti transfer tidak sesuai atau belum masuk. ${paymentData?.catatan || "Silakan lakukan transfer ulang dan unggah bukti baru."}`)
+                                    : (isMidtrans ? "Transaksi pembayaran Midtrans sedang menunggu penyelesaian pembayaran dari Anda." : "Bukti transfer Anda telah tersimpan dan sedang dalam antrean verifikasi oleh admin AutoCare. Status akan otomatis berubah saat di-ACC.")}
                             </Text>
 
                             {/* SIMULASI ACC UNTUK TESTING QA */}
@@ -382,6 +424,96 @@ export default function Payment() {
                             </View>
                         </View>
                     ) : null}
+
+                    {/* INFORMASI TRANSAKSI MIDTRANS JIKA AKTIF */}
+                    {isMidtrans && (
+                        <View style={{
+                            backgroundColor: "#FFF8F8",
+                            borderWidth: 1.5,
+                            borderColor: "#FFCDD2",
+                            borderRadius: 16,
+                            padding: 18,
+                            marginBottom: 20,
+                        }}>
+                            <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+                                <View style={{
+                                    width: 36,
+                                    height: 36,
+                                    borderRadius: 18,
+                                    backgroundColor: "rgba(178, 34, 34, 0.12)",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    marginRight: 10,
+                                }}>
+                                    <Ionicons name="card" size={20} color="#B22222" />
+                                </View>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={{ fontFamily: "Poppins_700Bold", fontSize: 15, color: "#1A1A1A" }}>
+                                        Pembayaran Gateway Midtrans
+                                    </Text>
+                                    <Text style={{ fontFamily: "Poppins_400Regular", fontSize: 12, color: "#666" }}>
+                                        Order ID: {paymentData?.order_id || "-"}
+                                    </Text>
+                                </View>
+                            </View>
+
+                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 6 }}>
+                                <Text style={{ fontFamily: "Poppins_500Medium", fontSize: 13, color: "#555" }}>Status Transaksi</Text>
+                                <Text style={{
+                                    fontFamily: "Poppins_700Bold",
+                                    fontSize: 13,
+                                    color: isApproved ? "#2E7D32" : isRejected ? "#C62828" : "#E65100",
+                                }}>
+                                    {(paymentData?.transaction_status || "PENDING").toUpperCase()}
+                                </Text>
+                            </View>
+
+                            {isPendingVerif && (
+                                <View style={{ marginTop: 14 }}>
+                                    <TouchableOpacity
+                                        style={{
+                                            backgroundColor: "#B22222",
+                                            paddingVertical: 13,
+                                            borderRadius: 12,
+                                            flexDirection: "row",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            gap: 8,
+                                        }}
+                                        onPress={handlePayMidtrans}
+                                        activeOpacity={0.85}
+                                    >
+                                        <Ionicons name="wallet-outline" size={18} color="#FFFFFF" />
+                                        <Text style={{ fontFamily: "Poppins_600SemiBold", color: "#FFFFFF", fontSize: 14 }}>
+                                            Bayar Sekarang via Midtrans
+                                        </Text>
+                                    </TouchableOpacity>
+
+                                    <TouchableOpacity
+                                        style={{
+                                            backgroundColor: "#FFFFFF",
+                                            borderWidth: 1.5,
+                                            borderColor: "#E0E0E0",
+                                            paddingVertical: 11,
+                                            borderRadius: 12,
+                                            flexDirection: "row",
+                                            justifyContent: "center",
+                                            alignItems: "center",
+                                            gap: 8,
+                                            marginTop: 10,
+                                        }}
+                                        onPress={() => loadData(false)}
+                                        activeOpacity={0.8}
+                                    >
+                                        <Ionicons name="refresh" size={16} color="#444" />
+                                        <Text style={{ fontFamily: "Poppins_500Medium", color: "#444", fontSize: 13 }}>
+                                            Periksa Status Midtrans
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </View>
+                    )}
 
                     {/* PILIHAN 4 METODE PEMBAYARAN */}
                     <Text style={styles.sectionTitle}>Pilih Metode Pembayaran</Text>

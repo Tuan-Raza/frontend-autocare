@@ -1,8 +1,10 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
+import * as WebBrowser from "expo-web-browser";
 import {
     ActivityIndicator,
+    Linking,
     Alert,
     Dimensions,
     Image,
@@ -103,16 +105,58 @@ export default function BookingBerhasil() {
         return `Rp ${num.toLocaleString("id-ID")}`;
     };
 
-    const paymentMethod = paymentData?.metode_pembayaran || metode || "qris";
+    const paymentMethod = paymentData?.metode_pembayaran || metode || "midtrans";
     const isCod = paymentMethod.toLowerCase() === "cod" || paymentMethod.toLowerCase() === "bayar_di_tempat";
+    const isMidtrans = paymentMethod.toLowerCase() === "midtrans";
+    const txStatus = paymentData?.transaction_status || "pending";
     const statusVerifikasi = paymentData?.status_verifikasi || (isCod ? "diterima" : "menunggu_verifikasi");
 
-    const isApproved = statusVerifikasi === "diterima";
-    const isRejected = statusVerifikasi === "ditolak";
-    const isPendingVerif = statusVerifikasi === "menunggu_verifikasi";
+    const isApproved = statusVerifikasi === "diterima" || txStatus === "settlement" || txStatus === "capture";
+    const isRejected = statusVerifikasi === "ditolak" || txStatus === "deny" || txStatus === "cancel" || txStatus === "expire";
+    const isPendingVerif = !isApproved && !isRejected;
+
+    const handlePayMidtrans = async () => {
+        try {
+            const snapToken = paymentData?.snap_token;
+            const redirectUrl = snapToken 
+                ? `https://app.sandbox.midtrans.com/snap/v2/vtweb/${snapToken}` 
+                : null;
+
+            if (!redirectUrl) {
+                Alert.alert("Perhatian", "Data Snap Midtrans belum tersedia. Silakan tekan Periksa Status.");
+                return;
+            }
+
+            if (Platform.OS === "web") {
+                if (typeof window !== "undefined") {
+                    window.location.href = redirectUrl;
+                    return;
+                }
+            }
+
+            try {
+                await WebBrowser.openBrowserAsync(redirectUrl, {
+                    presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
+                    toolbarColor: "#B22222",
+                });
+            } catch (err) {
+                if (await Linking.canOpenURL(redirectUrl)) {
+                    await Linking.openURL(redirectUrl);
+                }
+            }
+
+            // Setelah browser ditutup, refresh data langsung dari backend & Midtrans
+            await loadData(true);
+        } catch (err) {
+            console.error("Open Midtrans Error:", err);
+            Alert.alert("Error", "Gagal membuka halaman pembayaran Midtrans.");
+        }
+    };
 
     const getMetodeName = (method) => {
         switch (String(method).toLowerCase()) {
+            case "midtrans":
+                return `Midtrans Payment Gateway (${paymentData?.payment_type ? paymentData.payment_type.toUpperCase() : "Online"})`;
             case "qris":
                 return "QRIS (Semua Bank & E-Wallet)";
             case "dana":
@@ -180,20 +224,20 @@ export default function BookingBerhasil() {
                             {isCod
                                 ? "Booking Berhasil Dikonfirmasi!"
                                 : isApproved
-                                ? "Pembayaran Telah Disetujui (ACC)!"
+                                ? (isMidtrans ? "Pembayaran Berhasil Dikonfirmasi!" : "Pembayaran Telah Disetujui (ACC)!")
                                 : isRejected
-                                ? "Pembayaran Ditolak"
-                                : "Bukti Pembayaran Berhasil Dikirim!"}
+                                ? "Pembayaran Ditolak / Dibatalkan"
+                                : (isMidtrans ? "Menunggu Pembayaran Midtrans" : "Bukti Pembayaran Berhasil Dikirim!")}
                         </Text>
 
                         <Text style={styles.heroSubtitle}>
                             {isCod
                                 ? "Metode Bayar di Tempat berhasil dipilih. Anda dapat melakukan pembayaran saat servis selesai di bengkel."
                                 : isApproved
-                                ? "Pembayaran Anda telah diverifikasi oleh admin. Booking servis Anda sudah aktif dan terkonfirmasi."
+                                ? "Pembayaran transaksi Anda telah diverifikasi. Booking servis Anda sudah aktif dan terkonfirmasi di sistem AutoCare."
                                 : isRejected
-                                ? "Bukti transfer tidak valid. Silakan unggah ulang bukti pembayaran yang benar."
-                                : "Bukti transfer Anda telah masuk ke sistem dan sedang dalam antrean verifikasi oleh admin AutoCare."}
+                                ? (isMidtrans ? "Transaksi pembayaran Midtrans dibatalkan atau kedaluwarsa." : "Bukti transfer tidak valid. Silakan unggah ulang bukti pembayaran yang benar.")
+                                : (isMidtrans ? "Selesaikan pembayaran melalui payment gateway Midtrans agar jadwal servis langsung terkonfirmasi." : "Bukti transfer Anda telah masuk ke sistem dan sedang dalam antrean verifikasi oleh admin AutoCare.")}
                         </Text>
 
                         {/* STATUS BADGE ACC */}
@@ -231,10 +275,10 @@ export default function BookingBerhasil() {
                                 ]}
                             >
                                 {isApproved
-                                    ? "STATUS: PEMBAYARAN DI-ACC (LUNAS)"
+                                    ? "STATUS: LUNAS & DIKONFIRMASI"
                                     : isRejected
-                                    ? "STATUS: PEMBAYARAN DITOLAK"
-                                    : "STATUS: MENUNGGU VERIFIKASI (ACC) ADMIN"}
+                                    ? "STATUS: PEMBAYARAN BATAL / EXPIRED"
+                                    : (isMidtrans ? "STATUS: MENUNGGU PEMBAYARAN (PENDING)" : "STATUS: MENUNGGU VERIFIKASI (ACC) ADMIN")}
                             </Text>
                         </View>
                     </View>
@@ -272,6 +316,57 @@ export default function BookingBerhasil() {
                             </View>
                         </View>
                     )}
+
+                    {/* TOMBOL MIDTRANS BAYAR JIKA PENDING */}
+                    {isMidtrans && isPendingVerif ? (
+                        <View style={{ width: "100%", marginBottom: 16 }}>
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: "#B22222",
+                                    paddingVertical: 14,
+                                    borderRadius: 12,
+                                    flexDirection: "row",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    gap: 8,
+                                    shadowColor: "#B22222",
+                                    shadowOffset: { width: 0, height: 4 },
+                                    shadowOpacity: 0.3,
+                                    shadowRadius: 8,
+                                    elevation: 4,
+                                }}
+                                onPress={handlePayMidtrans}
+                                activeOpacity={0.85}
+                            >
+                                <Ionicons name="card" size={20} color="#FFFFFF" />
+                                <Text style={{ fontFamily: "Poppins_600SemiBold", color: "#FFFFFF", fontSize: 15 }}>
+                                    Bayar Sekarang via Midtrans
+                                </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={{
+                                    backgroundColor: "#FFFFFF",
+                                    borderWidth: 1.5,
+                                    borderColor: "#E0E0E0",
+                                    paddingVertical: 12,
+                                    borderRadius: 12,
+                                    flexDirection: "row",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    gap: 8,
+                                    marginTop: 10,
+                                }}
+                                onPress={() => loadData(false)}
+                                activeOpacity={0.8}
+                            >
+                                <Ionicons name="refresh" size={18} color="#444" />
+                                <Text style={{ fontFamily: "Poppins_500Medium", color: "#444", fontSize: 14 }}>
+                                    Periksa Status Pembayaran
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    ) : null}
 
                     {/* STRUK / RECEIPT CARD */}
                     <View style={styles.receiptCard}>
