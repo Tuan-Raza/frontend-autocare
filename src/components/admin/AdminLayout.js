@@ -32,8 +32,8 @@ export default function AdminLayout({
         const checkAuth = async () => {
             try {
                 const stored = await adminApi.getStoredAdmin();
-                if (!stored) {
-                    router.replace("/admin/login");
+                if (!stored || stored.role !== "admin") {
+                    router.replace("/login");
                     return;
                 }
                 if (isMounted) {
@@ -45,16 +45,20 @@ export default function AdminLayout({
                 adminApi
                     .getMe()
                     .then((res) => {
-                        if (isMounted && res.admin) {
-                            setAdminUser(res.admin);
+                        if (isMounted) {
+                            if (res && res.admin && res.admin.role === "admin") {
+                                setAdminUser(res.admin);
+                            } else {
+                                router.replace("/login");
+                            }
                         }
                     })
                     .catch(() => {
-                        // If token expired or invalid, redirect to login
-                        router.replace("/admin/login");
+                        // If token expired or invalid, redirect to unified login
+                        router.replace("/login");
                     });
             } catch {
-                router.replace("/admin/login");
+                router.replace("/login");
             }
         };
 

@@ -77,7 +77,10 @@ export default function LogoutAnimation() {
         // ── LANGKAH 1: Hapus data user & profile photo ──────────────────
         try {
             await AsyncStorage.multiRemove([
+                "autocare_token",
                 "autocare_user",
+                "autocare_admin_token",
+                "autocare_admin_user",
                 "autocare_profile_photo",
                 "autocare_reset_email",
             ]);

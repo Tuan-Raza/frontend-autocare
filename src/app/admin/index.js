@@ -9,10 +9,10 @@ export default function AdminIndex() {
         const check = async () => {
             const admin = await adminApi.getStoredAdmin();
             if (!isMounted) return;
-            if (admin) {
+            if (admin && admin.role === "admin") {
                 router.replace("/admin/dashboard");
             } else {
-                router.replace("/admin/login");
+                router.replace("/login");
             }
         };
         check();

@@ -2,7 +2,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { Stack, router } from "expo-router";
 import { useEffect, useState } from "react";
-import { BlurView } from "expo-blur";
 
 import {
     ActivityIndicator,
@@ -46,7 +45,7 @@ export default function Login() {
                     const parsed = JSON.parse(userData);
                     if (parsed && (parsed.id || parsed.email)) {
                         if (parsed.role === "admin") {
-                            router.replace("/admin");
+                            router.replace("/admin/dashboard");
                         } else {
                             router.replace("/home");
                         }
@@ -102,6 +101,11 @@ export default function Login() {
                 return;
             }
 
+            // Simpan token autentikasi jika tersedia dari server
+            if (data.token) {
+                await AsyncStorage.setItem("autocare_token", data.token);
+            }
+
             await AsyncStorage.setItem("autocare_user", JSON.stringify(data.user));
 
             if (data.user.foto) {
@@ -110,9 +114,16 @@ export default function Login() {
                 await AsyncStorage.removeItem("autocare_profile_photo");
             }
 
+            // Pengalihan berdasarkan role akun yang terverifikasi backend
             if (data.user.role === "admin") {
-                router.replace("/admin");
+                if (data.token) {
+                    await AsyncStorage.setItem("autocare_admin_token", data.token);
+                }
+                await AsyncStorage.setItem("autocare_admin_user", JSON.stringify(data.user));
+                router.replace("/admin/dashboard");
             } else {
+                // Bersihkan sesi admin lama jika login sebagai user biasa
+                await AsyncStorage.multiRemove(["autocare_admin_token", "autocare_admin_user"]);
                 router.replace("/home");
             }
         } catch (error) {
@@ -123,9 +134,11 @@ export default function Login() {
         }
     };
 
+    const isFormFilled = email.trim().length > 0 && password.length > 0;
+
     /*
     ============================================================
-    DESKTOP (Tetap seperti kode awal kamu)
+    DESKTOP (Panel Kiri Putih Polos & Form Bergaya Mobile)
     ============================================================
     */
     if (isDesktop) {
@@ -136,38 +149,8 @@ export default function Login() {
             >
                 <Stack.Screen options={{ headerShown: false }} />
 
-                <ImageBackground
-                    source={require("../../assets/images/autocare-login-desktop.png")}
-                    style={styles.desktopLeft}
-                    imageStyle={styles.desktopLeftImage}
-                >
-                    <View style={styles.leftCircleOne} />
-                    <View style={styles.leftCircleTwo} />
-                    <View style={styles.leftCircleThree} />
-
-                    <View style={styles.leftGrid}>
-                        {Array.from({ length: 9 }).map((_, index) => (
-                            <View
-                                key={`left-v-${index}`}
-                                style={[
-                                    styles.gridVertical,
-                                    { left: `${index * 12.5}%` },
-                                ]}
-                            />
-                        ))}
-                        {Array.from({ length: 7 }).map((_, index) => (
-                            <View
-                                key={`left-h-${index}`}
-                                style={[
-                                    styles.gridHorizontal,
-                                    { top: `${index * 16}%` },
-                                ]}
-                            />
-                        ))}
-                    </View>
-
-                    <View style={styles.leftOverlay} />
-
+                {/* PANEL KIRI: Putih Polos (#FFFFFF), Bersih, Modern & Form Bergaya Mobile */}
+                <View style={styles.desktopLeft}>
                     <ScrollView
                         style={styles.desktopLeftScroll}
                         contentContainerStyle={[
@@ -177,192 +160,158 @@ export default function Login() {
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     >
-                        <BlurView
-                            intensity={55}
-                            tint="dark"
-                            style={styles.desktopLoginCard}
-                        >
-                            <View style={styles.desktopGlassInner}>
-                                <View style={styles.desktopLogoBox}>
-                                    <Image
-                                        source={require("../../assets/images/autocare-logo.png")}
-                                        style={styles.desktopLogo}
-                                        resizeMode="contain"
-                                    />
-                                </View>
-
-                                <Text style={styles.desktopTitle}>Selamat Datang</Text>
-                                <Text style={styles.desktopSubtitle}>
-                                    Masuk ke akun AutoCare Anda
-                                </Text>
-
-                                {errorMessage ? (
-                                    <View style={styles.desktopErrorBox}>
-                                        <Ionicons
-                                            name="alert-circle-outline"
-                                            size={18}
-                                            color="#B00000"
-                                        />
-                                        <Text style={styles.desktopErrorText}>
-                                            {errorMessage}
-                                        </Text>
-                                    </View>
-                                ) : null}
-
-                                <Text style={styles.desktopInputLabel}>Email / No. HP</Text>
-                                <View style={styles.desktopInputContainer}>
-                                    <Ionicons
-                                        name="person-outline"
-                                        size={20}
-                                        color="#777777"
-                                    />
-                                    <TextInput
-                                        style={styles.desktopInput}
-                                        placeholder="Masukkan Email atau no. HP"
-                                        placeholderTextColor="#999999"
-                                        value={email}
-                                        onChangeText={setEmail}
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                        keyboardType="email-address"
-                                        returnKeyType="next"
-                                        onSubmitEditing={() => {
-                                            if (password) handleLogin();
-                                        }}
-                                    />
-                                </View>
-
-                                <Text
-                                    style={[
-                                        styles.desktopInputLabel,
-                                        { marginTop: 15 },
-                                    ]}
-                                >
-                                    Password
-                                </Text>
-                                <View style={styles.desktopInputContainer}>
-                                    <Ionicons
-                                        name="lock-closed-outline"
-                                        size={20}
-                                        color="#777777"
-                                    />
-                                    <TextInput
-                                        style={styles.desktopInput}
-                                        placeholder="Masukkan password"
-                                        placeholderTextColor="#999999"
-                                        value={password}
-                                        onChangeText={setPassword}
-                                        secureTextEntry={!showPassword}
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                        returnKeyType="go"
-                                        onSubmitEditing={handleLogin}
-                                    />
-                                    <TouchableOpacity
-                                        onPress={() => setShowPassword(!showPassword)}
-                                        style={styles.passwordEye}
-                                    >
-                                        <Ionicons
-                                            name={
-                                                showPassword
-                                                    ? "eye-outline"
-                                                    : "eye-off-outline"
-                                            }
-                                            size={20}
-                                            color="#777777"
-                                        />
-                                    </TouchableOpacity>
-                                </View>
-
-                                <View style={styles.desktopOptionRow}>
-                                    <Pressable
-                                        style={styles.rememberContainer}
-                                        onPress={() => setIngatSaya(!ingatSaya)}
-                                    >
-                                        <View
-                                            style={[
-                                                styles.checkbox,
-                                                ingatSaya && styles.checkboxActive,
-                                            ]}
-                                        >
-                                            {ingatSaya && (
-                                                <Text style={styles.checkmark}>✓</Text>
-                                            )}
-                                        </View>
-                                        <Text style={styles.rememberText}>Ingat saya</Text>
-                                    </Pressable>
-
-                                    <TouchableOpacity
-                                        onPress={() => router.push("/lupa-password")}
-                                    >
-                                        <Text style={styles.desktopForgot}>
-                                            Lupa password?
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-
-                                <TouchableOpacity
-                                    style={[
-                                        styles.desktopLoginButton,
-                                        loading && styles.loginButtonDisabled,
-                                    ]}
-                                    onPress={handleLogin}
-                                    disabled={loading}
-                                    activeOpacity={0.85}
-                                >
-                                    {loading ? (
-                                        <ActivityIndicator color="#FFFFFF" />
-                                    ) : (
-                                        <>
-                                            <Text style={styles.desktopLoginText}>
-                                                Masuk
-                                            </Text>
-                                            <Ionicons
-                                                name="arrow-forward"
-                                                size={19}
-                                                color="#FFFFFF"
-                                            />
-                                        </>
-                                    )}
-                                </TouchableOpacity>
-
-                                <View style={styles.desktopOrContainer}>
-                                    <View style={styles.desktopOrLine} />
-                                    <Text style={styles.desktopOrText}>atau</Text>
-                                    <View style={styles.desktopOrLine} />
-                                </View>
-
-                                <TouchableOpacity
-                                    style={styles.desktopGoogleButton}
-                                    activeOpacity={0.8}
-                                >
-                                    <Text style={styles.googleG}>G</Text>
-                                    <Text style={styles.googleText}>
-                                        Masuk dengan Google
-                                    </Text>
-                                </TouchableOpacity>
-
-                                <View style={styles.desktopRegister}>
-                                    <Text style={styles.desktopRegisterText}>
-                                        Belum punya akun?
-                                    </Text>
-                                    <TouchableOpacity
-                                        onPress={() => router.push("/daftar")}
-                                    >
-                                        <Text style={styles.desktopRegisterLink}>
-                                            Daftar
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-
-                                <Text style={styles.desktopFooter}>
-                                    AutoCare • Vehicle Service
-                                </Text>
+                        <View style={styles.desktopFormWrapper}>
+                            {/* Logo */}
+                            <View style={styles.desktopLogoWrapper}>
+                                <Image
+                                    source={require("../../assets/images/autocare-logo.png")}
+                                    style={styles.logo}
+                                    resizeMode="contain"
+                                />
                             </View>
-                        </BlurView>
-                    </ScrollView>
-                </ImageBackground>
 
+                            {/* Judul dan Deskripsi */}
+                            <Text style={styles.title}>Selamat Datang</Text>
+                            <Text style={styles.subtitle}>
+                                Masuk ke akun anda untuk melanjutkan
+                            </Text>
+
+                            {/* Pesan Error */}
+                            {errorMessage ? (
+                                <View style={styles.errorBox}>
+                                    <Ionicons
+                                        name="alert-circle-outline"
+                                        size={18}
+                                        color="#B30000"
+                                    />
+                                    <Text style={styles.errorText}>{errorMessage}</Text>
+                                </View>
+                            ) : null}
+
+                            {/* Input Email / No. Handphone */}
+                            <View style={styles.inputContainer}>
+                                <Ionicons
+                                    name="mail-outline"
+                                    size={20}
+                                    color="#8E96A4"
+                                    style={styles.inputIcon}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Email/No. Handphone"
+                                    placeholderTextColor="#8E96A4"
+                                    value={email}
+                                    onChangeText={setEmail}
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    keyboardType="email-address"
+                                    returnKeyType="next"
+                                    onSubmitEditing={() => {
+                                        if (password) handleLogin();
+                                    }}
+                                />
+                            </View>
+
+                            {/* Input Password */}
+                            <View style={styles.inputContainer}>
+                                <Ionicons
+                                    name="lock-closed-outline"
+                                    size={20}
+                                    color="#8E96A4"
+                                    style={styles.inputIcon}
+                                />
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Password"
+                                    placeholderTextColor="#8E96A4"
+                                    value={password}
+                                    onChangeText={setPassword}
+                                    secureTextEntry={!showPassword}
+                                    autoCapitalize="none"
+                                    autoCorrect={false}
+                                    returnKeyType="go"
+                                    onSubmitEditing={handleLogin}
+                                />
+                                <TouchableOpacity
+                                    onPress={() => setShowPassword(!showPassword)}
+                                    hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                                >
+                                    <Ionicons
+                                        name={showPassword ? "eye-outline" : "eye-off-outline"}
+                                        size={20}
+                                        color="#8E96A4"
+                                    />
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* Checkbox Ingat Saya & Link Lupa Password */}
+                            <View style={styles.desktopOptionRow}>
+                                <Pressable
+                                    style={styles.rememberContainer}
+                                    onPress={() => setIngatSaya(!ingatSaya)}
+                                >
+                                    <View
+                                        style={[
+                                            styles.checkbox,
+                                            ingatSaya && styles.checkboxActive,
+                                        ]}
+                                    >
+                                        {ingatSaya && (
+                                            <Text style={styles.checkmark}>✓</Text>
+                                        )}
+                                    </View>
+                                    <Text style={styles.rememberText}>Ingat saya</Text>
+                                </Pressable>
+
+                                <TouchableOpacity
+                                    onPress={() => router.push("/lupa-password")}
+                                >
+                                    <Text style={styles.forgotText}>Lupa password?</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* Tombol Login */}
+                            <TouchableOpacity
+                                style={[
+                                    styles.loginButton,
+                                    isFormFilled && styles.loginButtonActive,
+                                    loading && styles.loginButtonDisabled,
+                                ]}
+                                onPress={handleLogin}
+                                disabled={loading}
+                                activeOpacity={0.85}
+                            >
+                                {loading ? (
+                                    <ActivityIndicator color="#FFFFFF" />
+                                ) : (
+                                    <Text style={styles.loginButtonText}>Masuk</Text>
+                                )}
+                            </TouchableOpacity>
+
+                            {/* Pemisah "atau" */}
+                            <View style={styles.desktopOrContainer}>
+                                <View style={styles.desktopOrLine} />
+                                <Text style={styles.desktopOrText}>atau</Text>
+                                <View style={styles.desktopOrLine} />
+                            </View>
+
+                            {/* Link Daftar */}
+                            <View style={styles.desktopRegisterRow}>
+                                <Text style={styles.registerText}>Belum punya akun? </Text>
+                                <TouchableOpacity onPress={() => router.push("/daftar")}>
+                                    <Text style={styles.registerLink}>Daftar</Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            {/* Footer AutoCare */}
+                            <Text style={styles.desktopFooter}>
+                                AutoCare • Vehicle Service
+                            </Text>
+                        </View>
+                    </ScrollView>
+                </View>
+
+                {/* PANEL KANAN DESKTOP */}
                 <ImageBackground
                     source={require("../../assets/images/autocare-banner.png")}
                     style={styles.desktopRight}
@@ -392,6 +341,22 @@ export default function Login() {
                             Kelola kendaraan, booking service, dan pantau riwayat
                             perawatan kendaraan Anda dalam satu aplikasi.
                         </Text>
+
+                        {/* BADGE KEUNGGULAN / PROMOSI */}
+                        <View style={styles.brandFeatures}>
+                            <View style={styles.brandBadgeItem}>
+                                <Ionicons name="checkmark-circle" size={17} color="#FFFFFF" />
+                                <Text style={styles.brandBadgeText}>Booking Servis Cepat & Praktis</Text>
+                            </View>
+                            <View style={styles.brandBadgeItem}>
+                                <Ionicons name="shield-checkmark" size={17} color="#FFFFFF" />
+                                <Text style={styles.brandBadgeText}>Bengkel Rekanan Terverifikasi</Text>
+                            </View>
+                            <View style={styles.brandBadgeItem}>
+                                <Ionicons name="pricetag" size={17} color="#FFFFFF" />
+                                <Text style={styles.brandBadgeText}>Estimasi Biaya Transparan</Text>
+                            </View>
+                        </View>
                     </View>
 
                     <Text style={styles.brandCopyright}>© 2026 AutoCare</Text>
@@ -405,7 +370,6 @@ export default function Login() {
     MOBILE (Disesuaikan dengan Desain Gambar)
     ============================================================
     */
-    const isFormFilled = email.trim().length > 0 && password.length > 0;
 
     return (
         <KeyboardAvoidingView
@@ -692,148 +656,45 @@ const styles = StyleSheet.create({
     },
     desktopLeft: {
         flex: 1,
-    },
-    desktopLeftImage: {
-        resizeMode: "cover",
-    },
-    leftCircleOne: {
-        position: "absolute",
-        width: 300,
-        height: 300,
-        borderRadius: 150,
-        backgroundColor: "rgba(179,0,0,0.18)",
-        top: -80,
-        left: -80,
-    },
-    leftCircleTwo: {
-        position: "absolute",
-        width: 240,
-        height: 240,
-        borderRadius: 120,
-        backgroundColor: "rgba(255,255,255,0.06)",
-        bottom: -60,
-        right: -40,
-    },
-    leftCircleThree: {
-        position: "absolute",
-        width: 140,
-        height: 140,
-        borderRadius: 70,
-        backgroundColor: "rgba(179,0,0,0.14)",
-        top: "45%",
-        right: 40,
-    },
-    leftGrid: {
-        ...StyleSheet.absoluteFillObject,
-    },
-    gridVertical: {
-        position: "absolute",
-        top: 0,
-        bottom: 0,
-        width: 1,
-        backgroundColor: "rgba(255,255,255,0.04)",
-    },
-    gridHorizontal: {
-        position: "absolute",
-        left: 0,
-        right: 0,
-        height: 1,
-        backgroundColor: "rgba(255,255,255,0.04)",
-    },
-    leftOverlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(15,15,18,0.55)",
+        backgroundColor: "#FFFFFF",
     },
     desktopLeftScroll: {
         flex: 1,
+        backgroundColor: "#FFFFFF",
     },
     desktopLeftContent: {
         justifyContent: "center",
         alignItems: "center",
-        padding: 32,
+        paddingVertical: 48,
+        paddingHorizontal: 36,
     },
-    desktopLoginCard: {
+    desktopFormWrapper: {
         width: "100%",
-        maxWidth: 430,
-        borderRadius: 24,
-        overflow: "hidden",
-        borderWidth: 1,
-        borderColor: "rgba(255,255,255,0.22)",
+        maxWidth: 420,
     },
-    desktopGlassInner: {
-        padding: 32,
-        backgroundColor: "rgba(255,255,255,0.12)",
-    },
-    desktopLogoBox: {
-        width: 72,
-        height: 72,
-        borderRadius: 20,
+    desktopLogoWrapper: {
+        width: 108,
+        height: 108,
+        borderRadius: 54,
         backgroundColor: "#FFFFFF",
+        alignSelf: "center",
+        marginBottom: 28,
         justifyContent: "center",
         alignItems: "center",
-        alignSelf: "center",
-        marginBottom: 16,
-    },
-    desktopLogo: {
-        width: 54,
-        height: 54,
-    },
-    desktopTitle: {
-        fontSize: 26,
-        fontWeight: "700",
-        color: "#FFFFFF",
-        textAlign: "center",
-    },
-    desktopSubtitle: {
-        fontSize: 14,
-        color: "rgba(255,255,255,0.8)",
-        textAlign: "center",
-        marginTop: 4,
-        marginBottom: 22,
-    },
-    desktopErrorBox: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#FFEBEB",
-        padding: 10,
-        borderRadius: 10,
-        marginBottom: 14,
-        gap: 8,
-    },
-    desktopErrorText: {
-        color: "#B00000",
-        fontSize: 13,
-        flex: 1,
-    },
-    desktopInputLabel: {
-        color: "#FFFFFF",
-        fontSize: 13,
-        fontWeight: "600",
-        marginBottom: 6,
-    },
-    desktopInputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        backgroundColor: "#FFFFFF",
-        borderRadius: 12,
-        paddingHorizontal: 14,
-        height: 48,
-        gap: 10,
-    },
-    desktopInput: {
-        flex: 1,
-        fontSize: 14,
-        color: "#222222",
-    },
-    passwordEye: {
-        padding: 4,
+        elevation: 5,
+        shadowColor: "#000000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.12,
+        shadowRadius: 8,
+        borderWidth: 1,
+        borderColor: "#F3F4F6",
     },
     desktopOptionRow: {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 14,
-        marginBottom: 20,
+        marginTop: 2,
+        marginBottom: 26,
     },
     rememberContainer: {
         flexDirection: "row",
@@ -845,9 +706,10 @@ const styles = StyleSheet.create({
         height: 18,
         borderRadius: 4,
         borderWidth: 1.5,
-        borderColor: "#FFFFFF",
+        borderColor: "#8E96A4",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "#FFFFFF",
     },
     checkboxActive: {
         backgroundColor: "#B30000",
@@ -859,82 +721,35 @@ const styles = StyleSheet.create({
         fontWeight: "700",
     },
     rememberText: {
-        color: "#FFFFFF",
+        color: "#4B5563",
         fontSize: 13,
-    },
-    desktopForgot: {
-        color: "#FFD6D6",
-        fontSize: 13,
-        fontWeight: "600",
-    },
-    desktopLoginButton: {
-        height: 48,
-        borderRadius: 12,
-        backgroundColor: "#B30000",
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
-        gap: 8,
-    },
-    desktopLoginText: {
-        color: "#FFFFFF",
-        fontSize: 15,
-        fontWeight: "700",
     },
     desktopOrContainer: {
         flexDirection: "row",
         alignItems: "center",
-        marginVertical: 18,
-        gap: 10,
+        marginTop: 26,
+        marginBottom: 20,
+        gap: 12,
     },
     desktopOrLine: {
         flex: 1,
         height: 1,
-        backgroundColor: "rgba(255,255,255,0.25)",
+        backgroundColor: "#E5E7EB",
     },
     desktopOrText: {
-        color: "rgba(255,255,255,0.75)",
+        color: "#8E96A4",
         fontSize: 13,
     },
-    desktopGoogleButton: {
-        height: 46,
-        borderRadius: 12,
-        backgroundColor: "#FFFFFF",
+    desktopRegisterRow: {
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        gap: 10,
-    },
-    googleG: {
-        fontSize: 18,
-        fontWeight: "800",
-        color: "#DB4437",
-    },
-    googleText: {
-        fontSize: 14,
-        fontWeight: "600",
-        color: "#222222",
-    },
-    desktopRegister: {
-        flexDirection: "row",
-        justifyContent: "center",
-        gap: 5,
-        marginTop: 20,
-    },
-    desktopRegisterText: {
-        color: "rgba(255,255,255,0.85)",
-        fontSize: 13,
-    },
-    desktopRegisterLink: {
-        color: "#FFD6D6",
-        fontSize: 13,
-        fontWeight: "700",
     },
     desktopFooter: {
         textAlign: "center",
-        color: "rgba(255,255,255,0.55)",
+        color: "#9CA3AF",
         fontSize: 12,
-        marginTop: 18,
+        marginTop: 28,
     },
     desktopRight: {
         flex: 1,
@@ -1010,12 +825,43 @@ const styles = StyleSheet.create({
         lineHeight: 22,
     },
     brandFeatures: {
-        marginTop: 20,
+        marginTop: 24,
+        gap: 12,
+        width: "100%",
+        paddingHorizontal: 10,
+    },
+    brandBadgeItem: {
+        flexDirection: "row",
+        alignItems: "center",
+        backgroundColor: "rgba(255, 255, 255, 0.12)",
+        paddingVertical: 10,
+        paddingHorizontal: 16,
+        borderRadius: 12,
+        gap: 10,
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 0.15)",
+    },
+    brandBadgeText: {
+        color: "#FFFFFF",
+        fontSize: 13.5,
+        fontWeight: "600",
     },
     brandCopyright: {
         position: "absolute",
         bottom: 24,
         color: "rgba(255,255,255,0.7)",
         fontSize: 13,
+    },
+    loginButton: {
+        height: 48,
+        borderRadius: 10,
+        backgroundColor: "#B3B3B3", // Abu-abu default seperti di gambar
+        justifyContent: "center",
+        alignItems: "center",
+        elevation: 2,
+        shadowColor: "#000000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.12,
+        shadowRadius: 4,
     },
 });

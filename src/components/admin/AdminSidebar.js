@@ -83,7 +83,7 @@ export default function AdminSidebar({ adminUser, onClose }) {
     const handleLogout = async () => {
         const doLogout = async () => {
             await adminApi.logout();
-            router.replace("/admin/login");
+            router.replace("/login");
         };
 
         if (Platform.OS === "web") {

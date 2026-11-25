@@ -8,7 +8,10 @@ const ADMIN_USER_KEY = "autocare_admin_user";
  * Helper to get authorization headers
  */
 async function getAuthHeaders() {
-    const token = await AsyncStorage.getItem(TOKEN_KEY);
+    let token = await AsyncStorage.getItem(TOKEN_KEY);
+    if (!token) {
+        token = await AsyncStorage.getItem("autocare_token");
+    }
     return {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -66,18 +69,32 @@ export const adminApi = {
     },
 
     async getStoredAdmin() {
-        const raw = await AsyncStorage.getItem(ADMIN_USER_KEY);
-        if (!raw) return null;
-        try {
-            return JSON.parse(raw);
-        } catch {
-            return null;
+        const rawAdmin = await AsyncStorage.getItem(ADMIN_USER_KEY);
+        if (rawAdmin) {
+            try {
+                const parsed = JSON.parse(rawAdmin);
+                if (parsed && parsed.role === "admin") return parsed;
+            } catch (_) {}
         }
+        const rawUser = await AsyncStorage.getItem("autocare_user");
+        if (rawUser) {
+            try {
+                const parsed = JSON.parse(rawUser);
+                if (parsed && parsed.role === "admin") return parsed;
+            } catch (_) {}
+        }
+        return null;
     },
 
     async logout() {
-        await AsyncStorage.removeItem(TOKEN_KEY);
-        await AsyncStorage.removeItem(ADMIN_USER_KEY);
+        await AsyncStorage.multiRemove([
+            "autocare_token",
+            "autocare_user",
+            "autocare_admin_token",
+            "autocare_admin_user",
+            "autocare_profile_photo",
+            "autocare_reset_email",
+        ]);
     },
 
     // ----------------------------------------------------
