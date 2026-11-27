@@ -2,15 +2,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
 import { router, useLocalSearchParams } from "expo-router";
-import { safeBack } from "../utils/navigation";
-import * as WebBrowser from "expo-web-browser";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
     Alert,
     Dimensions,
-    Linking,
     Image,
+    Modal,
     Platform,
     SafeAreaView,
     ScrollView,
@@ -22,9 +20,10 @@ import {
 } from "react-native";
 
 import { API_URL } from "../config";
+import { safeBack } from "../utils/navigation";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const isDesktop = Platform.OS === "web" && SCREEN_WIDTH >= 768;
+const RED = "#B22222";
 
 export default function Payment() {
     const { bookingId } = useLocalSearchParams();
@@ -37,21 +36,23 @@ export default function Payment() {
     const [bookingData, setBookingData] = useState(null);
     const [paymentData, setPaymentData] = useState(null);
 
-    // Form manual payment
-    const [selectedMethod, setSelectedMethod] = useState("qris"); // 'qris' | 'dana' | 'seabank' | 'cod'
+    // Form pembayaran
+    const [selectedMethod, setSelectedMethod] = useState("qris"); // 'qris' | 'cod'
     const [proofImage, setProofImage] = useState(null); // base64 / uri
     const [catatan, setCatatan] = useState("");
-    const [copiedKey, setCopiedKey] = useState("");
+    const [isQrZoomed, setIsQrZoomed] = useState(false);
 
-    // Message feedback
+    // Feedback message
     const [statusMessage, setStatusMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
+
+    const isDesktop = Platform.OS === "web" && SCREEN_WIDTH >= 768;
 
     useEffect(() => {
         loadData();
     }, [bookingId]);
 
-    // Polling status pembayaran jika statusnya sedang menunggu verifikasi
+    // Polling status jika sedang menunggu verifikasi
     useEffect(() => {
         if (!bookingId) return;
         const interval = setInterval(() => {
@@ -72,7 +73,16 @@ export default function Payment() {
                 return;
             }
 
-            const response = await fetch(`${API_URL}/api/payment/booking/${bookingId}`);
+            const userData = await AsyncStorage.getItem("autocare_user");
+            const token = await AsyncStorage.getItem("autocare_token");
+            const user = userData ? JSON.parse(userData) : null;
+            const userParam = user?.id ? `?userId=${user.id}` : "";
+
+            const response = await fetch(`${API_URL}/api/payment/booking/${bookingId}${userParam}`, {
+                headers: {
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+            });
             const result = await response.json();
 
             if (!response.ok || !result.success) {
@@ -82,8 +92,11 @@ export default function Payment() {
             setBookingData(result.data.booking);
             if (result.data.payment) {
                 setPaymentData(result.data.payment);
-                if (result.data.payment.metode_pembayaran) {
-                    setSelectedMethod(result.data.payment.metode_pembayaran);
+                const method = result.data.payment.metode_pembayaran?.toLowerCase();
+                if (method === "cod" || method === "bayar_di_tempat") {
+                    setSelectedMethod("cod");
+                } else {
+                    setSelectedMethod("qris");
                 }
             }
         } catch (err) {
@@ -96,27 +109,19 @@ export default function Payment() {
         }
     };
 
-    const handleCopy = (text, key) => {
-        if (typeof navigator !== "undefined" && navigator.clipboard) {
-            navigator.clipboard.writeText(text);
-        }
-        setCopiedKey(key);
-        setTimeout(() => setCopiedKey(""), 2500);
-    };
-
     const pickProofImage = async () => {
         try {
             const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
             if (status !== "granted") {
                 Alert.alert(
                     "Izin Ditolak",
-                    "AutoCare membutuhkan izin akses galeri untuk mengunggah bukti pembayaran."
+                    "AutoCare membutuhkan izin akses galeri untuk mengunggah bukti pembayaran QRIS."
                 );
                 return;
             }
 
             const result = await ImagePicker.launchImageLibraryAsync({
-                mediaTypes: ['images'],
+                mediaTypes: ["images"],
                 allowsEditing: true,
                 aspect: [4, 5],
                 quality: 0.8,
@@ -134,7 +139,7 @@ export default function Payment() {
             }
         } catch (err) {
             console.error("Pick image error:", err);
-            Alert.alert("Error", "Gagal memilih foto bukti transfer.");
+            Alert.alert("Error", "Gagal memilih foto bukti pembayaran.");
         }
     };
 
@@ -151,22 +156,25 @@ export default function Payment() {
             }
             const user = JSON.parse(userData);
 
-            // Validasi bukti transfer jika bukan COD
-            if (selectedMethod !== "cod" && !proofImage) {
-                setErrorMessage("Harap unggah foto bukti transfer terlebih dahulu.");
+            // Validasi bukti transfer jika QRIS
+            if (selectedMethod === "qris" && !proofImage) {
+                setErrorMessage("Harap unggah foto bukti pembayaran QRIS terlebih dahulu.");
                 return;
             }
+
+            const token = await AsyncStorage.getItem("autocare_token");
 
             const response = await fetch(`${API_URL}/api/payment/manual`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
                 },
                 body: JSON.stringify({
                     bookingId: Number(bookingId),
                     userId: Number(user.id),
                     metodePembayaran: selectedMethod,
-                    buktiTransfer: proofImage || null,
+                    buktiTransfer: selectedMethod === "qris" ? proofImage : null,
                     catatan: catatan.trim() || null,
                 }),
             });
@@ -174,13 +182,12 @@ export default function Payment() {
             const result = await response.json();
 
             if (!response.ok || !result.success) {
-                throw new Error(result.message || "Gagal mengirim pembayaran");
+                throw new Error(result.message || "Gagal memproses pembayaran");
             }
 
             setStatusMessage(result.message);
             await loadData(true);
 
-            // Alihkan langsung ke tampilan struk & status setelah pembayaran
             setTimeout(() => {
                 router.replace({
                     pathname: "/booking-berhasil",
@@ -190,7 +197,7 @@ export default function Payment() {
                         metode: selectedMethod,
                     },
                 });
-            }, 600);
+            }, 700);
         } catch (err) {
             console.error("Submit Payment Error:", err);
             setErrorMessage(err.message || "Terjadi kesalahan saat memproses pembayaran.");
@@ -216,16 +223,19 @@ export default function Payment() {
                 },
                 body: JSON.stringify({
                     status: newStatus,
-                    alasan: newStatus === "diterima" ? "Pembayaran valid & sesuai" : "Bukti buram / transfer tidak masuk",
+                    alasan:
+                        newStatus === "terverifikasi" || newStatus === "diterima"
+                            ? "Pembayaran QRIS telah dicek & sesuai"
+                            : "Foto bukti tidak jelas atau nominal tidak sesuai",
                 }),
             });
 
             const result = await response.json();
             if (!response.ok || !result.success) {
-                throw new Error(result.message || "Gagal memverifikasi");
+                throw new Error(result.message || "Gagal memverifikasi status pembayaran");
             }
 
-            Alert.alert("Hasil Verifikasi", result.message);
+            Alert.alert("Hasil Pengujian", result.message);
             await loadData(true);
         } catch (err) {
             Alert.alert("Error", err.message || "Gagal memproses verifikasi");
@@ -242,7 +252,7 @@ export default function Payment() {
     if (loading) {
         return (
             <SafeAreaView style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#F20D18" />
+                <ActivityIndicator size="large" color={RED} />
                 <Text style={styles.loadingText}>Memuat rincian pembayaran...</Text>
             </SafeAreaView>
         );
@@ -250,50 +260,22 @@ export default function Payment() {
 
     const totalHarga = bookingData?.total_harga || 0;
     const kodeBooking = bookingData?.kode_booking || "-";
-    const txStatus = paymentData?.transaction_status || "";
-    const isMidtrans = paymentData?.metode_pembayaran === "midtrans" || paymentData?.payment_type === "midtrans";
-    const statusVerifikasi = paymentData?.status_verifikasi; // 'menunggu_verifikasi' | 'diterima' | 'ditolak'
-    const isApproved = statusVerifikasi === "diterima" || txStatus === "settlement" || txStatus === "capture";
-    const isRejected = statusVerifikasi === "ditolak" || txStatus === "deny" || txStatus === "cancel" || txStatus === "expire";
-    const isPendingVerif = !isApproved && !isRejected && (Boolean(statusVerifikasi) || Boolean(txStatus));
+    const statusVerifikasi = paymentData?.status_verifikasi;
+    const txStatus = paymentData?.transaction_status;
 
-    const handlePayMidtrans = async () => {
-        try {
-            const snapToken = paymentData?.snap_token;
-            const redirectUrl = snapToken 
-                ? `https://app.sandbox.midtrans.com/snap/v2/vtweb/${snapToken}` 
-                : null;
-
-            if (!redirectUrl) {
-                Alert.alert("Perhatian", "Data Snap Midtrans belum tersedia. Silakan muat ulang.");
-                return;
-            }
-
-            if (Platform.OS === "web") {
-                if (typeof window !== "undefined") {
-                    window.location.href = redirectUrl;
-                    return;
-                }
-            }
-
-            try {
-                await WebBrowser.openBrowserAsync(redirectUrl, {
-                    presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
-                    toolbarColor: "#B22222",
-                });
-            } catch (err) {
-                if (await Linking.canOpenURL(redirectUrl)) {
-                    await Linking.openURL(redirectUrl);
-                }
-            }
-
-            // Setelah browser ditutup, refresh data langsung dari backend & Midtrans
-            await loadData(true);
-        } catch (err) {
-            console.error("Open Midtrans Error:", err);
-            Alert.alert("Error", "Gagal membuka halaman pembayaran Midtrans.");
-        }
-    };
+    const isPaid =
+        statusVerifikasi === "terverifikasi" ||
+        statusVerifikasi === "diterima" ||
+        txStatus === "settlement";
+    const isRejected =
+        statusVerifikasi === "ditolak" ||
+        txStatus === "deny" ||
+        txStatus === "cancel";
+    const isUnpaidCod =
+        statusVerifikasi === "belum_dibayar" ||
+        statusVerifikasi === "menunggu_pembayaran";
+    const isPendingVerif =
+        statusVerifikasi === "menunggu_verifikasi" && !isPaid && !isRejected;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -323,7 +305,7 @@ export default function Payment() {
                                 <Text style={styles.billAmount}>{formatRupiah(totalHarga)}</Text>
                             </View>
                             <View style={styles.bookingBadge}>
-                                <Text style={styles.bookingBadgeText}>{kodeBooking}</Text>
+                                <Text style={styles.bookingBadgeText}>#{kodeBooking}</Text>
                             </View>
                         </View>
 
@@ -331,13 +313,18 @@ export default function Payment() {
 
                         <View style={styles.infoRow}>
                             <Ionicons name="business-outline" size={16} color="#666" />
-                            <Text style={styles.infoText}>{bookingData?.nama_bengkel || "Bengkel AutoCare"}</Text>
+                            <Text style={styles.infoText}>
+                                {bookingData?.nama_bengkel || "Bengkel AutoCare"}
+                            </Text>
                         </View>
 
                         <View style={styles.infoRow}>
                             <Ionicons name="calendar-outline" size={16} color="#666" />
                             <Text style={styles.infoText}>
-                                {bookingData?.tanggal_booking ? String(bookingData.tanggal_booking).split("T")[0] : "-"} | Jam {bookingData?.jam_booking?.substring(0, 5) || "-"}
+                                {bookingData?.tanggal_booking
+                                    ? String(bookingData.tanggal_booking).split("T")[0]
+                                    : "-"}{" "}
+                                | Jam {bookingData?.jam_booking?.substring(0, 5) || "-"}
                             </Text>
                         </View>
 
@@ -345,70 +332,91 @@ export default function Payment() {
                             <View style={styles.infoRow}>
                                 <Ionicons name="car-outline" size={16} color="#666" />
                                 <Text style={styles.infoText}>
-                                    {bookingData.nama_kendaraan} ({bookingData.nomor_polisi || "-"})
+                                    {bookingData.nama_kendaraan} (
+                                    {bookingData.nomor_polisi || "-"})
                                 </Text>
                             </View>
                         ) : null}
                     </View>
 
-                    {/* STATUS VERIFIKASI ACC JIKA SUDAH DISUBMIT */}
+                    {/* STATUS CARD (JIKA SUDAH DISUBMIT) */}
                     {statusVerifikasi ? (
                         <View
                             style={[
                                 styles.statusCard,
-                                isApproved && styles.statusCardApproved,
+                                isPaid && styles.statusCardPaid,
                                 isRejected && styles.statusCardRejected,
+                                isUnpaidCod && styles.statusCardCod,
                                 isPendingVerif && styles.statusCardPending,
                             ]}
                         >
                             <View style={styles.statusHeaderRow}>
                                 <Ionicons
                                     name={
-                                        isApproved
+                                        isPaid
                                             ? "checkmark-circle"
                                             : isRejected
                                             ? "close-circle"
-                                            : "time"
+                                            : isUnpaidCod
+                                            ? "cash-outline"
+                                            : "time-outline"
                                     }
                                     size={24}
-                                    color={isApproved ? "#2E7D32" : isRejected ? "#C62828" : "#E65100"}
+                                    color={
+                                        isPaid
+                                            ? "#2E7D32"
+                                            : isRejected
+                                            ? "#C62828"
+                                            : isUnpaidCod
+                                            ? "#1E40AF"
+                                            : "#D97706"
+                                    }
                                 />
                                 <Text
                                     style={[
                                         styles.statusTitle,
-                                        isApproved && { color: "#2E7D32" },
+                                        isPaid && { color: "#2E7D32" },
                                         isRejected && { color: "#C62828" },
-                                        isPendingVerif && { color: "#E65100" },
+                                        isUnpaidCod && { color: "#1E40AF" },
+                                        isPendingVerif && { color: "#D97706" },
                                     ]}
                                 >
-                                    {isApproved
-                                        ? "Pembayaran Disetujui (ACC)"
+                                    {isPaid
+                                        ? "Pembayaran Lunas (Terverifikasi)"
                                         : isRejected
-                                        ? "Pembayaran Ditolak"
+                                        ? "Bukti Pembayaran Ditolak"
+                                        : isUnpaidCod
+                                        ? "Belum Dibayar (Bayar di Bengkel)"
                                         : "Menunggu Verifikasi Admin"}
                                 </Text>
                             </View>
 
                             <Text style={styles.statusDescription}>
-                                {isApproved
-                                    ? (isMidtrans ? "Pembayaran online Midtrans Anda telah berhasil dikonfirmasi. Booking servis Anda sudah aktif!" : "Bukti pembayaran Anda telah diverifikasi dan disetujui (ACC). Booking servis Anda telah DIKONFIRMASI!")
+                                {isPaid
+                                    ? "Pembayaran Anda telah diverifikasi oleh admin. Booking servis Anda telah DIKONFIRMASI!"
                                     : isRejected
-                                    ? (isMidtrans ? "Pembayaran Midtrans dibatalkan atau kedaluwarsa. Silakan lakukan pembayaran baru." : `Bukti transfer tidak sesuai atau belum masuk. ${paymentData?.catatan || "Silakan lakukan transfer ulang dan unggah bukti baru."}`)
-                                    : (isMidtrans ? "Transaksi pembayaran Midtrans sedang menunggu penyelesaian pembayaran dari Anda." : "Bukti transfer Anda telah tersimpan dan sedang dalam antrean verifikasi oleh admin AutoCare. Status akan otomatis berubah saat di-ACC.")}
+                                    ? `Bukti transfer ditolak oleh admin: ${
+                                          paymentData?.catatan_penolakan ||
+                                          paymentData?.catatan ||
+                                          "Foto bukti tidak jelas atau transfer belum masuk."
+                                      } Silakan unggah foto bukti pembayaran yang baru di bawah.`
+                                    : isUnpaidCod
+                                    ? "Metode Bayar di Tempat (COD) telah dipilih. Anda dapat melakukan pembayaran langsung secara tunai atau debit saat tiba di bengkel."
+                                    : "Bukti transfer QRIS Anda telah kami terima dan sedang dalam antrean verifikasi oleh admin AutoCare. Status akan otomatis berubah menjadi Lunas setelah di-ACC."}
                             </Text>
 
-                            {/* SIMULASI ACC UNTUK TESTING QA */}
-                            <View style={styles.qaAccSection}>
-                                <Text style={styles.qaAccLabel}>🧪 Panel Pengujian Status ACC:</Text>
+                            {/* PANEL PENGUJIAN ACC UNTUK QA / ADMIN TESTING */}
+                            <View style={styles.qaSection}>
+                                <Text style={styles.qaTitle}>🧪 Panel Simulasi Verifikasi (QA):</Text>
                                 <View style={styles.qaBtnRow}>
                                     <TouchableOpacity
                                         style={[styles.qaBtn, styles.qaBtnAccept]}
-                                        onPress={() => handleSimulasiAcc("diterima")}
+                                        onPress={() => handleSimulasiAcc("terverifikasi")}
                                         disabled={verifying}
                                         activeOpacity={0.8}
                                     >
-                                        <Ionicons name="checkmark-done" size={16} color="#FFFFFF" />
-                                        <Text style={styles.qaBtnText}>Setujui (ACC)</Text>
+                                        <Ionicons name="checkmark-done" size={15} color="#FFFFFF" />
+                                        <Text style={styles.qaBtnText}>Setujui (Lunas)</Text>
                                     </TouchableOpacity>
 
                                     <TouchableOpacity
@@ -417,7 +425,7 @@ export default function Payment() {
                                         disabled={verifying}
                                         activeOpacity={0.8}
                                     >
-                                        <Ionicons name="close" size={16} color="#FFFFFF" />
+                                        <Ionicons name="close" size={15} color="#FFFFFF" />
                                         <Text style={styles.qaBtnText}>Tolak</Text>
                                     </TouchableOpacity>
                                 </View>
@@ -425,243 +433,155 @@ export default function Payment() {
                         </View>
                     ) : null}
 
-                    {/* INFORMASI TRANSAKSI MIDTRANS JIKA AKTIF */}
-                    {isMidtrans && (
-                        <View style={{
-                            backgroundColor: "#FFF8F8",
-                            borderWidth: 1.5,
-                            borderColor: "#FFCDD2",
-                            borderRadius: 16,
-                            padding: 18,
-                            marginBottom: 20,
-                        }}>
-                            <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-                                <View style={{
-                                    width: 36,
-                                    height: 36,
-                                    borderRadius: 18,
-                                    backgroundColor: "rgba(178, 34, 34, 0.12)",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    marginRight: 10,
-                                }}>
-                                    <Ionicons name="card" size={20} color="#B22222" />
-                                </View>
-                                <View style={{ flex: 1 }}>
-                                    <Text style={{ fontFamily: "Poppins_700Bold", fontSize: 15, color: "#1A1A1A" }}>
-                                        Pembayaran Gateway Midtrans
-                                    </Text>
-                                    <Text style={{ fontFamily: "Poppins_400Regular", fontSize: 12, color: "#666" }}>
-                                        Order ID: {paymentData?.order_id || "-"}
-                                    </Text>
-                                </View>
-                            </View>
-
-                            <View style={{ flexDirection: "row", justifyContent: "space-between", marginVertical: 6 }}>
-                                <Text style={{ fontFamily: "Poppins_500Medium", fontSize: 13, color: "#555" }}>Status Transaksi</Text>
-                                <Text style={{
-                                    fontFamily: "Poppins_700Bold",
-                                    fontSize: 13,
-                                    color: isApproved ? "#2E7D32" : isRejected ? "#C62828" : "#E65100",
-                                }}>
-                                    {(paymentData?.transaction_status || "PENDING").toUpperCase()}
-                                </Text>
-                            </View>
-
-                            {isPendingVerif && (
-                                <View style={{ marginTop: 14 }}>
-                                    <TouchableOpacity
-                                        style={{
-                                            backgroundColor: "#B22222",
-                                            paddingVertical: 13,
-                                            borderRadius: 12,
-                                            flexDirection: "row",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            gap: 8,
-                                        }}
-                                        onPress={handlePayMidtrans}
-                                        activeOpacity={0.85}
-                                    >
-                                        <Ionicons name="wallet-outline" size={18} color="#FFFFFF" />
-                                        <Text style={{ fontFamily: "Poppins_600SemiBold", color: "#FFFFFF", fontSize: 14 }}>
-                                            Bayar Sekarang via Midtrans
-                                        </Text>
-                                    </TouchableOpacity>
-
-                                    <TouchableOpacity
-                                        style={{
-                                            backgroundColor: "#FFFFFF",
-                                            borderWidth: 1.5,
-                                            borderColor: "#E0E0E0",
-                                            paddingVertical: 11,
-                                            borderRadius: 12,
-                                            flexDirection: "row",
-                                            justifyContent: "center",
-                                            alignItems: "center",
-                                            gap: 8,
-                                            marginTop: 10,
-                                        }}
-                                        onPress={() => loadData(false)}
-                                        activeOpacity={0.8}
-                                    >
-                                        <Ionicons name="refresh" size={16} color="#444" />
-                                        <Text style={{ fontFamily: "Poppins_500Medium", color: "#444", fontSize: 13 }}>
-                                            Periksa Status Midtrans
-                                        </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        </View>
-                    )}
-
-                    {/* PILIHAN 4 METODE PEMBAYARAN */}
+                    {/* PILIHAN METODE PEMBAYARAN */}
                     <Text style={styles.sectionTitle}>Pilih Metode Pembayaran</Text>
 
-                    {/* 1. QRIS */}
+                    {/* 1. METODE QRIS STATIC AUTOCARE */}
                     <TouchableOpacity
-                        style={[styles.methodCard, selectedMethod === "qris" && styles.methodCardActive]}
+                        style={[
+                            styles.methodCard,
+                            selectedMethod === "qris" && styles.methodCardActive,
+                        ]}
                         onPress={() => setSelectedMethod("qris")}
                         activeOpacity={0.8}
                     >
                         <View style={styles.methodHeader}>
                             <View style={styles.methodIconBadge}>
-                                <Ionicons name="qr-code-outline" size={22} color="#F20D18" />
+                                <Ionicons name="qr-code-outline" size={22} color={RED} />
                             </View>
                             <View style={{ flex: 1, marginLeft: 12 }}>
-                                <Text style={styles.methodName}>QRIS (Semua Bank & E-Wallet)</Text>
-                                <Text style={styles.methodDesc}>BCA, Mandiri, BRI, BNI, GoPay, OVO, ShopeePay, dll</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                                    <Text style={styles.methodName}>QRIS AutoCare</Text>
+                                    <View style={styles.instantBadge}>
+                                        <Text style={styles.instantBadgeText}>Resmi</Text>
+                                    </View>
+                                </View>
+                                <Text style={styles.methodDesc}>
+                                    BCA, Mandiri, BRI, BNI, GoPay, OVO, ShopeePay, DANA
+                                </Text>
                             </View>
-                            <View style={[styles.radioCircle, selectedMethod === "qris" && styles.radioCircleActive]}>
+                            <View
+                                style={[
+                                    styles.radioCircle,
+                                    selectedMethod === "qris" && styles.radioCircleActive,
+                                ]}
+                            >
                                 {selectedMethod === "qris" && <View style={styles.radioInner} />}
                             </View>
                         </View>
 
                         {selectedMethod === "qris" && (
                             <View style={styles.methodDetailBox}>
-                                <Text style={styles.detailTitle}>Scan QRIS AutoCare</Text>
-                                <View style={styles.qrisImageContainer}>
+                                <View style={styles.qrisHeaderRow}>
+                                    <View>
+                                        <Text style={styles.qrisMerchantTitle}>
+                                            Scan QRIS Merchant Resmi
+                                        </Text>
+                                        <Text style={styles.qrisNmidText}>
+                                            Azaadesigns ID • NMID: ID1026511776878
+                                        </Text>
+                                    </View>
+                                    <TouchableOpacity
+                                        style={styles.zoomPillBtn}
+                                        onPress={() => setIsQrZoomed(true)}
+                                        activeOpacity={0.7}
+                                    >
+                                        <Ionicons name="expand-outline" size={15} color={RED} />
+                                        <Text style={styles.zoomPillText}>Perbesar</Text>
+                                    </TouchableOpacity>
+                                </View>
+
+                                {/* GAMBAR QRIS RESMI */}
+                                <TouchableOpacity
+                                    style={styles.qrisImageWrapper}
+                                    onPress={() => setIsQrZoomed(true)}
+                                    activeOpacity={0.85}
+                                >
                                     <Image
                                         source={require("../../assets/images/qris-autocare.png")}
                                         style={styles.qrisImage}
                                         resizeMode="contain"
                                     />
-                                </View>
-                                <Text style={styles.qrisNmidText}>
-                                    <Text style={{ fontFamily: "Poppins_700Bold", fontWeight: "700" }}>Azaadesigns ID</Text> • NMID: ID1026511776878 (A01)
-                                </Text>
-                                <Text style={styles.qrisInstructions}>
-                                    Buka aplikasi M-Banking atau E-Wallet pilihan Anda, pilih menu Scan QRIS, lalu arahkan ke kode di atas.
-                                </Text>
-                            </View>
-                        )}
-                    </TouchableOpacity>
-
-                    {/* 2. DANA */}
-                    <TouchableOpacity
-                        style={[styles.methodCard, selectedMethod === "dana" && styles.methodCardActive]}
-                        onPress={() => setSelectedMethod("dana")}
-                        activeOpacity={0.8}
-                    >
-                        <View style={styles.methodHeader}>
-                            <View style={[styles.methodIconBadge, { backgroundColor: "rgba(17, 142, 234, 0.12)" }]}>
-                                <Ionicons name="wallet-outline" size={22} color="#118EEA" />
-                            </View>
-                            <View style={{ flex: 1, marginLeft: 12 }}>
-                                <Text style={styles.methodName}>DANA</Text>
-                                <Text style={styles.methodDesc}>Transfer sesama DANA atau via nomor HP</Text>
-                            </View>
-                            <View style={[styles.radioCircle, selectedMethod === "dana" && styles.radioCircleActive]}>
-                                {selectedMethod === "dana" && <View style={styles.radioInner} />}
-                            </View>
-                        </View>
-
-                        {selectedMethod === "dana" && (
-                            <View style={styles.methodDetailBox}>
-                                <View style={styles.accountCard}>
-                                    <View>
-                                        <Text style={styles.accountLabel}>Nomor DANA AutoCare:</Text>
-                                        <Text style={styles.accountNumber}>0812 9998 9695</Text>
-                                        <Text style={styles.accountName}>a.n Raza ikhsan Al fitrah</Text>
-                                    </View>
-                                    <TouchableOpacity
-                                        style={styles.copyBtn}
-                                        onPress={() => handleCopy("081299989695", "dana")}
-                                    >
-                                        <Ionicons
-                                            name={copiedKey === "dana" ? "checkmark" : "copy-outline"}
-                                            size={16}
-                                            color="#118EEA"
-                                        />
-                                        <Text style={styles.copyBtnText}>
-                                            {copiedKey === "dana" ? "Tersalin!" : "Salin"}
+                                    <View style={styles.qrisTapHint}>
+                                        <Ionicons name="scan-outline" size={14} color="#666" />
+                                        <Text style={styles.qrisTapHintText}>
+                                            Ketuk gambar untuk memperbesar QR
                                         </Text>
-                                    </TouchableOpacity>
-                                </View>
-                            </View>
-                        )}
-                    </TouchableOpacity>
-
-                    {/* 3. SEABANK */}
-                    <TouchableOpacity
-                        style={[styles.methodCard, selectedMethod === "seabank" && styles.methodCardActive]}
-                        onPress={() => setSelectedMethod("seabank")}
-                        activeOpacity={0.8}
-                    >
-                        <View style={styles.methodHeader}>
-                            <View style={[styles.methodIconBadge, { backgroundColor: "rgba(255, 122, 0, 0.12)" }]}>
-                                <Ionicons name="card-outline" size={22} color="#FF7A00" />
-                            </View>
-                            <View style={{ flex: 1, marginLeft: 12 }}>
-                                <Text style={styles.methodName}>SeaBank</Text>
-                                <Text style={styles.methodDesc}>Transfer Virtual/Rekening Bank (Bebas Biaya Transfer)</Text>
-                            </View>
-                            <View style={[styles.radioCircle, selectedMethod === "seabank" && styles.radioCircleActive]}>
-                                {selectedMethod === "seabank" && <View style={styles.radioInner} />}
-                            </View>
-                        </View>
-
-                        {selectedMethod === "seabank" && (
-                            <View style={styles.methodDetailBox}>
-                                <View style={styles.accountCard}>
-                                    <View>
-                                        <Text style={styles.accountLabel}>Nomor Rekening SeaBank:</Text>
-                                        <Text style={styles.accountNumber}>901180017388</Text>
-                                        <Text style={styles.accountName}>a.n Raza ikhsan Al fitrah</Text>
                                     </View>
-                                    <TouchableOpacity
-                                        style={styles.copyBtn}
-                                        onPress={() => handleCopy("901180017388", "seabank")}
-                                    >
-                                        <Ionicons
-                                            name={copiedKey === "seabank" ? "checkmark" : "copy-outline"}
-                                            size={16}
-                                            color="#FF7A00"
-                                        />
-                                        <Text style={[styles.copyBtnText, { color: "#FF7A00" }]}>
-                                            {copiedKey === "seabank" ? "Tersalin!" : "Salin"}
-                                        </Text>
-                                    </TouchableOpacity>
+                                </TouchableOpacity>
+
+                                {/* TOTAL NOMINAL TAGIHAN */}
+                                <View style={styles.amountBox}>
+                                    <Text style={styles.amountBoxLabel}>Nominal Pembayaran:</Text>
+                                    <Text style={styles.amountBoxValue}>{formatRupiah(totalHarga)}</Text>
+                                </View>
+
+                                {/* PANDUAN LANGKAH PEMBAYARAN */}
+                                <View style={styles.guideBox}>
+                                    <Text style={styles.guideTitle}>Cara Pembayaran QRIS:</Text>
+                                    <Text style={styles.guideStep}>
+                                        1. Buka aplikasi M-Banking atau E-Wallet pilihan Anda.
+                                    </Text>
+                                    <Text style={styles.guideStep}>
+                                        2. Pilih menu <Text style={styles.boldText}>Scan / Bayar QRIS</Text>.
+                                    </Text>
+                                    <Text style={styles.guideStep}>
+                                        3. Arahkan kamera ke kode QR di atas.
+                                    </Text>
+                                    <Text style={styles.guideStep}>
+                                        4. Masukkan nominal tepat{" "}
+                                        <Text style={styles.boldText}>{formatRupiah(totalHarga)}</Text> lalu selesaikan pembayaran.
+                                    </Text>
+                                    <Text style={styles.guideStep}>
+                                        5. Simpan tangkapan layar (screenshot) dan unggah pada formulir di bawah.
+                                    </Text>
                                 </View>
                             </View>
                         )}
                     </TouchableOpacity>
 
-                    {/* 4. BAYAR DI TEMPAT (COD) */}
+                    {/* 2. METODE COD (BAYAR LANGSUNG DI BENGKEL) */}
                     <TouchableOpacity
-                        style={[styles.methodCard, selectedMethod === "cod" && styles.methodCardActive]}
+                        style={[
+                            styles.methodCard,
+                            selectedMethod === "cod" && styles.methodCardActive,
+                        ]}
                         onPress={() => setSelectedMethod("cod")}
                         activeOpacity={0.8}
                     >
                         <View style={styles.methodHeader}>
-                            <View style={[styles.methodIconBadge, { backgroundColor: "rgba(46, 125, 50, 0.12)" }]}>
+                            <View
+                                style={[
+                                    styles.methodIconBadge,
+                                    { backgroundColor: "rgba(46, 125, 50, 0.12)" },
+                                ]}
+                            >
                                 <Ionicons name="cash-outline" size={22} color="#2E7D32" />
                             </View>
                             <View style={{ flex: 1, marginLeft: 12 }}>
-                                <Text style={styles.methodName}>Bayar di Tempat (Tunai di Bengkel)</Text>
-                                <Text style={styles.methodDesc}>Bayar langsung di lokasi setelah servis kendaraan selesai</Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                                    <Text style={styles.methodName}>Bayar di Tempat (COD)</Text>
+                                    <View
+                                        style={[
+                                            styles.instantBadge,
+                                            { backgroundColor: "#DCFCE7" },
+                                        ]}
+                                    >
+                                        <Text style={[styles.instantBadgeText, { color: "#166534" }]}>
+                                            Tunai / Debit
+                                        </Text>
+                                    </View>
+                                </View>
+                                <Text style={styles.methodDesc}>
+                                    Bayar langsung di kasir bengkel saat servis kendaraan
+                                </Text>
                             </View>
-                            <View style={[styles.radioCircle, selectedMethod === "cod" && styles.radioCircleActive]}>
+                            <View
+                                style={[
+                                    styles.radioCircle,
+                                    selectedMethod === "cod" && styles.radioCircleActive,
+                                ]}
+                            >
                                 {selectedMethod === "cod" && <View style={styles.radioInner} />}
                             </View>
                         </View>
@@ -669,33 +589,60 @@ export default function Payment() {
                         {selectedMethod === "cod" && (
                             <View style={styles.methodDetailBox}>
                                 <View style={styles.codAlertBox}>
-                                    <Ionicons name="information-circle" size={20} color="#2E7D32" />
-                                    <Text style={styles.codAlertText}>
-                                        Anda dapat membayar langsung secara tunai atau debit saat tiba di bengkel. Tidak perlu mengunggah bukti pembayaran sekarang.
+                                    <Ionicons name="information-circle" size={22} color="#2E7D32" />
+                                    <View style={{ flex: 1, marginLeft: 10 }}>
+                                        <Text style={styles.codAlertTitle}>
+                                            Tidak Perlu Transfer Sekarang
+                                        </Text>
+                                        <Text style={styles.codAlertText}>
+                                            Booking Anda akan langsung didaftarkan dengan status Belum Dibayar. Anda dapat melakukan pembayaran langsung di bengkel dengan uang tunai atau kartu debit setelah pengerjaan servis selesai.
+                                        </Text>
+                                    </View>
+                                </View>
+
+                                <View style={styles.locationCard}>
+                                    <Text style={styles.locationCardTitle}>Lokasi Pembayaran:</Text>
+                                    <Text style={styles.locationWorkshopName}>
+                                        {bookingData?.nama_bengkel || "Bengkel AutoCare"}
+                                    </Text>
+                                    <Text style={styles.locationWorkshopAddress}>
+                                        {bookingData?.alamat_bengkel || "Alamat bengkel terdaftar"}
                                     </Text>
                                 </View>
                             </View>
                         )}
                     </TouchableOpacity>
 
-                    {/* FORM UPLOAD BUKTI TRANSFER (JIKA TRANSFER) */}
-                    {selectedMethod !== "cod" ? (
+                    {/* FORM UPLOAD BUKTI PEMBAYARAN QRIS */}
+                    {selectedMethod === "qris" ? (
                         <View style={styles.uploadSection}>
-                            <Text style={styles.uploadSectionTitle}>Unggah Bukti Transfer</Text>
+                            <Text style={styles.uploadSectionTitle}>
+                                Unggah Bukti Pembayaran QRIS
+                            </Text>
                             <Text style={styles.uploadSectionSubtitle}>
-                                Foto struk ATM, bukti transfer M-Banking, atau screenshot pembayaran DANA/QRIS
+                                Unggah screenshot bukti pembayaran sukses dari aplikasi M-Banking atau E-Wallet Anda
                             </Text>
 
                             {proofImage ? (
                                 <View style={styles.previewContainer}>
-                                    <Image source={{ uri: proofImage }} style={styles.previewImage} resizeMode="contain" />
+                                    <Image
+                                        source={{ uri: proofImage }}
+                                        style={styles.previewImage}
+                                        resizeMode="contain"
+                                    />
                                     <TouchableOpacity
                                         style={styles.changeImageBtn}
                                         onPress={pickProofImage}
                                         activeOpacity={0.8}
                                     >
-                                        <Ionicons name="camera-reverse-outline" size={18} color="#FFFFFF" />
-                                        <Text style={styles.changeImageBtnText}>Ganti Foto Bukti</Text>
+                                        <Ionicons
+                                            name="camera-reverse-outline"
+                                            size={18}
+                                            color="#FFFFFF"
+                                        />
+                                        <Text style={styles.changeImageBtnText}>
+                                            Ganti Foto Bukti
+                                        </Text>
                                     </TouchableOpacity>
                                 </View>
                             ) : (
@@ -704,17 +651,27 @@ export default function Payment() {
                                     onPress={pickProofImage}
                                     activeOpacity={0.7}
                                 >
-                                    <Ionicons name="cloud-upload-outline" size={42} color="#F20D18" />
-                                    <Text style={styles.uploadDropzoneText}>Ketuk untuk Pilih Foto Bukti Transfer</Text>
-                                    <Text style={styles.uploadDropzoneHint}>Format JPG, PNG, atau Screenshot HP</Text>
+                                    <Ionicons
+                                        name="cloud-upload-outline"
+                                        size={40}
+                                        color={RED}
+                                    />
+                                    <Text style={styles.uploadDropzoneText}>
+                                        Ketuk untuk Pilih Foto Bukti Pembayaran
+                                    </Text>
+                                    <Text style={styles.uploadDropzoneHint}>
+                                        Format JPG, PNG, atau Screenshot HP
+                                    </Text>
                                 </TouchableOpacity>
                             )}
 
                             {/* CATATAN PENGIRIM */}
-                            <Text style={styles.inputLabel}>Catatan Pengirim (Opsional)</Text>
+                            <Text style={styles.inputLabel}>
+                                Catatan Pengirim (Opsional)
+                            </Text>
                             <TextInput
                                 style={styles.textInput}
-                                placeholder="Contoh: Transfer atas nama Budi via BCA"
+                                placeholder="Contoh: Pembayaran dari rekening Budi via BCA Mobile"
                                 placeholderTextColor="#999"
                                 value={catatan}
                                 onChangeText={setCatatan}
@@ -722,7 +679,7 @@ export default function Payment() {
                         </View>
                     ) : null}
 
-                    {/* ERROR / SUCCESS FEEDBACK */}
+                    {/* FEEDBACK ERROR / SUCCESS */}
                     {errorMessage ? (
                         <View style={styles.errorBox}>
                             <Ionicons name="alert-circle-outline" size={18} color="#D32F2F" />
@@ -732,14 +689,21 @@ export default function Payment() {
 
                     {statusMessage ? (
                         <View style={styles.successBox}>
-                            <Ionicons name="checkmark-circle-outline" size={18} color="#2E7D32" />
+                            <Ionicons
+                                name="checkmark-circle-outline"
+                                size={18}
+                                color="#2E7D32"
+                            />
                             <Text style={styles.successText}>{statusMessage}</Text>
                         </View>
                     ) : null}
 
                     {/* TOMBOL KONFIRMASI PEMBAYARAN */}
                     <TouchableOpacity
-                        style={[styles.submitButton, submitting && styles.submitButtonDisabled]}
+                        style={[
+                            styles.submitButton,
+                            submitting && styles.submitButtonDisabled,
+                        ]}
                         onPress={handleSubmitPayment}
                         disabled={submitting}
                         activeOpacity={0.85}
@@ -750,8 +714,10 @@ export default function Payment() {
                             <>
                                 <Text style={styles.submitButtonText}>
                                     {selectedMethod === "cod"
-                                        ? "Konfirmasi Bayar di Tempat"
-                                        : "Kirim Bukti Pembayaran"}
+                                        ? "Konfirmasi Bayar di Tempat (COD)"
+                                        : isRejected
+                                        ? "Kirim Ulang Bukti Pembayaran"
+                                        : "Kirim Bukti Pembayaran QRIS"}
                                 </Text>
                                 <Ionicons name="arrow-forward" size={18} color="#FFFFFF" />
                             </>
@@ -764,10 +730,56 @@ export default function Payment() {
                         onPress={() => router.replace("/riwayat-servis")}
                         activeOpacity={0.7}
                     >
-                        <Text style={styles.historyBtnText}>Lihat Riwayat Booking & Servis</Text>
+                        <Text style={styles.historyBtnText}>
+                            Lihat Riwayat Booking & Servis
+                        </Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>
+
+            {/* MODAL PERBESAR QRIS */}
+            <Modal
+                visible={isQrZoomed}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setIsQrZoomed(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.zoomModalCard}>
+                        <View style={styles.zoomModalHeader}>
+                            <Text style={styles.zoomModalTitle}>QRIS Merchant AutoCare</Text>
+                            <TouchableOpacity
+                                style={styles.zoomModalCloseBtn}
+                                onPress={() => setIsQrZoomed(false)}
+                            >
+                                <Ionicons name="close" size={24} color="#333" />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.zoomModalBody}>
+                            <Image
+                                source={require("../../assets/images/qris-autocare.png")}
+                                style={styles.zoomImage}
+                                resizeMode="contain"
+                            />
+                            <Text style={styles.zoomNmid}>
+                                Azaadesigns ID • NMID: ID1026511776878
+                            </Text>
+                            <Text style={styles.zoomAmount}>
+                                Nominal: {formatRupiah(totalHarga)}
+                            </Text>
+                        </View>
+
+                        <TouchableOpacity
+                            style={styles.zoomModalDoneBtn}
+                            onPress={() => setIsQrZoomed(false)}
+                            activeOpacity={0.85}
+                        >
+                            <Text style={styles.zoomModalDoneText}>Tutup</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </SafeAreaView>
     );
 }
@@ -775,7 +787,7 @@ export default function Payment() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#F7F8FA",
+        backgroundColor: "#F8F9FA",
     },
 
     loadingContainer: {
@@ -810,14 +822,14 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 20,
-        backgroundColor: "#F0F0F0",
+        backgroundColor: "#F3F4F6",
     },
 
     headerTitle: {
-        fontFamily: "Poppins_800ExtraBold",
+        fontFamily: "Poppins_700Bold",
         fontSize: 16,
-        fontWeight: "800",
-        color: "#1A1A1A",
+        fontWeight: "700",
+        color: "#111827",
     },
 
     scrollContent: {
@@ -828,7 +840,7 @@ const styles = StyleSheet.create({
 
     contentCard: {
         width: "100%",
-        maxWidth: 520,
+        maxWidth: 540,
     },
 
     desktopCard: {
@@ -840,6 +852,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.08,
         shadowRadius: 16,
         elevation: 3,
+        borderWidth: 1,
+        borderColor: "#E5E7EB",
     },
 
     billCard: {
@@ -853,7 +867,7 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 2,
         borderWidth: 1,
-        borderColor: "#EAEAEA",
+        borderColor: "#E5E7EB",
     },
 
     billTopRow: {
@@ -865,109 +879,113 @@ const styles = StyleSheet.create({
     billLabel: {
         fontFamily: "Poppins_600SemiBold",
         fontSize: 12,
-        color: "#777777",
+        color: "#6B7280",
         fontWeight: "600",
     },
 
     billAmount: {
-        fontFamily: "Poppins_800ExtraBold",
+        fontFamily: "Poppins_700Bold",
         fontSize: 22,
-        fontWeight: "900",
-        color: "#F20D18",
-        marginTop: 3,
+        fontWeight: "700",
+        color: RED,
+        marginTop: 2,
     },
 
     bookingBadge: {
-        backgroundColor: "rgba(242, 13, 24, 0.08)",
+        backgroundColor: "rgba(178, 34, 34, 0.08)",
         paddingVertical: 4,
         paddingHorizontal: 10,
         borderRadius: 8,
         borderWidth: 1,
-        borderColor: "rgba(242, 13, 24, 0.2)",
+        borderColor: "rgba(178, 34, 34, 0.2)",
     },
 
     bookingBadgeText: {
-        fontFamily: "Poppins_800ExtraBold",
-        color: "#F20D18",
-        fontWeight: "800",
-        fontSize: 11,
+        fontFamily: "Poppins_700Bold",
+        color: RED,
+        fontWeight: "700",
+        fontSize: 12,
     },
 
     divider: {
         height: 1,
-        backgroundColor: "#F0F0F0",
+        backgroundColor: "#F3F4F6",
         marginVertical: 12,
     },
 
     infoRow: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 6,
+        marginBottom: 8,
+        gap: 8,
     },
 
     infoText: {
-        fontFamily: "Poppins_500Medium",
-        fontSize: 12,
-        color: "#444444",
-        marginLeft: 8,
-        fontWeight: "500",
+        fontFamily: "Poppins_400Regular",
+        fontSize: 13,
+        color: "#4B5563",
+        flex: 1,
     },
 
     statusCard: {
         borderRadius: 16,
         padding: 16,
         marginBottom: 16,
-        borderWidth: 1.2,
+        borderWidth: 1.5,
     },
 
-    statusCardPending: {
-        backgroundColor: "rgba(255, 152, 0, 0.08)",
-        borderColor: "rgba(255, 152, 0, 0.4)",
-    },
-
-    statusCardApproved: {
-        backgroundColor: "rgba(46, 125, 50, 0.08)",
-        borderColor: "rgba(46, 125, 50, 0.4)",
+    statusCardPaid: {
+        backgroundColor: "#F0FDF4",
+        borderColor: "#BBF7D0",
     },
 
     statusCardRejected: {
-        backgroundColor: "rgba(198, 40, 40, 0.08)",
-        borderColor: "rgba(198, 40, 40, 0.4)",
+        backgroundColor: "#FEF2F2",
+        borderColor: "#FECACA",
+    },
+
+    statusCardCod: {
+        backgroundColor: "#EFF6FF",
+        borderColor: "#BFDBFE",
+    },
+
+    statusCardPending: {
+        backgroundColor: "#FFFBEB",
+        borderColor: "#FDE68A",
     },
 
     statusHeaderRow: {
         flexDirection: "row",
         alignItems: "center",
-        marginBottom: 6,
+        gap: 8,
+        marginBottom: 8,
     },
 
     statusTitle: {
-        fontFamily: "Poppins_800ExtraBold",
-        fontSize: 14.5,
-        fontWeight: "800",
-        marginLeft: 8,
+        fontFamily: "Poppins_700Bold",
+        fontSize: 15,
+        fontWeight: "700",
     },
 
     statusDescription: {
         fontFamily: "Poppins_400Regular",
-        fontSize: 12,
-        color: "#444444",
-        lineHeight: 18,
+        fontSize: 13,
+        color: "#4B5563",
+        lineHeight: 19,
     },
 
-    qaAccSection: {
+    qaSection: {
         marginTop: 12,
         paddingTop: 10,
         borderTopWidth: 1,
         borderTopColor: "rgba(0,0,0,0.06)",
     },
 
-    qaAccLabel: {
-        fontFamily: "Poppins_700Bold",
-        fontSize: 11,
-        fontWeight: "700",
-        color: "#555",
-        marginBottom: 6,
+    qaTitle: {
+        fontFamily: "Poppins_600SemiBold",
+        fontSize: 12,
+        color: "#6B7280",
+        marginBottom: 8,
     },
 
     qaBtnRow: {
@@ -976,50 +994,51 @@ const styles = StyleSheet.create({
     },
 
     qaBtn: {
-        flex: 1,
         flexDirection: "row",
-        justifyContent: "center",
         alignItems: "center",
+        justifyContent: "center",
         paddingVertical: 7,
+        paddingHorizontal: 12,
         borderRadius: 8,
-        gap: 4,
+        gap: 6,
     },
 
     qaBtnAccept: {
-        backgroundColor: "#2E7D32",
+        backgroundColor: "#16A34A",
     },
 
     qaBtnReject: {
-        backgroundColor: "#C62828",
+        backgroundColor: "#DC2626",
     },
 
     qaBtnText: {
-        fontFamily: "Poppins_700Bold",
+        fontFamily: "Poppins_600SemiBold",
         color: "#FFFFFF",
-        fontSize: 11,
-        fontWeight: "700",
+        fontSize: 12,
+        fontWeight: "600",
     },
 
     sectionTitle: {
-        fontFamily: "Poppins_800ExtraBold",
-        fontSize: 14.5,
-        fontWeight: "800",
-        color: "#222222",
-        marginBottom: 10,
+        fontFamily: "Poppins_700Bold",
+        fontSize: 15,
+        fontWeight: "700",
+        color: "#111827",
+        marginTop: 8,
+        marginBottom: 12,
     },
 
     methodCard: {
         backgroundColor: "#FFFFFF",
         borderRadius: 14,
-        padding: 14,
-        marginBottom: 10,
-        borderWidth: 1.2,
-        borderColor: "#EAEAEA",
+        padding: 16,
+        marginBottom: 12,
+        borderWidth: 1.5,
+        borderColor: "#E5E7EB",
     },
 
     methodCardActive: {
-        borderColor: "#F20D18",
-        backgroundColor: "rgba(242, 13, 24, 0.02)",
+        borderColor: RED,
+        backgroundColor: "#FFFFFF",
     },
 
     methodHeader: {
@@ -1028,351 +1047,488 @@ const styles = StyleSheet.create({
     },
 
     methodIconBadge: {
-        width: 42,
-        height: 42,
-        borderRadius: 10,
-        backgroundColor: "rgba(242, 13, 24, 0.08)",
+        width: 44,
+        height: 44,
+        borderRadius: 12,
+        backgroundColor: "rgba(178, 34, 34, 0.08)",
         justifyContent: "center",
         alignItems: "center",
     },
 
     methodName: {
-        fontFamily: "Poppins_800ExtraBold",
-        fontSize: 13,
-        fontWeight: "800",
-        color: "#222222",
+        fontFamily: "Poppins_700Bold",
+        fontSize: 14,
+        fontWeight: "700",
+        color: "#111827",
+    },
+
+    instantBadge: {
+        backgroundColor: "#FEE2E2",
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 6,
+    },
+
+    instantBadgeText: {
+        fontFamily: "Poppins_700Bold",
+        fontSize: 10,
+        fontWeight: "700",
+        color: RED,
     },
 
     methodDesc: {
         fontFamily: "Poppins_400Regular",
-        fontSize: 10.5,
-        color: "#777777",
+        fontSize: 12,
+        color: "#6B7280",
         marginTop: 2,
     },
 
     radioCircle: {
-        width: 20,
-        height: 20,
-        borderRadius: 10,
-        borderWidth: 1.5,
-        borderColor: "#CCCCCC",
+        width: 22,
+        height: 22,
+        borderRadius: 11,
+        borderWidth: 2,
+        borderColor: "#D1D5DB",
         justifyContent: "center",
         alignItems: "center",
     },
 
     radioCircleActive: {
-        borderColor: "#F20D18",
+        borderColor: RED,
     },
 
     radioInner: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        backgroundColor: "#F20D18",
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+        backgroundColor: RED,
     },
 
     methodDetailBox: {
         marginTop: 14,
-        paddingTop: 12,
+        paddingTop: 14,
         borderTopWidth: 1,
-        borderTopColor: "#EEEEEE",
+        borderTopColor: "#F3F4F6",
     },
 
-    detailTitle: {
-        fontFamily: "Poppins_700Bold",
-        fontSize: 12.5,
-        fontWeight: "700",
-        color: "#333333",
-        textAlign: "center",
-        marginBottom: 8,
-    },
-
-    qrisImageContainer: {
+    qrisHeaderRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
-        justifyContent: "center",
-        padding: 8,
-        backgroundColor: "#FFFFFF",
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#E5E5E5",
-        marginVertical: 6,
+        marginBottom: 10,
     },
 
-    qrisImage: {
-        width: 260,
-        height: 360,
-        borderRadius: 8,
+    qrisMerchantTitle: {
+        fontFamily: "Poppins_700Bold",
+        fontSize: 13,
+        fontWeight: "700",
+        color: "#111827",
     },
 
     qrisNmidText: {
         fontFamily: "Poppins_400Regular",
         fontSize: 11,
-        color: "#555555",
-        textAlign: "center",
-        marginTop: 6,
+        color: "#6B7280",
     },
 
-    qrisInstructions: {
-        fontFamily: "Poppins_400Regular",
-        fontSize: 11,
-        color: "#777777",
-        textAlign: "center",
-        marginTop: 6,
-        lineHeight: 16,
-    },
-
-    accountCard: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        backgroundColor: "#F8F9FA",
-        borderRadius: 12,
-        padding: 12,
-        borderWidth: 1,
-        borderColor: "#EAEAEA",
-    },
-
-    accountLabel: {
-        fontFamily: "Poppins_600SemiBold",
-        fontSize: 11,
-        color: "#666666",
-        fontWeight: "600",
-    },
-
-    accountNumber: {
-        fontFamily: "Poppins_800ExtraBold",
-        fontSize: 17,
-        fontWeight: "900",
-        color: "#222222",
-        letterSpacing: 0.5,
-        marginTop: 2,
-    },
-
-    accountName: {
-        fontFamily: "Poppins_600SemiBold",
-        fontSize: 11,
-        color: "#444444",
-        fontWeight: "600",
-        marginTop: 2,
-    },
-
-    copyBtn: {
+    zoomPillBtn: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#FFFFFF",
-        paddingVertical: 6,
-        paddingHorizontal: 12,
+        backgroundColor: "#FEF2F2",
+        paddingHorizontal: 8,
+        paddingVertical: 4,
         borderRadius: 8,
-        borderWidth: 1,
-        borderColor: "#DDDDDD",
         gap: 4,
     },
 
-    copyBtnText: {
-        fontFamily: "Poppins_700Bold",
+    zoomPillText: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 11,
+        color: RED,
+        fontWeight: "600",
+    },
+
+    qrisImageWrapper: {
+        backgroundColor: "#FFFFFF",
+        padding: 12,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: "#E5E7EB",
+        alignItems: "center",
+    },
+
+    qrisImage: {
+        width: 220,
+        height: 220,
+    },
+
+    qrisTapHint: {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 4,
+        marginTop: 6,
+    },
+
+    qrisTapHintText: {
+        fontFamily: "Poppins_400Regular",
+        fontSize: 11,
+        color: "#6B7280",
+    },
+
+    amountBox: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: "#F9FAFB",
+        padding: 12,
+        borderRadius: 10,
+        marginTop: 12,
+        borderWidth: 1,
+        borderColor: "#E5E7EB",
+    },
+
+    amountBoxLabel: {
+        fontFamily: "Poppins_500Medium",
+        fontSize: 12,
+        color: "#4B5563",
+    },
+
+    amountBoxValue: {
+        fontFamily: "Poppins_700Bold",
+        fontSize: 16,
         fontWeight: "700",
-        color: "#118EEA",
+        color: RED,
+    },
+
+    guideBox: {
+        backgroundColor: "#F9FAFB",
+        padding: 12,
+        borderRadius: 10,
+        marginTop: 10,
+    },
+
+    guideTitle: {
+        fontFamily: "Poppins_700Bold",
+        fontSize: 12,
+        fontWeight: "700",
+        color: "#374151",
+        marginBottom: 4,
+    },
+
+    guideStep: {
+        fontFamily: "Poppins_400Regular",
+        fontSize: 11,
+        color: "#4B5563",
+        lineHeight: 18,
+    },
+
+    boldText: {
+        fontFamily: "Poppins_700Bold",
+        fontWeight: "700",
+        color: "#111827",
     },
 
     codAlertBox: {
         flexDirection: "row",
-        alignItems: "flex-start",
-        backgroundColor: "rgba(46, 125, 50, 0.08)",
+        backgroundColor: "#F0FDF4",
+        padding: 12,
         borderRadius: 10,
-        padding: 10,
-        gap: 8,
+        borderWidth: 1,
+        borderColor: "#BBF7D0",
+    },
+
+    codAlertTitle: {
+        fontFamily: "Poppins_700Bold",
+        fontSize: 13,
+        fontWeight: "700",
+        color: "#166534",
     },
 
     codAlertText: {
-        fontFamily: "Poppins_500Medium",
-        flex: 1,
-        fontSize: 11.5,
-        color: "#2E7D32",
-        lineHeight: 16,
-        fontWeight: "500",
+        fontFamily: "Poppins_400Regular",
+        fontSize: 12,
+        color: "#166534",
+        lineHeight: 18,
+        marginTop: 2,
+    },
+
+    locationCard: {
+        backgroundColor: "#F9FAFB",
+        padding: 12,
+        borderRadius: 10,
+        marginTop: 10,
+        borderWidth: 1,
+        borderColor: "#E5E7EB",
+    },
+
+    locationCardTitle: {
+        fontFamily: "Poppins_600SemiBold",
+        fontSize: 11,
+        color: "#6B7280",
+    },
+
+    locationWorkshopName: {
+        fontFamily: "Poppins_700Bold",
+        fontSize: 13,
+        color: "#111827",
+        marginTop: 2,
+    },
+
+    locationWorkshopAddress: {
+        fontFamily: "Poppins_400Regular",
+        fontSize: 12,
+        color: "#4B5563",
+        marginTop: 1,
     },
 
     uploadSection: {
         backgroundColor: "#FFFFFF",
-        borderRadius: 16,
+        borderRadius: 14,
         padding: 16,
-        marginTop: 8,
         marginBottom: 16,
-        borderWidth: 1,
-        borderColor: "#EAEAEA",
+        borderWidth: 1.5,
+        borderColor: "#E5E7EB",
     },
 
     uploadSectionTitle: {
-        fontFamily: "Poppins_800ExtraBold",
-        fontSize: 13.5,
-        fontWeight: "800",
-        color: "#222222",
+        fontFamily: "Poppins_700Bold",
+        fontSize: 14,
+        fontWeight: "700",
+        color: "#111827",
     },
 
     uploadSectionSubtitle: {
         fontFamily: "Poppins_400Regular",
-        fontSize: 11,
-        color: "#777777",
+        fontSize: 12,
+        color: "#6B7280",
         marginTop: 2,
         marginBottom: 12,
     },
 
     uploadDropzone: {
-        height: 130,
-        borderRadius: 12,
+        backgroundColor: "#F9FAFB",
         borderWidth: 1.5,
-        borderColor: "rgba(242, 13, 24, 0.35)",
+        borderColor: "#D1D5DB",
         borderStyle: "dashed",
-        backgroundColor: "rgba(242, 13, 24, 0.02)",
-        justifyContent: "center",
+        borderRadius: 12,
+        paddingVertical: 24,
         alignItems: "center",
-        padding: 12,
+        justifyContent: "center",
     },
 
     uploadDropzoneText: {
-        fontFamily: "Poppins_700Bold",
-        fontSize: 12,
-        fontWeight: "700",
-        color: "#F20D18",
-        marginTop: 6,
+        fontFamily: "Poppins_600SemiBold",
+        fontSize: 13,
+        color: "#111827",
+        marginTop: 8,
     },
 
     uploadDropzoneHint: {
         fontFamily: "Poppins_400Regular",
-        fontSize: 10,
-        color: "#999999",
+        fontSize: 11,
+        color: "#9CA3AF",
         marginTop: 2,
     },
 
     previewContainer: {
         alignItems: "center",
-        justifyContent: "center",
+        backgroundColor: "#F9FAFB",
+        borderRadius: 12,
+        padding: 12,
+        borderWidth: 1,
+        borderColor: "#E5E7EB",
     },
 
     previewImage: {
-        width: "100%",
-        height: 220,
-        borderRadius: 12,
-        borderWidth: 1,
-        borderColor: "#E5E5E5",
+        width: 220,
+        height: 260,
+        borderRadius: 8,
     },
 
     changeImageBtn: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "#333333",
-        paddingVertical: 7,
+        backgroundColor: RED,
         paddingHorizontal: 14,
+        paddingVertical: 8,
         borderRadius: 8,
-        marginTop: 8,
+        marginTop: 10,
         gap: 6,
     },
 
     changeImageBtnText: {
-        fontFamily: "Poppins_700Bold",
+        fontFamily: "Poppins_600SemiBold",
         color: "#FFFFFF",
-        fontSize: 11,
-        fontWeight: "700",
+        fontSize: 12,
     },
 
     inputLabel: {
-        fontFamily: "Poppins_700Bold",
-        fontSize: 11.5,
-        fontWeight: "700",
-        color: "#444444",
+        fontFamily: "Poppins_600SemiBold",
+        fontSize: 12,
+        color: "#374151",
         marginTop: 12,
         marginBottom: 4,
     },
 
     textInput: {
-        fontFamily: "Poppins_400Regular",
-        height: 44,
-        borderRadius: 10,
+        backgroundColor: "#F9FAFB",
         borderWidth: 1,
-        borderColor: "#DDDDDD",
+        borderColor: "#E5E7EB",
+        borderRadius: 8,
         paddingHorizontal: 12,
-        fontSize: 12,
-        color: "#222222",
-        backgroundColor: "#FAFAFA",
+        paddingVertical: 10,
+        fontSize: 13,
+        color: "#111827",
+        fontFamily: "Poppins_400Regular",
     },
 
     errorBox: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "rgba(211, 47, 47, 0.08)",
-        padding: 10,
-        borderRadius: 10,
+        backgroundColor: "#FEF2F2",
+        padding: 12,
+        borderRadius: 8,
         marginBottom: 12,
         borderWidth: 1,
-        borderColor: "rgba(211, 47, 47, 0.25)",
-        gap: 6,
+        borderColor: "#FECACA",
+        gap: 8,
     },
 
     errorText: {
-        fontFamily: "Poppins_600SemiBold",
-        flex: 1,
+        fontFamily: "Poppins_500Medium",
+        fontSize: 12,
         color: "#D32F2F",
-        fontSize: 11.5,
-        fontWeight: "600",
+        flex: 1,
     },
 
     successBox: {
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "rgba(46, 125, 50, 0.08)",
-        padding: 10,
-        borderRadius: 10,
+        backgroundColor: "#F0FDF4",
+        padding: 12,
+        borderRadius: 8,
         marginBottom: 12,
         borderWidth: 1,
-        borderColor: "rgba(46, 125, 50, 0.25)",
-        gap: 6,
+        borderColor: "#BBF7D0",
+        gap: 8,
     },
 
     successText: {
-        fontFamily: "Poppins_600SemiBold",
+        fontFamily: "Poppins_500Medium",
+        fontSize: 12,
+        color: "#166534",
         flex: 1,
-        color: "#2E7D32",
-        fontSize: 11.5,
-        fontWeight: "600",
     },
 
     submitButton: {
-        height: 48,
-        backgroundColor: "#F20D18",
+        backgroundColor: RED,
+        paddingVertical: 14,
         borderRadius: 12,
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
         gap: 8,
-        shadowColor: "#F20D18",
+        shadowColor: RED,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.25,
         shadowRadius: 8,
-        elevation: 4,
+        elevation: 3,
     },
 
     submitButtonDisabled: {
-        opacity: 0.65,
+        opacity: 0.6,
     },
 
     submitButtonText: {
-        fontFamily: "Poppins_800ExtraBold",
+        fontFamily: "Poppins_700Bold",
         color: "#FFFFFF",
-        fontSize: 13.5,
-        fontWeight: "800",
+        fontSize: 14,
+        fontWeight: "700",
     },
 
     historyBtn: {
-        alignItems: "center",
         paddingVertical: 14,
-        marginTop: 4,
+        alignItems: "center",
+        marginTop: 6,
     },
 
     historyBtnText: {
+        fontFamily: "Poppins_600SemiBold",
+        color: "#6B7280",
+        fontSize: 13,
+    },
+
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.7)",
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+    },
+
+    zoomModalCard: {
+        backgroundColor: "#FFFFFF",
+        borderRadius: 20,
+        padding: 20,
+        width: "100%",
+        maxWidth: 380,
+        alignItems: "center",
+    },
+
+    zoomModalHeader: {
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: 14,
+    },
+
+    zoomModalTitle: {
         fontFamily: "Poppins_700Bold",
+        fontSize: 15,
+        color: "#111827",
+    },
+
+    zoomModalCloseBtn: {
+        padding: 4,
+    },
+
+    zoomModalBody: {
+        alignItems: "center",
+        width: "100%",
+    },
+
+    zoomImage: {
+        width: 280,
+        height: 280,
+    },
+
+    zoomNmid: {
+        fontFamily: "Poppins_600SemiBold",
         fontSize: 12,
-        fontWeight: "700",
-        color: "#666666",
+        color: "#4B5563",
+        marginTop: 10,
+    },
+
+    zoomAmount: {
+        fontFamily: "Poppins_700Bold",
+        fontSize: 16,
+        color: RED,
+        marginTop: 4,
+    },
+
+    zoomModalDoneBtn: {
+        backgroundColor: RED,
+        width: "100%",
+        paddingVertical: 11,
+        borderRadius: 10,
+        alignItems: "center",
+        marginTop: 16,
+    },
+
+    zoomModalDoneText: {
+        fontFamily: "Poppins_600SemiBold",
+        color: "#FFFFFF",
+        fontSize: 14,
     },
 });

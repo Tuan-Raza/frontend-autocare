@@ -44,9 +44,23 @@ export default function AdminStatusBadge({ status, type = "booking" }) {
         switch (s) {
             case "settlement":
             case "terverifikasi":
+            case "diterima":
+            case "lunas":
                 bgColor = "#D1FAE5";
                 textColor = "#065F46";
-                label = "Terverifikasi";
+                label = "Lunas";
+                break;
+            case "menunggu_verifikasi":
+                bgColor = "#FEF3C7";
+                textColor = "#92400E";
+                label = "Menunggu Verifikasi";
+                break;
+            case "belum_dibayar":
+            case "menunggu_pembayaran":
+            case "unpaid":
+                bgColor = "#DBEAFE";
+                textColor = "#1E40AF";
+                label = "Belum Dibayar";
                 break;
             case "pending":
                 bgColor = "#FEF3C7";
@@ -59,12 +73,30 @@ export default function AdminStatusBadge({ status, type = "booking" }) {
             case "expire":
                 bgColor = "#FEE2E2";
                 textColor = "#991B1B";
-                label = s === "ditolak" ? "Ditolak" : "Gagal/Expired";
+                label = "Ditolak";
                 break;
             default:
                 bgColor = "#F3F4F6";
                 textColor = "#4B5563";
                 label = status;
+        }
+    } else if (type === "method") {
+        switch (s) {
+            case "qris":
+                bgColor = "#FEE2E2";
+                textColor = "#B91C1C";
+                label = "QRIS";
+                break;
+            case "cod":
+            case "bayar_di_tempat":
+                bgColor = "#DCFCE7";
+                textColor = "#166534";
+                label = "COD (Tunai)";
+                break;
+            default:
+                bgColor = "#F3F4F6";
+                textColor = "#4B5563";
+                label = String(status || "-").toUpperCase();
         }
     } else if (type === "status") {
         if (s === "aktif") {

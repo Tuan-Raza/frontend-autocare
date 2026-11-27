@@ -17,8 +17,6 @@ import {
 
 import Ionicons from "@expo/vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import * as WebBrowser from "expo-web-browser";
-import { WebView } from "react-native-webview";
 
 import { API_URL } from "../config";
 import RealtimeClock from "../components/RealtimeClock";
@@ -54,10 +52,6 @@ export default function BookingStep4() {
     const [loadingUser, setLoadingUser] = useState(true);
 
     const [submitting, setSubmitting] = useState(false);
-    const [paymentUrl, setPaymentUrl] = useState("");
-    const [activeBookingId, setActiveBookingId] = useState(null);
-    const [activeOrderId, setActiveOrderId] = useState(null);
-
     const [errorMessage, setErrorMessage] = useState("");
 
     // =========================================================
@@ -186,21 +180,6 @@ export default function BookingStep4() {
     // =========================================================
 
     const handleBack = () => {
-        if (paymentUrl) {
-            setPaymentUrl("");
-            if (activeBookingId) {
-                router.replace({
-                    pathname: "/booking-berhasil",
-                    params: {
-                        bookingId: String(activeBookingId),
-                        orderId: String(activeOrderId || ""),
-                        metode: "midtrans",
-                    },
-                });
-            }
-            return;
-        }
-
         safeBack("/booking-step3");
     };
 
@@ -214,8 +193,8 @@ export default function BookingStep4() {
                 (total, item) => {
                     const harga = Number(
                         item.harga ||
-                            item.price ||
-                            0
+                        item.price ||
+                        0
                     );
 
                     const qty = Number(
@@ -232,7 +211,7 @@ export default function BookingStep4() {
     }, [layananList, totalHarga]);
 
     // =========================================================
-    // KONFIRMASI BOOKING + MIDTRANS
+    // KONFIRMASI BOOKING
     // =========================================================
 
     const handleConfirmBooking = async () => {
@@ -323,37 +302,6 @@ export default function BookingStep4() {
                 throw new Error("Booking berhasil dibuat tetapi ID tidak ditemukan.");
             }
 
-            setActiveBookingId(bookingId);
-
-            // =================================================
-            // STEP 2: BUAT TRANSAKSI MIDTRANS SNAP
-            // =================================================
-            console.log("STEP 2 - CREATE MIDTRANS SNAP TRANSACTION FOR BOOKING:", bookingId);
-            const paymentResponse = await fetch(`${API_URL}/api/payment/create`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    bookingId: Number(bookingId),
-                    userId: Number(user.id),
-                }),
-            });
-
-            const paymentResult = await paymentResponse.json();
-
-            if (!paymentResponse.ok || !paymentResult.success) {
-                throw new Error(
-                    paymentResult.message || "Gagal membuat transaksi pembayaran Midtrans."
-                );
-            }
-
-            const payment = paymentResult.data || {};
-            const redirectUrl = payment.redirectUrl;
-            const orderId = payment.orderId;
-
-            setActiveOrderId(orderId);
-
             // Bersihkan form cache lokal
             try {
                 await AsyncStorage.multiRemove([
@@ -363,53 +311,17 @@ export default function BookingStep4() {
                     "booking_jadwal",
                     "booking_catatan",
                 ]);
-            } catch (_) {}
+            } catch (_) { }
 
-            // =================================================
-            // STEP 3: BUKA HALAMAN MIDTRANS SNAP
-            // =================================================
-            if (Platform.OS === "web") {
-                if (redirectUrl && typeof window !== "undefined") {
-                    window.location.href = redirectUrl;
-                    return;
-                }
-            }
-
-            if (redirectUrl) {
-                try {
-                    await WebBrowser.openBrowserAsync(redirectUrl, {
-                        presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
-                        toolbarColor: RED,
-                    });
-                } catch (browserErr) {
-                    console.log("WebBrowser fallback:", browserErr);
-                    if (await Linking.canOpenURL(redirectUrl)) {
-                        await Linking.openURL(redirectUrl);
-                    } else {
-                        setPaymentUrl(redirectUrl);
-                        return;
-                    }
-                }
-
-                // Setelah browser Midtrans ditutup / selesai, alihkan ke status struk
-                router.replace({
-                    pathname: "/booking-berhasil",
-                    params: {
-                        bookingId: String(bookingId),
-                        orderId: String(orderId || ""),
-                        metode: "midtrans",
-                    },
-                });
-            } else {
-                router.replace({
-                    pathname: "/payment",
-                    params: {
-                        bookingId: String(bookingId),
-                    },
-                });
-            }
+            // Alihkan ke halaman pembayaran AutoCare (QRIS & COD)
+            router.replace({
+                pathname: "/payment",
+                params: {
+                    bookingId: String(bookingId),
+                },
+            });
         } catch (error) {
-            console.log("CREATE BOOKING/PAYMENT ERROR:", error);
+            console.log("CREATE BOOKING ERROR:", error);
             setErrorMessage(
                 error?.message || "Terjadi kesalahan saat memproses booking."
             );
@@ -450,125 +362,6 @@ export default function BookingStep4() {
     }
 
     // =========================================================
-    // MIDTRANS PAYMENT SCREEN
-    // =========================================================
-
-    if (paymentUrl) {
-        return (
-            <SafeAreaView
-                style={
-                    styles.paymentScreen
-                }
-            >
-                <View
-                    style={
-                        styles.paymentHeader
-                    }
-                >
-                    <TouchableOpacity
-                        activeOpacity={0.8}
-                        style={
-                            styles.paymentBackButton
-                        }
-                        onPress={
-                            handleBack
-                        }
-                    >
-                        <Ionicons
-                            name="arrow-back"
-                            size={23}
-                            color="#222"
-                        />
-                    </TouchableOpacity>
-
-                    <View
-                        style={
-                            styles.paymentHeaderText
-                        }
-                    >
-                        <Text
-                            style={
-                                styles.paymentHeaderTitle
-                            }
-                        >
-                            Pembayaran
-                        </Text>
-
-                        <Text
-                            style={
-                                styles.paymentHeaderSubtitle
-                            }
-                        >
-                            Selesaikan pembayaran
-                            melalui Midtrans
-                        </Text>
-                    </View>
-                </View>
-
-                <View
-                    style={
-                        styles.webViewContainer
-                    }
-                >
-                    <WebView
-                        source={{
-                            uri: paymentUrl,
-                        }}
-                        startInLoadingState
-                        javaScriptEnabled
-                        domStorageEnabled
-                        setSupportMultipleWindows={false}
-                        onNavigationStateChange={(navState) => {
-                            const url = navState.url || "";
-                            if (
-                                url.includes("status_code=200") ||
-                                url.includes("status_code=201") ||
-                                url.includes("transaction_status=settlement") ||
-                                url.includes("/finish") ||
-                                url.includes("booking-berhasil")
-                            ) {
-                                setPaymentUrl("");
-                                router.replace({
-                                    pathname: "/booking-berhasil",
-                                    params: {
-                                        bookingId: String(activeBookingId || ""),
-                                        orderId: String(activeOrderId || ""),
-                                        metode: "midtrans",
-                                    },
-                                });
-                            }
-                        }}
-                        renderLoading={() => (
-                            <View
-                                style={
-                                    styles.webViewLoading
-                                }
-                            >
-                                <ActivityIndicator
-                                    size="large"
-                                    color={
-                                        RED
-                                    }
-                                />
-
-                                <Text
-                                    style={
-                                        styles.webViewLoadingText
-                                    }
-                                >
-                                    Membuka
-                                    pembayaran
-                                    Midtrans...
-                                </Text>
-                            </View>
-                        )}
-                    />
-                </View>
-            </SafeAreaView>
-        );
-    }
-
-    // =========================================================
     // RENDER
     // =========================================================
 
@@ -580,7 +373,7 @@ export default function BookingStep4() {
                 style={[
                     styles.container,
                     isDesktop &&
-                        styles.containerDesktop,
+                    styles.containerDesktop,
                 ]}
             >
                 {/* HEADER */}
@@ -589,7 +382,7 @@ export default function BookingStep4() {
                     style={[
                         styles.header,
                         isDesktop &&
-                            styles.headerDesktop,
+                        styles.headerDesktop,
                     ]}
                 >
                     <TouchableOpacity
@@ -643,7 +436,7 @@ export default function BookingStep4() {
                     contentContainerStyle={[
                         styles.scrollContent,
                         isDesktop &&
-                            styles.scrollContentDesktop,
+                        styles.scrollContentDesktop,
                     ]}
                 >
                     {/* STEPPER */}
@@ -687,7 +480,7 @@ export default function BookingStep4() {
                                                 ]}
                                             >
                                                 {number <
-                                                4 ? (
+                                                    4 ? (
                                                     <Ionicons
                                                         name="checkmark"
                                                         size={
@@ -708,21 +501,21 @@ export default function BookingStep4() {
 
                                             {index <
                                                 3 && (
-                                                <View
-                                                    style={[
-                                                        styles.stepLine,
-                                                        styles.stepLineActive,
-                                                    ]}
-                                                />
-                                            )}
+                                                    <View
+                                                        style={[
+                                                            styles.stepLine,
+                                                            styles.stepLineActive,
+                                                        ]}
+                                                    />
+                                                )}
                                         </View>
 
                                         <Text
                                             style={[
                                                 styles.stepLabel,
                                                 number ===
-                                                    4 &&
-                                                    styles.stepLabelActive,
+                                                4 &&
+                                                styles.stepLabelActive,
                                             ]}
                                         >
                                             {
@@ -741,7 +534,7 @@ export default function BookingStep4() {
                         style={[
                             styles.contentWrapper,
                             isDesktop &&
-                                styles.contentWrapperDesktop,
+                            styles.contentWrapperDesktop,
                         ]}
                     >
                         {/* TITLE */}
@@ -949,7 +742,7 @@ export default function BookingStep4() {
                             </View>
 
                             {layananList.length ===
-                            0 ? (
+                                0 ? (
                                 <Text
                                     style={
                                         styles.emptyService
@@ -972,9 +765,9 @@ export default function BookingStep4() {
                                             style={[
                                                 styles.serviceRow,
                                                 index ===
-                                                    layananList.length -
-                                                        1 &&
-                                                    styles.serviceRowLast,
+                                                layananList.length -
+                                                1 &&
+                                                styles.serviceRowLast,
                                             ]}
                                         >
                                             <View
@@ -1011,13 +804,13 @@ export default function BookingStep4() {
                                                 {formatRupiah(
                                                     Number(
                                                         item.harga ||
-                                                            item.price ||
-                                                            0
+                                                        item.price ||
+                                                        0
                                                     ) *
-                                                        Number(
-                                                            item.qty ||
-                                                                1
-                                                        )
+                                                    Number(
+                                                        item.qty ||
+                                                        1
+                                                    )
                                                 )}
                                             </Text>
                                         </View>
@@ -1292,7 +1085,7 @@ export default function BookingStep4() {
                                         styles.paymentTitle
                                     }
                                 >
-                                    Pembayaran Aman
+                                    Metode Pembayaran Resmi
                                 </Text>
 
                                 <Text
@@ -1300,11 +1093,7 @@ export default function BookingStep4() {
                                         styles.paymentText
                                     }
                                 >
-                                    Setelah konfirmasi,
-                                    Anda akan diarahkan
-                                    ke payment gateway
-                                    Midtrans untuk
-                                    menyelesaikan pembayaran.
+                                    AutoCare menyediakan pembayaran praktis melalui QRIS (Semua Bank & E-Wallet) dan Bayar di Tempat (COD di Bengkel). Anda dapat memilih metode pembayaran pada langkah berikutnya.
                                 </Text>
                             </View>
                         </View>
@@ -1380,7 +1169,7 @@ export default function BookingStep4() {
                                     style={[
                                         styles.confirmButtonDesktop,
                                         submitting &&
-                                            styles.confirmButtonDisabled,
+                                        styles.confirmButtonDisabled,
                                     ]}
                                 >
                                     {submitting ? (
@@ -1459,7 +1248,7 @@ export default function BookingStep4() {
                             style={[
                                 styles.confirmButton,
                                 submitting &&
-                                    styles.confirmButtonDisabled,
+                                styles.confirmButtonDisabled,
                             ]}
                         >
                             {submitting ? (
@@ -2109,74 +1898,5 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         gap: 9,
-    },
-
-    // =========================================================
-    // MIDTRANS WEBVIEW
-    // =========================================================
-
-    paymentScreen: {
-        flex: 1,
-        backgroundColor: "#FFFFFF",
-    },
-
-    paymentHeader: {
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 18,
-        paddingVertical: 13,
-        backgroundColor: "#FFFFFF",
-        borderBottomWidth: 1,
-        borderBottomColor: "#E5E5E5",
-    },
-
-    paymentBackButton: {
-        width: 42,
-        height: 42,
-        borderRadius: 21,
-        backgroundColor: "#F3F3F3",
-        alignItems: "center",
-        justifyContent: "center",
-        marginRight: 12,
-    },
-
-    paymentHeaderText: {
-        flex: 1,
-    },
-
-    paymentHeaderTitle: {
-        fontFamily: "Poppins_800ExtraBold",
-        fontSize: 18,
-        fontWeight: "900",
-        color: "#222",
-    },
-
-    paymentHeaderSubtitle: {
-        fontFamily: "Poppins_400Regular",
-        marginTop: 2,
-        fontSize: 11,
-        color: "#888",
-    },
-
-    webViewContainer: {
-        flex: 1,
-    },
-
-    webViewLoading: {
-        position: "absolute",
-        left: 0,
-        right: 0,
-        top: 0,
-        bottom: 0,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "#FFFFFF",
-    },
-
-    webViewLoadingText: {
-        fontFamily: "Poppins_400Regular",
-        marginTop: 12,
-        fontSize: 13,
-        color: "#888",
     },
 });

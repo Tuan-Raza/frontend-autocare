@@ -1,10 +1,9 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import * as WebBrowser from "expo-web-browser";
 import {
     ActivityIndicator,
-    Linking,
     Alert,
     Dimensions,
     Image,
@@ -21,6 +20,7 @@ import { API_URL } from "../config";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const isDesktop = Platform.OS === "web" && SCREEN_WIDTH >= 768;
+const RED = "#B22222";
 
 export default function BookingBerhasil() {
     const { bookingId, orderId, metode } = useLocalSearchParams();
@@ -51,7 +51,16 @@ export default function BookingBerhasil() {
 
             if (!bookingId) return;
 
-            const res = await fetch(`${API_URL}/api/payment/booking/${bookingId}`);
+            const userData = await AsyncStorage.getItem("autocare_user");
+            const token = await AsyncStorage.getItem("autocare_token");
+            const user = userData ? JSON.parse(userData) : null;
+            const userParam = user?.id ? `?userId=${user.id}` : "";
+
+            const res = await fetch(`${API_URL}/api/payment/booking/${bookingId}${userParam}`, {
+                headers: {
+                    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                },
+            });
             const result = await res.json();
 
             if (res.ok && result.success) {
@@ -65,7 +74,7 @@ export default function BookingBerhasil() {
         }
     };
 
-    // Simulasi ACC Admin langsung untuk pengujian status di-ACC atau tidak
+    // Simulasi ACC Admin langsung untuk pengujian QA
     const handleSimulasiAcc = async (newStatus) => {
         try {
             setVerifying(true);
@@ -82,7 +91,10 @@ export default function BookingBerhasil() {
                 },
                 body: JSON.stringify({
                     status: newStatus,
-                    alasan: newStatus === "diterima" ? "Pembayaran valid & telah masuk" : "Bukti buram / transfer tidak sesuai",
+                    alasan:
+                        newStatus === "terverifikasi" || newStatus === "diterima"
+                            ? "Pembayaran valid & telah masuk"
+                            : "Bukti buram / transfer tidak sesuai",
                 }),
             });
 
@@ -105,64 +117,32 @@ export default function BookingBerhasil() {
         return `Rp ${num.toLocaleString("id-ID")}`;
     };
 
-    const paymentMethod = paymentData?.metode_pembayaran || metode || "midtrans";
-    const isCod = paymentMethod.toLowerCase() === "cod" || paymentMethod.toLowerCase() === "bayar_di_tempat";
-    const isMidtrans = paymentMethod.toLowerCase() === "midtrans";
+    const paymentMethod = paymentData?.metode_pembayaran || metode || "qris";
+    const isCod =
+        paymentMethod.toLowerCase() === "cod" ||
+        paymentMethod.toLowerCase() === "bayar_di_tempat";
     const txStatus = paymentData?.transaction_status || "pending";
-    const statusVerifikasi = paymentData?.status_verifikasi || (isCod ? "diterima" : "menunggu_verifikasi");
+    const statusVerifikasi =
+        paymentData?.status_verifikasi || (isCod ? "belum_dibayar" : "menunggu_verifikasi");
 
-    const isApproved = statusVerifikasi === "diterima" || txStatus === "settlement" || txStatus === "capture";
-    const isRejected = statusVerifikasi === "ditolak" || txStatus === "deny" || txStatus === "cancel" || txStatus === "expire";
-    const isPendingVerif = !isApproved && !isRejected;
-
-    const handlePayMidtrans = async () => {
-        try {
-            const snapToken = paymentData?.snap_token;
-            const redirectUrl = snapToken 
-                ? `https://app.sandbox.midtrans.com/snap/v2/vtweb/${snapToken}` 
-                : null;
-
-            if (!redirectUrl) {
-                Alert.alert("Perhatian", "Data Snap Midtrans belum tersedia. Silakan tekan Periksa Status.");
-                return;
-            }
-
-            if (Platform.OS === "web") {
-                if (typeof window !== "undefined") {
-                    window.location.href = redirectUrl;
-                    return;
-                }
-            }
-
-            try {
-                await WebBrowser.openBrowserAsync(redirectUrl, {
-                    presentationStyle: WebBrowser.WebBrowserPresentationStyle.FULL_SCREEN,
-                    toolbarColor: "#B22222",
-                });
-            } catch (err) {
-                if (await Linking.canOpenURL(redirectUrl)) {
-                    await Linking.openURL(redirectUrl);
-                }
-            }
-
-            // Setelah browser ditutup, refresh data langsung dari backend & Midtrans
-            await loadData(true);
-        } catch (err) {
-            console.error("Open Midtrans Error:", err);
-            Alert.alert("Error", "Gagal membuka halaman pembayaran Midtrans.");
-        }
-    };
+    const isApproved =
+        statusVerifikasi === "terverifikasi" ||
+        statusVerifikasi === "diterima" ||
+        txStatus === "settlement";
+    const isRejected =
+        statusVerifikasi === "ditolak" ||
+        txStatus === "deny" ||
+        txStatus === "cancel";
+    const isUnpaidCod =
+        isCod &&
+        (statusVerifikasi === "belum_dibayar" ||
+            statusVerifikasi === "menunggu_pembayaran");
+    const isPendingVerif = !isApproved && !isRejected && !isUnpaidCod;
 
     const getMetodeName = (method) => {
         switch (String(method).toLowerCase()) {
-            case "midtrans":
-                return `Midtrans Payment Gateway (${paymentData?.payment_type ? paymentData.payment_type.toUpperCase() : "Online"})`;
             case "qris":
                 return "QRIS (Semua Bank & E-Wallet)";
-            case "dana":
-                return "DANA (0812 9998 9695 - a.n Raza ikhsan Al fitrah)";
-            case "seabank":
-                return "SeaBank (901180017388 - a.n Raza ikhsan Al fitrah)";
             case "cod":
             case "bayar_di_tempat":
                 return "Bayar di Tempat (Tunai di Bengkel)";
@@ -221,23 +201,23 @@ export default function BookingBerhasil() {
                         </View>
 
                         <Text style={styles.heroTitle}>
-                            {isCod
-                                ? "Booking Berhasil Dikonfirmasi!"
-                                : isApproved
-                                ? (isMidtrans ? "Pembayaran Berhasil Dikonfirmasi!" : "Pembayaran Telah Disetujui (ACC)!")
+                            {isApproved
+                                ? "Pembayaran Berhasil Diverifikasi!"
                                 : isRejected
-                                ? "Pembayaran Ditolak / Dibatalkan"
-                                : (isMidtrans ? "Menunggu Pembayaran Midtrans" : "Bukti Pembayaran Berhasil Dikirim!")}
+                                ? "Bukti Pembayaran Ditolak"
+                                : isUnpaidCod
+                                ? "Booking Berhasil Didaftarkan!"
+                                : "Bukti Pembayaran Berhasil Dikirim!"}
                         </Text>
 
                         <Text style={styles.heroSubtitle}>
-                            {isCod
-                                ? "Metode Bayar di Tempat berhasil dipilih. Anda dapat melakukan pembayaran saat servis selesai di bengkel."
-                                : isApproved
-                                ? "Pembayaran transaksi Anda telah diverifikasi. Booking servis Anda sudah aktif dan terkonfirmasi di sistem AutoCare."
+                            {isApproved
+                                ? "Pembayaran transaksi Anda telah diverifikasi oleh admin. Booking servis Anda sudah aktif dan terkonfirmasi di sistem AutoCare."
                                 : isRejected
-                                ? (isMidtrans ? "Transaksi pembayaran Midtrans dibatalkan atau kedaluwarsa." : "Bukti transfer tidak valid. Silakan unggah ulang bukti pembayaran yang benar.")
-                                : (isMidtrans ? "Selesaikan pembayaran melalui payment gateway Midtrans agar jadwal servis langsung terkonfirmasi." : "Bukti transfer Anda telah masuk ke sistem dan sedang dalam antrean verifikasi oleh admin AutoCare.")}
+                                ? "Bukti transfer ditolak oleh admin. Silakan buka detail pembayaran untuk mengunggah ulang bukti transfer yang benar."
+                                : isUnpaidCod
+                                ? "Metode Bayar di Tempat (COD) berhasil dipilih. Silakan lakukan pembayaran tunai atau debit saat tiba di bengkel."
+                                : "Bukti transfer QRIS Anda telah masuk ke antrean verifikasi admin AutoCare. Status akan otomatis berubah menjadi Lunas setelah di-ACC."}
                         </Text>
 
                         {/* STATUS BADGE ACC */}
@@ -247,6 +227,7 @@ export default function BookingBerhasil() {
                                 isApproved && styles.statusBadgeApproved,
                                 isPendingVerif && styles.statusBadgePending,
                                 isRejected && styles.statusBadgeRejected,
+                                isUnpaidCod && styles.statusBadgeCod,
                             ]}
                         >
                             <Ionicons
@@ -255,6 +236,8 @@ export default function BookingBerhasil() {
                                         ? "shield-checkmark"
                                         : isPendingVerif
                                         ? "time-outline"
+                                        : isUnpaidCod
+                                        ? "cash-outline"
                                         : "alert-circle"
                                 }
                                 size={15}
@@ -263,6 +246,8 @@ export default function BookingBerhasil() {
                                         ? "#2E7D32"
                                         : isPendingVerif
                                         ? "#E65100"
+                                        : isUnpaidCod
+                                        ? "#1E40AF"
                                         : "#C62828"
                                 }
                             />
@@ -272,19 +257,22 @@ export default function BookingBerhasil() {
                                     isApproved && { color: "#2E7D32" },
                                     isPendingVerif && { color: "#E65100" },
                                     isRejected && { color: "#C62828" },
+                                    isUnpaidCod && { color: "#1E40AF" },
                                 ]}
                             >
                                 {isApproved
                                     ? "STATUS: LUNAS & DIKONFIRMASI"
                                     : isRejected
-                                    ? "STATUS: PEMBAYARAN BATAL / EXPIRED"
-                                    : (isMidtrans ? "STATUS: MENUNGGU PEMBAYARAN (PENDING)" : "STATUS: MENUNGGU VERIFIKASI (ACC) ADMIN")}
+                                    ? "STATUS: BUKTI DITOLAK"
+                                    : isUnpaidCod
+                                    ? "STATUS: BELUM DIBAYAR (COD)"
+                                    : "STATUS: MENUNGGU VERIFIKASI ADMIN"}
                             </Text>
                         </View>
                     </View>
 
                     {/* PANEL PENGUJIAN ACC ADMIN LIVE */}
-                    {!isCod && (
+                    {!isCod && isPendingVerif ? (
                         <View style={styles.qaCard}>
                             <View style={styles.qaHeader}>
                                 <Ionicons name="construct-outline" size={17} color="#555" />
@@ -296,12 +284,12 @@ export default function BookingBerhasil() {
                             <View style={styles.qaBtnRow}>
                                 <TouchableOpacity
                                     style={[styles.qaBtn, styles.qaBtnAccept]}
-                                    onPress={() => handleSimulasiAcc("diterima")}
+                                    onPress={() => handleSimulasiAcc("terverifikasi")}
                                     disabled={verifying}
                                     activeOpacity={0.8}
                                 >
                                     <Ionicons name="checkmark-done" size={16} color="#FFFFFF" />
-                                    <Text style={styles.qaBtnText}>Setujui (ACC)</Text>
+                                    <Text style={styles.qaBtnText}>Setujui (Lunas)</Text>
                                 </TouchableOpacity>
 
                                 <TouchableOpacity
@@ -315,58 +303,49 @@ export default function BookingBerhasil() {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                    )}
+                    ) : null}
 
-                    {/* TOMBOL MIDTRANS BAYAR JIKA PENDING */}
-                    {isMidtrans && isPendingVerif ? (
+                    {/* TOMBOL LIHAT DETAIL PEMBAYARAN JIKA BELUM LUNAS */}
+                    {!isApproved && (
                         <View style={{ width: "100%", marginBottom: 16 }}>
                             <TouchableOpacity
                                 style={{
-                                    backgroundColor: "#B22222",
-                                    paddingVertical: 14,
+                                    backgroundColor: RED,
+                                    paddingVertical: 13,
                                     borderRadius: 12,
                                     flexDirection: "row",
                                     justifyContent: "center",
                                     alignItems: "center",
                                     gap: 8,
-                                    shadowColor: "#B22222",
+                                    shadowColor: RED,
                                     shadowOffset: { width: 0, height: 4 },
-                                    shadowOpacity: 0.3,
+                                    shadowOpacity: 0.25,
                                     shadowRadius: 8,
-                                    elevation: 4,
+                                    elevation: 3,
                                 }}
-                                onPress={handlePayMidtrans}
+                                onPress={() =>
+                                    router.replace({
+                                        pathname: "/payment",
+                                        params: { bookingId: String(bookingId) },
+                                    })
+                                }
                                 activeOpacity={0.85}
                             >
-                                <Ionicons name="card" size={20} color="#FFFFFF" />
-                                <Text style={{ fontFamily: "Poppins_600SemiBold", color: "#FFFFFF", fontSize: 15 }}>
-                                    Bayar Sekarang via Midtrans
-                                </Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={{
-                                    backgroundColor: "#FFFFFF",
-                                    borderWidth: 1.5,
-                                    borderColor: "#E0E0E0",
-                                    paddingVertical: 12,
-                                    borderRadius: 12,
-                                    flexDirection: "row",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    gap: 8,
-                                    marginTop: 10,
-                                }}
-                                onPress={() => loadData(false)}
-                                activeOpacity={0.8}
-                            >
-                                <Ionicons name="refresh" size={18} color="#444" />
-                                <Text style={{ fontFamily: "Poppins_500Medium", color: "#444", fontSize: 14 }}>
-                                    Periksa Status Pembayaran
+                                <Ionicons name="wallet-outline" size={18} color="#FFFFFF" />
+                                <Text
+                                    style={{
+                                        fontFamily: "Poppins_600SemiBold",
+                                        color: "#FFFFFF",
+                                        fontSize: 14,
+                                    }}
+                                >
+                                    {isRejected
+                                        ? "Unggah Ulang Bukti Pembayaran"
+                                        : "Buka Halaman Pembayaran"}
                                 </Text>
                             </TouchableOpacity>
                         </View>
-                    ) : null}
+                    )}
 
                     {/* STRUK / RECEIPT CARD */}
                     <View style={styles.receiptCard}>
@@ -600,6 +579,11 @@ const styles = StyleSheet.create({
     statusBadgeRejected: {
         backgroundColor: "rgba(198, 40, 40, 0.1)",
         borderColor: "rgba(198, 40, 40, 0.35)",
+    },
+
+    statusBadgeCod: {
+        backgroundColor: "rgba(30, 64, 175, 0.1)",
+        borderColor: "rgba(30, 64, 175, 0.35)",
     },
 
     statusBadgeText: {
